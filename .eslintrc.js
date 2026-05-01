@@ -1,0 +1,9 @@
+module.exports = {
+  root: true,
+  parser: '@typescript-eslint/parser',
+  extends: ['prettier'],
+  plugins: ['prettier'],
+  rules: {
+    'prettier/prettier': 'error'
+  }
+}
