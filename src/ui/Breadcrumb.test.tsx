@@ -2,6 +2,17 @@ import React from 'react'
 import { Provider as PaperProvider } from 'react-native-paper'
 import { fireEvent, render, screen } from '@testing-library/react-native'
 
+jest.mock('cozy-client', () => ({
+  __esModule: true,
+  useQuery: () => ({ data: null, fetchStatus: 'loaded' }),
+  Q: jest.fn(() => ({
+    where: jest.fn().mockReturnThis(),
+    sortBy: jest.fn().mockReturnThis(),
+    limitBy: jest.fn().mockReturnThis(),
+    getById: jest.fn().mockReturnThis()
+  }))
+}))
+
 import { Breadcrumb } from './Breadcrumb'
 
 const wrap = (ui: React.ReactElement) => <PaperProvider>{ui}</PaperProvider>

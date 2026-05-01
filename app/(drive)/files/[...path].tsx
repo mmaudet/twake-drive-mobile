@@ -32,7 +32,7 @@ export default function FilesScreen() {
   const segments = useMemo<BreadcrumbSegment[]>(() => {
     const list: BreadcrumbSegment[] = [{ id: ROOT_DIR_ID, name: t('drive.myFiles') }]
     if (path) {
-      for (const id of path) list.push({ id, name: id })
+      for (const id of path) list.push({ id })
     }
     return list
   }, [path, t])
@@ -79,7 +79,11 @@ export default function FilesScreen() {
   return (
     <View style={styles.container}>
       <AppBar
-        title={isRoot ? t('drive.myFiles') : segments[segments.length - 1].name}
+        title={
+          isRoot
+            ? t('drive.myFiles')
+            : (segments[segments.length - 1].name ?? segments[segments.length - 1].id)
+        }
         onBack={isRoot ? undefined : () => router.back()}
         onLogout={isRoot ? logout : undefined}
       />

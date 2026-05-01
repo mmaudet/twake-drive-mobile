@@ -34,7 +34,7 @@ export default function SharedScreen() {
 
   const segments = useMemo<BreadcrumbSegment[]>(() => {
     const list: BreadcrumbSegment[] = [{ id: 'root', name: t('drive.shared') }]
-    if (path) for (const id of path) list.push({ id, name: id })
+    if (path) for (const id of path) list.push({ id })
     return list
   }, [path, t])
 
@@ -78,7 +78,11 @@ export default function SharedScreen() {
   return (
     <View style={styles.container}>
       <AppBar
-        title={isRoot ? t('drive.shared') : segments[segments.length - 1].name}
+        title={
+          isRoot
+            ? t('drive.shared')
+            : (segments[segments.length - 1].name ?? segments[segments.length - 1].id)
+        }
         onBack={isRoot ? undefined : () => router.back()}
         onLogout={isRoot ? logout : undefined}
       />
