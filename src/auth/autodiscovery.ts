@@ -24,3 +24,22 @@ export const fetchTwakeConfiguration = async (
     return null
   }
 }
+
+const REDIRECT_SCHEME = 'twakedrive://'
+
+export const getLoginUri = async (email: string): Promise<URL | null> => {
+  const domain = extractDomain(email)
+  if (!domain) return null
+
+  const config = await fetchTwakeConfiguration(domain)
+  const flagshipUri = config?.['twake-flagship-login-uri']
+  if (!flagshipUri) return null
+
+  try {
+    const uri = new URL(flagshipUri)
+    uri.searchParams.append('redirect_after_oidc', REDIRECT_SCHEME)
+    return uri
+  } catch {
+    return null
+  }
+}
