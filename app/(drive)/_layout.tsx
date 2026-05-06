@@ -52,6 +52,12 @@ export default function DriveLayout() {
           href: null
         }}
       />
+      <Tabs.Screen
+        name="note/[fileId]"
+        options={{
+          href: null
+        }}
+      />
     </Tabs>
   )
 }

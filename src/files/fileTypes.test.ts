@@ -1,4 +1,24 @@
-import { isOfficeFile } from './fileTypes'
+import { isCozyNoteFile, isOfficeFile } from './fileTypes'
+
+describe('isCozyNoteFile', () => {
+  it('returns false for missing name', () => {
+    expect(isCozyNoteFile()).toBe(false)
+    expect(isCozyNoteFile(undefined)).toBe(false)
+    expect(isCozyNoteFile('')).toBe(false)
+  })
+
+  it('returns true for .cozy-note files (case-insensitive)', () => {
+    expect(isCozyNoteFile('Daily.cozy-note')).toBe(true)
+    expect(isCozyNoteFile('Notes.COZY-NOTE')).toBe(true)
+    expect(isCozyNoteFile('foo.bar.cozy-note')).toBe(true)
+  })
+
+  it('returns false for other extensions', () => {
+    expect(isCozyNoteFile('foo.txt')).toBe(false)
+    expect(isCozyNoteFile('cozy-note')).toBe(false)
+    expect(isCozyNoteFile('foo.cozy-note.txt')).toBe(false)
+  })
+})
 
 describe('isOfficeFile', () => {
   it('returns false for missing mime', () => {

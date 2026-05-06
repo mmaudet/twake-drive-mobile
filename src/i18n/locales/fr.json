@@ -55,6 +55,9 @@
     },
     "onlyoffice": {
       "title": "Document"
+    },
+    "note": {
+      "title": "Note"
     }
   },
   "errors": {

@@ -23,7 +23,6 @@ import {
   FileQueryResult
 } from '@/client/queries'
 import { useSharedFileIds } from '@/client/useSharedFiles'
-import { isOfficeFile } from '@/files/fileTypes'
 
 export default function SharedScreen() {
   const router = useRouter()
@@ -95,10 +94,6 @@ export default function SharedScreen() {
       <FileRow
         file={{ ...item, size: item.size ?? null }}
         onPress={file => {
-          if (isOfficeFile(file.mime)) {
-            router.push(`/(drive)/onlyoffice/${file._id}`)
-            return
-          }
           sheetRef.current?.present({
             ...file,
             cozyMetadata: item.cozyMetadata,

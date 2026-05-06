@@ -13,7 +13,6 @@ import { FileMetadataSheet, FileMetadataSheetHandle } from '@/ui/FileMetadataShe
 import { useAuth } from '@/auth/useAuth'
 import { getErrorMessageKey } from '@/utils/errorMessages'
 import { trashQuery, trashQueryAs, FileQueryResult } from '@/client/queries'
-import { isOfficeFile } from '@/files/fileTypes'
 
 export default function TrashScreen() {
   const router = useRouter()
@@ -26,10 +25,6 @@ export default function TrashScreen() {
     <FileRow
       file={{ ...item, size: item.size ?? null }}
       onPress={file => {
-        if (isOfficeFile(file.mime)) {
-          router.push(`/(drive)/onlyoffice/${file._id}`)
-          return
-        }
         sheetRef.current?.present({ ...file, cozyMetadata: item.cozyMetadata, path: item.path })
       }}
     />

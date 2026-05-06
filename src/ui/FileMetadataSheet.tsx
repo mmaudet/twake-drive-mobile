@@ -5,9 +5,11 @@ import { Button, Divider, Text, useTheme } from 'react-native-paper'
 import { format } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 import { useClient } from 'cozy-client'
+import { useRouter } from 'expo-router'
 
 import { formatFileSize } from '@/utils/formatters'
 import { openFileNatively } from '@/files/openFile'
+import { isCozyNoteFile, isOfficeFile } from '@/files/fileTypes'
 import { FileThumbnail } from './FileThumbnail'
 
 export interface FileMetadata {
@@ -34,6 +36,7 @@ export const FileMetadataSheet = forwardRef<FileMetadataSheetHandle>((_, ref) =>
   const theme = useTheme()
   const { t } = useTranslation()
   const client = useClient()
+  const router = useRouter()
   const bottomSheetRef = useRef<BottomSheet>(null)
   const [file, setFile] = React.useState<FileMetadata | null>(null)
   const [opening, setOpening] = useState(false)
@@ -50,6 +53,16 @@ export const FileMetadataSheet = forwardRef<FileMetadataSheetHandle>((_, ref) =>
 
   const onOpen = async (): Promise<void> => {
     if (!client || !file) return
+    if (isCozyNoteFile(file.name)) {
+      bottomSheetRef.current?.close()
+      router.push(`/(drive)/note/${file._id}`)
+      return
+    }
+    if (isOfficeFile(file.mime)) {
+      bottomSheetRef.current?.close()
+      router.push(`/(drive)/onlyoffice/${file._id}`)
+      return
+    }
     setOpening(true)
     setOpenError(null)
     try {
