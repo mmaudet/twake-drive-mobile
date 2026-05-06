@@ -2,25 +2,27 @@ import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
 import { Button, Divider, Text, useTheme } from 'react-native-paper'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { format } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 import { useClient } from 'cozy-client'
 
 import { formatFileSize } from '@/utils/formatters'
-import { getFileIcon } from '@/utils/fileIcons'
 import { openFileNatively } from '@/files/openFile'
+import { FileThumbnail } from './FileThumbnail'
 
 export interface FileMetadata {
   _id: string
   name: string
+  type?: 'file' | 'directory'
   size: number | null
   mime?: string
+  class?: string
   updated_at?: string
   path?: string
   cozyMetadata?: {
     createdBy?: { account?: string }
   }
+  links?: { tiny?: string; small?: string; medium?: string; large?: string }
 }
 
 export interface FileMetadataSheetHandle {
@@ -76,11 +78,7 @@ export const FileMetadataSheet = forwardRef<FileMetadataSheetHandle>((_, ref) =>
         {file ? (
           <>
             <View style={styles.header}>
-              <Icon
-                name={getFileIcon('file', file.mime, file.name)}
-                size={56}
-                color={theme.colors.primary}
-              />
+              <FileThumbnail file={file} size={120} />
               <Text variant="titleMedium" style={styles.name}>
                 {file.name}
               </Text>
