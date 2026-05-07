@@ -105,9 +105,9 @@ export const ShareSheet = forwardRef<ShareSheetHandle>((_, ref) => {
     linkPermission && stackUri ? buildPublicLinkUrl(stackUri, linkPermission) : null
 
   const refresh = useCallback(
-    async (target: ShareSheetFile) => {
+    async (target: ShareSheetFile, { silent = false }: { silent?: boolean } = {}) => {
       if (!client) return
-      setLoading(true)
+      if (!silent) setLoading(true)
       setError(null)
       try {
         const [s, p] = await Promise.all([
@@ -120,7 +120,7 @@ export const ShareSheet = forwardRef<ShareSheetHandle>((_, ref) => {
         console.error('[ShareSheet] load failed', e)
         setError(t('drive.share.errorLoad'))
       } finally {
-        setLoading(false)
+        if (!silent) setLoading(false)
       }
     },
     [client, t]
@@ -152,7 +152,7 @@ export const ShareSheet = forwardRef<ShareSheetHandle>((_, ref) => {
       } else {
         await revokePublicLink(client, file)
       }
-      await refresh(file)
+      await refresh(file, { silent: true })
     } catch (e) {
       console.error('[ShareSheet] toggle link failed', e)
       setError(t('drive.share.errorMutate'))
@@ -186,7 +186,7 @@ export const ShareSheet = forwardRef<ShareSheetHandle>((_, ref) => {
       }
       setEmailInput('')
       setShowAddForm(false)
-      await refresh(file)
+      await refresh(file, { silent: true })
     } catch (e) {
       console.error('[ShareSheet] add recipient failed', e)
       setError(t('drive.share.errorMutate'))
@@ -203,7 +203,7 @@ export const ShareSheet = forwardRef<ShareSheetHandle>((_, ref) => {
     setError(null)
     try {
       await revokeRecipientAtIndex(client, sharing, memberIndex)
-      await refresh(file)
+      await refresh(file, { silent: true })
     } catch (e) {
       console.error('[ShareSheet] revoke recipient failed', e)
       setError(t('drive.share.errorMutate'))
