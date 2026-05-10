@@ -1,5 +1,10 @@
 import { softDeleteEntry } from './deleteFile'
 
+const mockSyncImmediately = jest.fn()
+jest.mock('@/client/createClient', () => ({
+  pouchLink: { syncImmediately: (...args: unknown[]) => mockSyncImmediately(...args) }
+}))
+
 describe('softDeleteEntry', () => {
   it('calls client.destroy with the entry doc', async () => {
     const destroy = jest.fn().mockResolvedValue({})
@@ -38,5 +43,25 @@ describe('softDeleteEntry', () => {
     const destroy = jest.fn().mockRejectedValue(new Error('boom'))
     const client = { destroy } as unknown as Parameters<typeof softDeleteEntry>[0]
     await expect(softDeleteEntry(client, { _id: 'abc' })).rejects.toThrow('boom')
+  })
+})
+
+describe('softDeleteEntry — pouch sync', () => {
+  beforeEach(() => {
+    mockSyncImmediately.mockReset()
+  })
+
+  it('schedules an immediate pouch sync after a successful destroy', async () => {
+    const destroy = jest.fn().mockResolvedValue({})
+    const client = { destroy } as unknown as Parameters<typeof softDeleteEntry>[0]
+    await softDeleteEntry(client, { _id: 'abc' })
+    expect(mockSyncImmediately).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not call syncImmediately when destroy throws', async () => {
+    const destroy = jest.fn().mockRejectedValue(new Error('boom'))
+    const client = { destroy } as unknown as Parameters<typeof softDeleteEntry>[0]
+    await expect(softDeleteEntry(client, { _id: 'abc' })).rejects.toThrow()
+    expect(mockSyncImmediately).not.toHaveBeenCalled()
   })
 })
