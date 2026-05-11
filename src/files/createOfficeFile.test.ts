@@ -1,3 +1,7 @@
+jest.mock('@/pouchdb/triggerReplication', () => ({
+  triggerPouchReplication: jest.fn()
+}))
+
 jest.mock('expo-asset', () => ({
   Asset: {
     fromModule: jest.fn().mockReturnValue({
@@ -13,6 +17,7 @@ jest.mock('expo-file-system', () => ({
   }))
 }))
 
+import { triggerPouchReplication } from '@/pouchdb/triggerReplication'
 import { buildFinalName, createOfficeFile } from './createOfficeFile'
 
 describe('buildFinalName', () => {
@@ -36,6 +41,10 @@ describe('buildFinalName', () => {
 })
 
 describe('createOfficeFile', () => {
+  beforeEach(() => {
+    ;(triggerPouchReplication as jest.Mock).mockClear()
+  })
+
   it('calls createFile with built name + dirId + contentType, returns id/name', async () => {
     const createFile = jest.fn().mockResolvedValue({
       data: { _id: 'new-id', attributes: { name: 'Notes.docx' } }
@@ -69,5 +78,27 @@ describe('createOfficeFile', () => {
     const client = { collection: () => ({ createFile }) } as unknown as import('cozy-client').default
 
     await expect(createOfficeFile(client, 'slide', 'X', 'p')).rejects.toThrow(/no id/)
+  })
+
+  it('triggers a pouch replication on success', async () => {
+    const createFile = jest.fn().mockResolvedValue({
+      data: { _id: 'new-id', attributes: { name: 'Notes.docx' } }
+    })
+    const client = {
+      collection: () => ({ createFile })
+    } as unknown as import('cozy-client').default
+
+    await createOfficeFile(client, 'text', 'Notes', 'parent-id')
+    expect(triggerPouchReplication).toHaveBeenCalledWith(client, 'io.cozy.files')
+  })
+
+  it('does NOT trigger pouch replication when the stack call fails', async () => {
+    const createFile = jest.fn().mockRejectedValue(new Error('boom'))
+    const client = {
+      collection: () => ({ createFile })
+    } as unknown as import('cozy-client').default
+
+    await expect(createOfficeFile(client, 'text', 'Notes', 'parent-id')).rejects.toThrow('boom')
+    expect(triggerPouchReplication).not.toHaveBeenCalled()
   })
 })

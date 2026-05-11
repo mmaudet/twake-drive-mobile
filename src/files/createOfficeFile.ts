@@ -2,6 +2,8 @@ import { File } from 'expo-file-system'
 import { Asset } from 'expo-asset'
 import type CozyClient from 'cozy-client'
 
+import { triggerPouchReplication } from '@/pouchdb/triggerReplication'
+
 export type OfficeFileClass = 'text' | 'sheet' | 'slide'
 
 interface TemplateMeta {
@@ -73,6 +75,7 @@ export const createOfficeFile = async (
     dirId,
     contentType: tpl.mime
   })
+  triggerPouchReplication(client, 'io.cozy.files')
   const data = result.data
   const id = data._id ?? data.id
   if (!id) throw new Error('Upload returned no id')
