@@ -19,6 +19,8 @@ import { getErrorMessageKey } from '@/utils/errorMessages'
 import { recentQuery, recentQueryAs, FileQueryResult } from '@/client/queries'
 import { softDeleteEntry } from '@/files/deleteFile'
 import { renameEntry } from '@/files/renameEntry'
+import { useIsOnline } from '@/network/useIsOnline'
+import { requireOnline } from '@/network/requireOnline'
 
 export default function RecentScreen() {
   const router = useRouter()
@@ -32,8 +34,10 @@ export default function RecentScreen() {
   const [pendingRename, setPendingRename] = useState<FileQueryResult | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [snackbar, setSnackbar] = useState<string | null>(null)
+  const isOnline = useIsOnline()
 
   const confirmDelete = async (): Promise<void> => {
+    if (!requireOnline(isOnline, setSnackbar, t)) return
     if (!client || !pendingDelete) return
     setDeleting(true)
     try {
@@ -55,6 +59,7 @@ export default function RecentScreen() {
   }
 
   const submitRename = async (newName: string): Promise<void> => {
+    if (!requireOnline(isOnline, setSnackbar, t)) return
     if (!client || !pendingRename) return
     await renameEntry(client, pendingRename._id, newName)
     setSnackbar(t('drive.rename.successFile'))
@@ -68,9 +73,10 @@ export default function RecentScreen() {
       onPress={file => {
         sheetRef.current?.present({ ...file, cozyMetadata: item.cozyMetadata, path: item.path })
       }}
-      onShare={file =>
+      onShare={file => {
+        if (!requireOnline(isOnline, setSnackbar, t)) return
         shareRef.current?.present({ _id: file._id, name: file.name, type: 'file' })
-      }
+      }}
       onRename={() => setPendingRename(item)}
       onDelete={() => setPendingDelete(item)}
     />
@@ -105,7 +111,10 @@ export default function RecentScreen() {
       )}
       <FileMetadataSheet
         ref={sheetRef}
-        onShareRequested={file => shareRef.current?.present(file)}
+        onShareRequested={file => {
+          if (!requireOnline(isOnline, setSnackbar, t)) return
+          shareRef.current?.present(file)
+        }}
         onRenameRequested={file => {
           const full = data.find(d => d._id === file._id)
           if (full) setPendingRename(full)
