@@ -64,6 +64,18 @@ export default function TrashScreen() {
       await emptyTrash(client)
       setSnackbar(t('drive.trashActions.emptySuccess'))
       setEmptyDialogVisible(false)
+      // cozy-stack's bulk DELETE /files/trash doesn't reliably surface
+      // the per-doc deletions in the changes feed, so a plain
+      // replicateOnce (incremental via changes) won't see the empty
+      // state. Wiping syncedDoctypes forces the next replication to
+      // run as an initial replication (replicateAllDocs via _all_docs),
+      // which DOES reflect the post-purge state because the trash docs
+      // are no longer listed.
+      const internal = pouchLink as unknown as {
+        pouches?: { clearSyncedDoctypes?: () => Promise<unknown> }
+      }
+      await internal.pouches?.clearSyncedDoctypes?.()
+      await onRefresh()
     } catch (e) {
       console.error('[TrashScreen] empty failed', e)
       setSnackbar(t('drive.trashActions.emptyError'))
@@ -74,26 +86,25 @@ export default function TrashScreen() {
 
   /**
    * Pull-to-refresh / focus refresh: run a real Pouch replication and
-   * AWAIT it to completion (not the fire-and-forget `syncImmediately`),
-   * then re-read.
-   *
-   * `pouchLink.syncImmediately()` only schedules an immediate task on
-   * the replication loop and returns void — we can't tell when "our"
-   * sync actually finishes. The `pouchlink:sync:end` event fires for
-   * every sync, including ones that started before our pull, so
-   * waiting on it can resolve too early.
-   *
-   * Reaching into `pouchLink.pouches.replicateOnce()` lets us await
-   * the actual replication promise. That's the only way to be sure
-   * the local SQLite reflects the server state before we re-query.
+   * AWAIT it to completion, then re-read. Bounded by an 8s safety
+   * timeout so the spinner can't hang forever if the underlying
+   * replication promise never resolves.
    */
   const onRefresh = useCallback(async (): Promise<void> => {
     if (!client) return
     const internal = pouchLink as unknown as {
-      pouches?: { replicateOnce?: () => Promise<unknown> }
+      pouches?: {
+        replicateOnce?: (opts?: {
+          waitForReplications?: boolean
+        }) => Promise<unknown>
+      }
     }
     try {
-      await internal.pouches?.replicateOnce?.()
+      await Promise.race([
+        internal.pouches?.replicateOnce?.({ waitForReplications: false }) ??
+          Promise.resolve(),
+        new Promise<void>(resolve => setTimeout(resolve, 8000))
+      ])
     } catch (e) {
       console.error('[TrashScreen] replicateOnce failed', e)
     }
