@@ -8,10 +8,25 @@ module.exports = function (api) {
         {
           root: ['./'],
           alias: {
-            '@': './src'
-          }
+            '@': './src',
+            'pouchdb-collate': '@craftzdog/pouchdb-collate-react-native',
+            crypto: 'react-native-quick-crypto',
+            stream: 'readable-stream',
+            buffer: '@craftzdog/react-native-buffer'
+          },
+          extensions: [
+            '.ios.js',
+            '.android.js',
+            '.native.js',
+            '.js',
+            '.jsx',
+            '.json',
+            '.ts',
+            '.tsx'
+          ]
         }
-      ]
+      ],
+      'react-native-worklets/plugin'
     ]
   }
 }
