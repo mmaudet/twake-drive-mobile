@@ -31,19 +31,54 @@ export const offlineDoctypes = [
 // Shape required by cozy-pouch-link (see CozyPouchLink.spec.js + PouchManager.spec.js):
 //   { definition: () => QueryDefinition, options: { as: string } }
 //
-// We use a single trivial warmup per doctype — its purpose is just to gate
-// the local-vs-stack decision, not to pre-fetch anything specific.
-const buildWarmupQuery = (doctype: string): unknown => ({
+// A trivial gate to keep the local-vs-stack decision triggered. The
+// definition shape doesn't matter for the gating itself.
+const buildGateWarmupQuery = (doctype: string): unknown => ({
   definition: () => Q(doctype).limitBy(1),
   options: { as: `${doctype}/warmup` }
 })
+
+// Extra warmup queries for `io.cozy.files` that pre-build the pouch-find
+// indexes the app actually uses. Without this, the first time the user
+// opens a screen (e.g. Recent), pouch-find lazily builds the index by
+// scanning every doc — visible as a several-second freeze on the first
+// view. With this, the index exists by the time the user gets there.
+//
+// Shape of each entry mirrors what cozy-pouch-link tests expect:
+//   { definition: () => QueryDefinition, options: { as: string } }
+const filesIndexWarmupQueries: unknown[] = [
+  // Recent view (sort by updated_at)
+  {
+    definition: () =>
+      Q('io.cozy.files')
+        .where({ updated_at: { $gt: null } })
+        .indexFields(['updated_at'])
+        .sortBy([{ updated_at: 'desc' }])
+        .limitBy(1),
+    options: { as: 'io.cozy.files/warmup/recent' }
+  },
+  // Folder listing (sort by dir_id + type + name) — covers files screen
+  // and trash screen which share the same indexFields.
+  {
+    definition: () =>
+      Q('io.cozy.files')
+        .where({ dir_id: { $gt: null } })
+        .indexFields(['dir_id', 'type', 'name'])
+        .sortBy([{ dir_id: 'asc' }, { type: 'asc' }, { name: 'asc' }])
+        .limitBy(1),
+    options: { as: 'io.cozy.files/warmup/folder' }
+  }
+]
 
 const doctypesReplicationOptions = Object.fromEntries(
   offlineDoctypes.map(dt => [
     dt,
     {
       strategy: 'fromRemote' as const,
-      warmupQueries: [buildWarmupQuery(dt)]
+      warmupQueries:
+        dt === 'io.cozy.files'
+          ? [buildGateWarmupQuery(dt), ...filesIndexWarmupQueries]
+          : [buildGateWarmupQuery(dt)]
     }
   ])
 )
