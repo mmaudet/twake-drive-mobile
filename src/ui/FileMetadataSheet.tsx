@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
-import { Linking, StyleSheet, View } from 'react-native'
+import { Image, Linking, StyleSheet, View } from 'react-native'
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
-import { Button, Divider, Text, useTheme } from 'react-native-paper'
+import { Button, Divider, Switch, Text, useTheme } from 'react-native-paper'
 import { format } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 import { useClient } from 'cozy-client'
@@ -13,6 +13,9 @@ import { isCozyNoteFile, isDocsNoteFile, isOfficeFile, isShortcutFile } from '@/
 import { fetchShortcutUrl } from '@/files/shortcuts'
 import { canPreviewInApp } from '@/files/streamUrl'
 import { useIsOnline } from '@/network/useIsOnline'
+import { useOfflineState } from '@/offline/useOfflineState'
+import { useOfflineActions } from '@/offline/useOfflineActions'
+import { FileSystemRepo } from '@/offline/FileSystemRepo'
 import { FileThumbnail } from './FileThumbnail'
 
 export interface FileMetadata {
@@ -52,6 +55,14 @@ export const FileMetadataSheet = forwardRef<FileMetadataSheetHandle, FileMetadat
   const [file, setFile] = React.useState<FileMetadata | null>(null)
   const [opening, setOpening] = useState(false)
   const [openError, setOpenError] = useState<string | null>(null)
+  const offlineEntry = useOfflineState(file?._id)
+  const { pin, unpin } = useOfflineActions()
+  const isPinned = !!offlineEntry
+  const togglePin = (): void => {
+    if (!file) return
+    if (isPinned) void unpin(file._id)
+    else pin({ _id: file._id, name: file.name, size: file.size ?? null })
+  }
 
   useImperativeHandle(ref, () => ({
     present: (f: FileMetadata) => {
@@ -146,11 +157,34 @@ export const FileMetadataSheet = forwardRef<FileMetadataSheetHandle, FileMetadat
         {file ? (
           <>
             <View style={styles.header}>
-              <FileThumbnail file={file} size={120} />
+              {isPinned && offlineEntry?.state === 'downloaded' && file.class === 'image' ? (
+                <Image
+                  source={{ uri: FileSystemRepo.localPath(file._id) }}
+                  style={styles.localPreview}
+                  resizeMode="contain"
+                  accessibilityLabel={file.name}
+                />
+              ) : (
+                <FileThumbnail file={file} size={120} />
+              )}
               <Text variant="titleMedium" style={styles.name}>
                 {file.name}
               </Text>
             </View>
+            <Divider />
+            <View style={styles.toggleRow}>
+              <Text style={styles.toggleLabel}>{t('drive.offline.keepOffline')}</Text>
+              <Switch
+                value={isPinned}
+                onValueChange={togglePin}
+                disabled={!isPinned && !isOnline}
+              />
+            </View>
+            {!isPinned && !isOnline ? (
+              <Text style={[styles.toggleHelper, { color: theme.colors.outline }]}>
+                {t('drive.offline.disabledOffline')}
+              </Text>
+            ) : null}
             <Divider />
             <Row label={t('drive.fileMeta.type')} value={file.mime ?? '—'} />
             <Row label={t('drive.fileMeta.size')} value={formatFileSize(file.size)} />
@@ -168,7 +202,7 @@ export const FileMetadataSheet = forwardRef<FileMetadataSheetHandle, FileMetadat
                 mode="contained"
                 onPress={onOpen}
                 loading={opening}
-                disabled={opening || !isOnline}
+                disabled={opening || (!isOnline && offlineEntry?.state !== 'downloaded')}
                 icon="open-in-new"
               >
                 {t('drive.fileMeta.open')}
@@ -246,13 +280,27 @@ const Row = ({ label, value }: { label: string; value: string }) => (
 const styles = StyleSheet.create({
   container: { paddingHorizontal: 16, paddingBottom: 32 },
   header: { alignItems: 'center', paddingVertical: 16, gap: 8 },
+  localPreview: {
+    width: '100%',
+    aspectRatio: 4 / 3,
+    borderRadius: 8,
+    backgroundColor: '#00000010'
+  },
   name: { textAlign: 'center' },
   row: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12 },
   label: { flex: 1 },
   value: { flex: 2, textAlign: 'right' },
   footer: { marginTop: 24, gap: 8 },
   errorText: { textAlign: 'center' },
-  hint: { textAlign: 'center', marginTop: 4 }
+  hint: { textAlign: 'center', marginTop: 4 },
+  toggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8
+  },
+  toggleLabel: { fontSize: 14 },
+  toggleHelper: { fontSize: 12, paddingBottom: 8 }
 })
 
 FileMetadataSheet.displayName = 'FileMetadataSheet'

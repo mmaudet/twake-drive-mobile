@@ -6,7 +6,26 @@ import { useTranslation } from 'react-i18next'
 import { FileTypeIcon } from '@/ui/icons/FileTypeIcon'
 import { useFileSharingStatus } from '@/sharing/SharingProvider'
 import { useIsOnline } from '@/network/useIsOnline'
+import { useOfflineFolderState } from '@/offline/useOfflineState'
+import { PinnedBadge } from '@/offline/PinnedBadge'
+import type { OfflineFileEntry, OfflineFileState } from '@/offline/types'
 import { SharedBadge } from './SharedBadge'
+
+// Synthetic entry just to drive the PinnedBadge visuals. Folders don't have
+// per-folder state in the store; we synthesize one whose `state` reflects the
+// aggregated state of the folder's children.
+const folderBadgeEntry = (state: OfflineFileState): OfflineFileEntry => ({
+  fileId: '',
+  state,
+  rev: '',
+  md5sum: '',
+  size: 0,
+  name: '',
+  localPath: '',
+  pinnedAt: 0,
+  isDirectPin: false,
+  parentFolderPins: []
+})
 
 export interface FolderItem {
   _id: string
@@ -29,6 +48,7 @@ interface Props {
   onRename?: (folder: FolderItem) => void
   onRestore?: (folder: FolderItem) => void
   onDelete?: (folder: FolderItem) => void
+  onTogglePin?: (folder: FolderItem) => void
 }
 
 export const FolderRow = ({
@@ -39,18 +59,29 @@ export const FolderRow = ({
   onShare,
   onRename,
   onRestore,
-  onDelete
+  onDelete,
+  onTogglePin
 }: Props) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const isOnline = useIsOnline()
   const [menuVisible, setMenuVisible] = useState(false)
   const sharingStatus = useFileSharingStatus(folder._id)
-  const hasMenu = (!!onShare || !!onRename || !!onRestore || !!onDelete) && !selected
+  const folderOfflineState = useOfflineFolderState(folder._id)
+  const isPinned = folderOfflineState.pinned
+  const hasMenu = (!!onShare || !!onRename || !!onRestore || !!onDelete || !!onTogglePin) && !selected
+
+  const description = isPinned && folderOfflineState.downloading > 0
+    ? t('drive.offline.folderPartial', {
+        count: folderOfflineState.downloaded,
+        total: folderOfflineState.total
+      })
+    : undefined
 
   return (
     <List.Item
       title={folder.name}
+      description={description}
       // Honour the `style` Paper passes to `left` so the folder icon aligns
       // with file thumbnails in the same list (matching column widths).
       left={props => (
@@ -62,10 +93,17 @@ export const FolderRow = ({
               <List.Icon icon="check" color={theme.colors.onPrimary} />
             </View>
           ) : (
-            <>
+            <View style={styles.thumbWrap}>
               <FileTypeIcon icon="folder" size={40} />
               <SharedBadge status={sharingStatus} />
-            </>
+              <PinnedBadge
+                entry={
+                  isPinned && folderOfflineState.aggregate
+                    ? folderBadgeEntry(folderOfflineState.aggregate)
+                    : undefined
+                }
+              />
+            </View>
           )}
         </View>
       )}
@@ -83,6 +121,17 @@ export const FolderRow = ({
               />
             }
           >
+            {onTogglePin ? (
+              <Menu.Item
+                leadingIcon={isPinned ? 'cloud-off-outline' : 'cloud-download-outline'}
+                title={t(isPinned ? 'drive.offline.unpin' : 'drive.offline.pin')}
+                disabled={!isPinned && !isOnline}
+                onPress={() => {
+                  setMenuVisible(false)
+                  onTogglePin(folder)
+                }}
+              />
+            ) : null}
             {onShare ? (
               <Menu.Item
                 leadingIcon="share-variant"
@@ -145,6 +194,7 @@ export const FolderRow = ({
 const styles = StyleSheet.create({
   row: { paddingVertical: 4 },
   leftSlot: { justifyContent: 'center', alignItems: 'center', width: 40, height: 40 },
+  thumbWrap: { position: 'relative', width: 40, height: 40 },
   checkmark: {
     width: 40,
     height: 40,

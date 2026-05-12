@@ -1,5 +1,6 @@
 import CozyClient, { CozyLink, Q, StackLink } from 'cozy-client'
 import PouchLink from 'cozy-pouch-link'
+import { createMMKV } from 'react-native-mmkv'
 
 import { platformReactNative } from './platformReactNative'
 
@@ -83,7 +84,56 @@ const doctypesReplicationOptions = Object.fromEntries(
   ])
 )
 
+// Aliases the current config expects to find as "warmed up" in MMKV. If we
+// add new warmup queries between releases, areQueriesWarmedUp() rejects users
+// whose prior session only marked the old aliases — and offline they can't
+// re-run the warmup (which is fromRemote). Backfill missing aliases for
+// doctypes whose gate alias is already persisted: that means the user had a
+// successful prior session, so pouch is populated and indexes will lazy-build
+// on first query via pouch-find. New installs are untouched (no gate alias =
+// no backfill = warmup runs normally on first online sync).
+const PERSISTED_WARMUP_KEY = 'cozy-client-pouch-link-warmupedqueries'
+const expectedAliasesByDoctype = (): Record<string, string[]> => {
+  const out: Record<string, string[]> = {}
+  for (const [doctype, opts] of Object.entries(doctypesReplicationOptions)) {
+    out[doctype] = (opts.warmupQueries as Array<{ options: { as: string } }>).map(
+      q => q.options.as
+    )
+  }
+  return out
+}
+
+const backfillWarmupAliases = (): void => {
+  let storage: ReturnType<typeof createMMKV>
+  try {
+    storage = createMMKV({ id: 'pouchdb-meta' })
+  } catch {
+    return
+  }
+  const raw = storage.getString(PERSISTED_WARMUP_KEY)
+  if (!raw) return
+  let parsed: Record<string, string[]>
+  try {
+    parsed = JSON.parse(raw) as Record<string, string[]>
+  } catch {
+    return
+  }
+  const expected = expectedAliasesByDoctype()
+  let changed = false
+  for (const [doctype, aliases] of Object.entries(expected)) {
+    if (!Array.isArray(parsed[doctype]) || parsed[doctype].length === 0) continue
+    for (const alias of aliases) {
+      if (!parsed[doctype].includes(alias)) {
+        parsed[doctype].push(alias)
+        changed = true
+      }
+    }
+  }
+  if (changed) storage.set(PERSISTED_WARMUP_KEY, JSON.stringify(parsed))
+}
+
 export const getLinks = (): CozyLink[] => {
+  backfillWarmupAliases()
   const pouchLink = new PouchLink({
     doctypes: [...offlineDoctypes],
     initialSync: false,

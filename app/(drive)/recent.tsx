@@ -21,6 +21,8 @@ import { softDeleteEntry } from '@/files/deleteFile'
 import { renameEntry } from '@/files/renameEntry'
 import { useIsOnline } from '@/network/useIsOnline'
 import { requireOnline } from '@/network/requireOnline'
+import { useOfflineActions } from '@/offline/useOfflineActions'
+import { OfflineFilesStore } from '@/offline/OfflineFilesStore'
 
 export default function RecentScreen() {
   const router = useRouter()
@@ -35,6 +37,12 @@ export default function RecentScreen() {
   const [deleting, setDeleting] = useState(false)
   const [snackbar, setSnackbar] = useState<string | null>(null)
   const isOnline = useIsOnline()
+  const offlineActions = useOfflineActions()
+  const onToggleFilePin = (file: { _id: string; name: string; size?: number | null }): void => {
+    const entry = OfflineFilesStore.get(file._id)
+    if (entry?.isDirectPin) void offlineActions.unpin(file._id)
+    else offlineActions.pin({ _id: file._id, name: file.name, size: file.size ?? null })
+  }
 
   const confirmDelete = async (): Promise<void> => {
     if (!requireOnline(isOnline, setSnackbar, t)) return
@@ -79,6 +87,7 @@ export default function RecentScreen() {
       }}
       onRename={() => setPendingRename(item)}
       onDelete={() => setPendingDelete(item)}
+      onTogglePin={onToggleFilePin}
     />
   )
 

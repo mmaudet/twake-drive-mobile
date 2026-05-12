@@ -28,6 +28,9 @@ import { renameEntry } from '@/files/renameEntry'
 import { useFlag } from '@/client/useFlag'
 import { useIsOnline } from '@/network/useIsOnline'
 import { requireOnline } from '@/network/requireOnline'
+import { useOfflineActions } from '@/offline/useOfflineActions'
+import { OfflineFilesStore } from '@/offline/OfflineFilesStore'
+import { BigFolderConfirmDialog } from '@/offline/BigFolderConfirmDialog'
 import {
   fileByIdQuery,
   fileByIdQueryAs,
@@ -66,6 +69,16 @@ export default function FilesScreen() {
   const [deleting, setDeleting] = useState(false)
   const [snackbar, setSnackbar] = useState<string | null>(null)
   const selection = useMultiSelect()
+  const offlineActions = useOfflineActions()
+  const onToggleFilePin = useCallback((file: { _id: string; name: string; size?: number | null }) => {
+    const entry = OfflineFilesStore.get(file._id)
+    if (entry?.isDirectPin) void offlineActions.unpin(file._id)
+    else offlineActions.pin({ _id: file._id, name: file.name, size: file.size ?? null })
+  }, [offlineActions])
+  const onToggleFolderPin = useCallback((folder: { _id: string; name: string }) => {
+    if (OfflineFilesStore.getFolder(folder._id)) void offlineActions.unpinFolder(folder._id)
+    else void offlineActions.pinFolder({ _id: folder._id, name: folder.name })
+  }, [offlineActions])
   const client = useClient()
   const docsEnabled = !!useFlag('drive.lasuitedocs.enabled')
   const isOnline = useIsOnline()
@@ -237,6 +250,7 @@ export default function FilesScreen() {
           }
           onRename={selection.isSelecting ? undefined : () => requestRename(item)}
           onDelete={selection.isSelecting ? undefined : () => requestDelete(item)}
+          onTogglePin={selection.isSelecting ? undefined : onToggleFolderPin}
         />
       )
     }
@@ -270,6 +284,7 @@ export default function FilesScreen() {
         }
         onRename={selection.isSelecting ? undefined : () => requestRename(item)}
         onDelete={selection.isSelecting ? undefined : () => requestDelete(item)}
+        onTogglePin={selection.isSelecting ? undefined : onToggleFilePin}
       />
     )
   }
@@ -388,6 +403,13 @@ export default function FilesScreen() {
         }}
       />
       <ShareSheet ref={shareRef} />
+      <BigFolderConfirmDialog
+        visible={!!offlineActions.pendingConfirmation}
+        count={offlineActions.pendingConfirmation?.count ?? 0}
+        bytes={offlineActions.pendingConfirmation?.bytes ?? 0}
+        onConfirm={() => void offlineActions.confirmPending()}
+        onCancel={offlineActions.cancelPending}
+      />
       <FAB.Group
         open={fabOpen}
         visible={!selection.isSelecting && isOnline}

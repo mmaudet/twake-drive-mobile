@@ -7,6 +7,14 @@ jest.mock('cozy-client', () => ({
   useClient: () => null
 }))
 
+jest.mock('@/offline/useOfflineState', () => ({
+  useOfflineState: jest.fn().mockReturnValue(undefined)
+}))
+
+jest.mock('@/network/useIsOnline', () => ({
+  useIsOnline: () => true
+}))
+
 import { FileRow, FileItem } from './FileRow'
 
 const file: FileItem = {
@@ -30,5 +38,10 @@ describe('FileRow', () => {
     render(wrap(<FileRow file={file} onPress={onPress} />))
     fireEvent.press(screen.getByText('rapport.pdf'))
     expect(onPress).toHaveBeenCalledWith(file)
+  })
+
+  it('renders a 3-dot menu trigger when onTogglePin is provided', () => {
+    render(wrap(<FileRow file={file} onPress={jest.fn()} onTogglePin={jest.fn()} />))
+    expect(screen.getByLabelText('file actions')).toBeOnTheScreen()
   })
 })

@@ -1,17 +1,24 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Tabs } from 'expo-router'
 import { useTheme } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
+import { useClient } from 'cozy-client'
 
 import { SharingProvider } from '@/sharing/SharingProvider'
 import { OfflineBanner } from '@/ui/OfflineBanner'
 import { useForegroundSync } from '@/pouchdb/useForegroundSync'
+import { initOfflineSubsystem } from '@/offline/initOffline'
 
 export default function DriveLayout() {
   const theme = useTheme()
   const { t } = useTranslation()
+  const client = useClient()
   useForegroundSync()
+  useEffect(() => {
+    if (!client) return
+    void initOfflineSubsystem(client)
+  }, [client])
   return (
     <SharingProvider>
       <OfflineBanner />
@@ -62,6 +69,15 @@ export default function DriveLayout() {
             title: t('drive.trash'),
             tabBarIcon: ({ color, size }) => (
               <Icon name="trash-can-outline" color={color} size={size} />
+            )
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: t('settings.title'),
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="cog-outline" color={color} size={size} />
             )
           }}
         />

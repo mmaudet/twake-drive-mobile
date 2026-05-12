@@ -4,7 +4,11 @@
     "retry": "Retry",
     "loading": "Loading…",
     "logout": "Log out",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "settings": {
+    "title": "Settings"
   },
   "auth": {
     "welcomeTitle": "Welcome to Twake Drive",
@@ -134,7 +138,29 @@
     },
     "offline": {
       "requiresOnline": "Available when you're back online",
-      "banner": "Offline — showing cached data"
+      "banner": "Offline — showing cached data",
+      "pin": "Keep offline",
+      "unpin": "Remove from offline",
+      "keepOffline": "Keep offline",
+      "disabledOffline": "Reconnect to enable offline mode",
+      "downloading": "Downloading…",
+      "downloaded": "Available offline",
+      "failed": "Download failed",
+      "notAvailableOffline": "File not available offline",
+      "folderPartial": "{{count}}/{{total}} files",
+      "folderSummary": "{{count}} files · {{size}}",
+      "folderConfirm": "This folder contains {{count}} files (~{{size}}). Continue?",
+      "bigFolderTitle": "Confirm download",
+      "diskFull": "Device storage full. Remove items to free up space.",
+      "deleteAllConfirm": "Remove {{count}} files ({{size}})? This cannot be undone.",
+      "storageTitle": "Offline storage",
+      "totalUsed": "Total used",
+      "deleteAll": "Delete all",
+      "wifiOnly": "Download on WiFi only",
+      "foldersSection": "Folders",
+      "filesSection": "Files",
+      "errorsSection": "Errors",
+      "retry": "Retry"
     }
   },
   "errors": {

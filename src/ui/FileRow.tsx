@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next'
 import { formatFileSize } from '@/utils/formatters'
 import { useFileSharingStatus } from '@/sharing/SharingProvider'
 import { useIsOnline } from '@/network/useIsOnline'
+import { PinnedBadge } from '@/offline/PinnedBadge'
+import { useOfflineState } from '@/offline/useOfflineState'
 import { FileThumbnail } from './FileThumbnail'
 import { SharedBadge } from './SharedBadge'
 
@@ -36,6 +38,7 @@ interface Props {
   onRename?: (file: FileItem) => void
   onRestore?: (file: FileItem) => void
   onDelete?: (file: FileItem) => void
+  onTogglePin?: (file: FileItem) => void
 }
 
 export const FileRow = ({
@@ -46,19 +49,26 @@ export const FileRow = ({
   onShare,
   onRename,
   onRestore,
-  onDelete
+  onDelete,
+  onTogglePin
 }: Props) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const isOnline = useIsOnline()
   const [menuVisible, setMenuVisible] = useState(false)
+  const offlineEntry = useOfflineState(file._id)
+  const isPinned = !!offlineEntry
   const size = formatFileSize(file.size)
   const date = file.updated_at
     ? formatDistanceToNow(new Date(file.updated_at), { addSuffix: true })
     : ''
-  const description = date ? `${size} · ${date}` : size
+  const offlineDescription =
+    offlineEntry?.state === 'downloading' && offlineEntry.bytesDownloaded !== undefined
+      ? `${formatFileSize(offlineEntry.bytesDownloaded)} / ${formatFileSize(file.size)}`
+      : undefined
+  const description = offlineDescription ?? (date ? `${size} · ${date}` : size)
   const sharingStatus = useFileSharingStatus(file._id)
-  const hasMenu = (!!onShare || !!onRename || !!onRestore || !!onDelete) && !selected
+  const hasMenu = (!!onShare || !!onRename || !!onRestore || !!onDelete || !!onTogglePin) && !selected
 
   return (
     <List.Item
@@ -75,10 +85,11 @@ export const FileRow = ({
               <List.Icon icon="check" color={theme.colors.onPrimary} />
             </View>
           ) : (
-            <>
+            <View style={styles.thumbWrap}>
               <FileThumbnail file={file} size={40} />
               <SharedBadge status={sharingStatus} />
-            </>
+              <PinnedBadge entry={offlineEntry} />
+            </View>
           )}
         </View>
       )}
@@ -96,6 +107,17 @@ export const FileRow = ({
               />
             }
           >
+            {onTogglePin ? (
+              <Menu.Item
+                leadingIcon={isPinned ? 'cloud-off-outline' : 'cloud-download-outline'}
+                title={t(isPinned ? 'drive.offline.unpin' : 'drive.offline.pin')}
+                disabled={!isPinned && !isOnline}
+                onPress={() => {
+                  setMenuVisible(false)
+                  onTogglePin(file)
+                }}
+              />
+            ) : null}
             {onShare ? (
               <Menu.Item
                 leadingIcon="share-variant"
@@ -156,6 +178,7 @@ export const FileRow = ({
 const styles = StyleSheet.create({
   row: { paddingVertical: 4 },
   leftSlot: { justifyContent: 'center', alignItems: 'center', width: 40, height: 40 },
+  thumbWrap: { position: 'relative', width: 40, height: 40 },
   checkmark: {
     width: 40,
     height: 40,

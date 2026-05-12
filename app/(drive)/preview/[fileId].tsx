@@ -20,6 +20,9 @@ import {
   StreamSource
 } from '@/files/streamUrl'
 import { openFileNatively } from '@/files/openFile'
+import { OfflineFilesStore } from '@/offline/OfflineFilesStore'
+import { FileSystemRepo } from '@/offline/FileSystemRepo'
+import { useOfflineState } from '@/offline/useOfflineState'
 
 const TEXT_MAX_BYTES = 1_000_000
 
@@ -233,14 +236,22 @@ export default function PreviewScreen() {
     | null
     | undefined
 
-  const source = useMemo(() => {
-    if (!client || !fileId) return null
+  // Re-renders when the offline state of this file changes (so a download
+  // completing while the screen is open swaps the source to the local blob).
+  const offlineEntry = useOfflineState(fileId ?? undefined)
+  const source = useMemo<StreamSource | null>(() => {
+    if (!fileId) return null
+    // Prefer the local blob when available: works offline, no auth, instant.
+    if (OfflineFilesStore.isPinnedAndDownloaded(fileId)) {
+      return { uri: FileSystemRepo.localPath(fileId), headers: {} }
+    }
+    if (!client) return null
     try {
       return buildFileStreamSource(client, fileId)
     } catch {
       return null
     }
-  }, [client, fileId])
+  }, [client, fileId, offlineEntry?.state])
 
   const thumbnailUrl = useMemo(
     () => (client && file?.links ? buildThumbnailUrl(client, file.links, 'large') : null),

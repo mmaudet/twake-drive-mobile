@@ -4,7 +4,11 @@
     "retry": "Réessayer",
     "loading": "Chargement…",
     "logout": "Se déconnecter",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "confirm": "Confirmer"
+  },
+  "settings": {
+    "title": "Paramètres"
   },
   "auth": {
     "welcomeTitle": "Bienvenue sur Twake Drive",
@@ -134,7 +138,29 @@
     },
     "offline": {
       "requiresOnline": "Disponible quand vous serez en ligne",
-      "banner": "Hors-ligne — affichage du cache"
+      "banner": "Hors-ligne — affichage du cache",
+      "pin": "Garder hors-ligne",
+      "unpin": "Retirer du hors-ligne",
+      "keepOffline": "Garder hors-ligne",
+      "disabledOffline": "Reconnectez-vous pour activer le mode hors-ligne",
+      "downloading": "Téléchargement…",
+      "downloaded": "Disponible hors-ligne",
+      "failed": "Échec du téléchargement",
+      "notAvailableOffline": "Fichier non disponible hors-ligne",
+      "folderPartial": "{{count}}/{{total}} fichiers",
+      "folderSummary": "{{count}} fichiers · {{size}}",
+      "folderConfirm": "Ce dossier contient {{count}} fichiers (~{{size}}). Continuer ?",
+      "bigFolderTitle": "Confirmer le téléchargement",
+      "diskFull": "Stockage de l'appareil plein. Supprimez des fichiers pour libérer de l'espace.",
+      "deleteAllConfirm": "Supprimer {{count}} fichiers ({{size}}) ? Cette action est irréversible.",
+      "storageTitle": "Stockage hors-ligne",
+      "totalUsed": "Total utilisé",
+      "deleteAll": "Tout supprimer",
+      "wifiOnly": "Télécharger en WiFi uniquement",
+      "foldersSection": "Dossiers",
+      "filesSection": "Fichiers",
+      "errorsSection": "Erreurs",
+      "retry": "Réessayer"
     }
   },
   "errors": {

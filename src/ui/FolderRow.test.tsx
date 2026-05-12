@@ -7,6 +7,23 @@ jest.mock('cozy-client', () => ({
   useClient: () => null
 }))
 
+jest.mock('@/offline/useOfflineState', () => ({
+  useOfflineFolderPinned: jest.fn().mockReturnValue(false),
+  useOfflineFolderState: jest.fn().mockReturnValue({
+    pinned: false,
+    aggregate: null,
+    total: 0,
+    downloaded: 0,
+    downloading: 0,
+    pending: 0,
+    failed: 0
+  })
+}))
+
+jest.mock('@/network/useIsOnline', () => ({
+  useIsOnline: () => true
+}))
+
 import { FolderRow, FolderItem } from './FolderRow'
 
 const folder: FolderItem = { _id: 'd1', name: 'Documents' }
@@ -24,5 +41,10 @@ describe('FolderRow', () => {
     render(wrap(<FolderRow folder={folder} onPress={onPress} />))
     fireEvent.press(screen.getByText('Documents'))
     expect(onPress).toHaveBeenCalledWith(folder)
+  })
+
+  it('renders a 3-dot menu trigger when onTogglePin is provided', () => {
+    render(wrap(<FolderRow folder={folder} onPress={jest.fn()} onTogglePin={jest.fn()} />))
+    expect(screen.getByLabelText('folder actions')).toBeOnTheScreen()
   })
 })

@@ -22,6 +22,9 @@ import {
   SharedDriveEntry
 } from '@/files/sharedDrives'
 import { FileQueryResult } from '@/client/queries'
+import { useOfflineActions } from '@/offline/useOfflineActions'
+import { OfflineFilesStore } from '@/offline/OfflineFilesStore'
+import { BigFolderConfirmDialog } from '@/offline/BigFolderConfirmDialog'
 
 interface DriveChild {
   _id: string
@@ -78,6 +81,16 @@ export default function SharedDrivesScreen() {
   const shareRef = useRef<ShareSheetHandle>(null)
   const [refreshing, setRefreshing] = useState(false)
   const [resolveError, setResolveError] = useState<string | null>(null)
+  const offlineActions = useOfflineActions()
+  const onToggleFilePin = (file: { _id: string; name: string; size?: number | null }): void => {
+    const entry = OfflineFilesStore.get(file._id)
+    if (entry?.isDirectPin) void offlineActions.unpin(file._id)
+    else offlineActions.pin({ _id: file._id, name: file.name, size: file.size ?? null })
+  }
+  const onToggleFolderPin = (folder: { _id: string; name: string }): void => {
+    if (OfflineFilesStore.getFolder(folder._id)) void offlineActions.unpinFolder(folder._id)
+    else void offlineActions.pinFolder({ _id: folder._id, name: folder.name })
+  }
 
   // path semantics:
   //   []                       → drives list (root)
@@ -196,6 +209,7 @@ export default function SharedDrivesScreen() {
               type: 'directory'
             })
           }
+          onTogglePin={onToggleFolderPin}
         />
       )
     }
@@ -209,6 +223,7 @@ export default function SharedDrivesScreen() {
             path: item.path
           })
         }
+        onTogglePin={onToggleFilePin}
       />
     )
   }
@@ -257,6 +272,13 @@ export default function SharedDrivesScreen() {
         onShareRequested={file => shareRef.current?.present(file)}
       />
       <ShareSheet ref={shareRef} />
+      <BigFolderConfirmDialog
+        visible={!!offlineActions.pendingConfirmation}
+        count={offlineActions.pendingConfirmation?.count ?? 0}
+        bytes={offlineActions.pendingConfirmation?.bytes ?? 0}
+        onConfirm={() => void offlineActions.confirmPending()}
+        onCancel={offlineActions.cancelPending}
+      />
       <Snackbar
         visible={!!resolveError}
         onDismiss={() => setResolveError(null)}

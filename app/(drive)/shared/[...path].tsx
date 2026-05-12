@@ -26,6 +26,9 @@ import {
   FileQueryResult
 } from '@/client/queries'
 import { useSharedFileIds } from '@/client/useSharedFiles'
+import { useOfflineActions } from '@/offline/useOfflineActions'
+import { OfflineFilesStore } from '@/offline/OfflineFilesStore'
+import { BigFolderConfirmDialog } from '@/offline/BigFolderConfirmDialog'
 
 export default function SharedScreen() {
   const router = useRouter()
@@ -44,6 +47,16 @@ export default function SharedScreen() {
   const sheetRef = useRef<FileMetadataSheetHandle>(null)
   const shareRef = useRef<ShareSheetHandle>(null)
   const [refreshing, setRefreshing] = useState(false)
+  const offlineActions = useOfflineActions()
+  const onToggleFilePin = (file: { _id: string; name: string; size?: number | null }): void => {
+    const entry = OfflineFilesStore.get(file._id)
+    if (entry?.isDirectPin) void offlineActions.unpin(file._id)
+    else offlineActions.pin({ _id: file._id, name: file.name, size: file.size ?? null })
+  }
+  const onToggleFolderPin = (folder: { _id: string; name: string }): void => {
+    if (OfflineFilesStore.getFolder(folder._id)) void offlineActions.unpinFolder(folder._id)
+    else void offlineActions.pinFolder({ _id: folder._id, name: folder.name })
+  }
 
   const isRoot = !path || path.length === 0
   const safeCurrentDirId = isRoot ? 'io.cozy.files.root-dir' : path![path!.length - 1]
@@ -102,6 +115,7 @@ export default function SharedScreen() {
               type: 'directory'
             })
           }
+          onTogglePin={onToggleFolderPin}
         />
       )
     }
@@ -118,6 +132,7 @@ export default function SharedScreen() {
         onShare={file =>
           shareRef.current?.present({ _id: file._id, name: file.name, type: 'file' })
         }
+        onTogglePin={onToggleFilePin}
       />
     )
   }
@@ -194,6 +209,13 @@ export default function SharedScreen() {
         onShareRequested={file => shareRef.current?.present(file)}
       />
       <ShareSheet ref={shareRef} />
+      <BigFolderConfirmDialog
+        visible={!!offlineActions.pendingConfirmation}
+        count={offlineActions.pendingConfirmation?.count ?? 0}
+        bytes={offlineActions.pendingConfirmation?.bytes ?? 0}
+        onConfirm={() => void offlineActions.confirmPending()}
+        onCancel={offlineActions.cancelPending}
+      />
     </View>
   )
 }

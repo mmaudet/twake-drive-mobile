@@ -1,5 +1,15 @@
 import '@testing-library/react-native/extend-expect'
 
+// Node 16 does not ship FormData globally; jest-expo's winter runtime requires it.
+if (typeof FormData === 'undefined') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(global as any).FormData = class FormData {
+    private data: Record<string, string> = {}
+    append(key: string, value: string) { this.data[key] = value }
+    get(key: string) { return this.data[key] ?? null }
+  }
+}
+
 // Use node-fetch (http-based) so nock can intercept HTTP requests in tests.
 // Node 18+'s built-in fetch uses undici, which nock cannot intercept by default.
 const nodeFetch = require('node-fetch')

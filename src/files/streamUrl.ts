@@ -7,7 +7,7 @@ interface MinimalStackClient {
 
 export interface StreamSource {
   uri: string
-  headers: { Authorization: string }
+  headers: Record<string, string>
 }
 
 export const buildFileStreamSource = (
