@@ -22,7 +22,11 @@ export const triggerPouchReplication = (
   _opts: { immediate?: boolean } = {}
 ): void => {
   const pouchLink = getPouchLink(client)
-  if (!pouchLink) return
+  if (!pouchLink) {
+    console.warn('[triggerPouchReplication] no PouchLink in chain, skipping', { doctype })
+    return
+  }
+  console.log('[triggerPouchReplication] startReplication', { doctype })
   log.debug('startReplication', doctype ?? '')
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
   ;(pouchLink as any).startReplication()
