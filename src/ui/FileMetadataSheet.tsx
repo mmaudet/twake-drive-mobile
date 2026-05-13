@@ -92,7 +92,7 @@ export const FileMetadataSheet = forwardRef<FileMetadataSheetHandle, FileMetadat
     }
     if (canPreviewInApp(file)) {
       bottomSheetRef.current?.close()
-      router.push(`/(drive)/preview/${file._id}`)
+      router.push(`/preview/${file._id}`)
       return
     }
     if (isShortcutFile(file)) {

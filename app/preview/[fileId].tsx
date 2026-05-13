@@ -23,6 +23,7 @@ import { openFileNatively } from '@/files/openFile'
 import { OfflineFilesStore } from '@/offline/OfflineFilesStore'
 import { FileSystemRepo } from '@/offline/FileSystemRepo'
 import { useOfflineState } from '@/offline/useOfflineState'
+import { ZoomableImage } from '@/ui/ZoomableImage'
 
 const TEXT_MAX_BYTES = 1_000_000
 
@@ -83,26 +84,27 @@ const PdfPreview = ({
 
 const ImagePreview = ({
   source,
-  thumbnailUrl
+  thumbnailUrl,
+  onDismiss
 }: {
   source: StreamSource
   thumbnailUrl: string | null
+  onDismiss: () => void
 }) => {
   const [loaded, setLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
   return (
     <View style={styles.viewerContainer}>
-      <Image
-        source={{ uri: source.uri, headers: source.headers }}
-        placeholder={thumbnailUrl ? { uri: thumbnailUrl } : undefined}
-        placeholderContentFit="contain"
-        style={styles.image}
-        contentFit="contain"
-        transition={150}
+      <ZoomableImage
+        uri={source.uri}
+        headers={source.headers}
+        placeholderUri={thumbnailUrl}
+        onDismiss={onDismiss}
         onLoad={() => setLoaded(true)}
         onError={err => {
           console.error('[PreviewScreen] image error', err)
-          setError(err?.error ?? 'Image error')
+          const e = err as { error?: string } | null
+          setError(e?.error ?? 'Image error')
         }}
       />
       {error ? <ErrorOverlay message={error} /> : !loaded && !thumbnailUrl ? <LoadingOverlay /> : null}
@@ -299,7 +301,13 @@ export default function PreviewScreen() {
       case 'pdf':
         return <PdfPreview source={source} thumbnailUrl={thumbnailUrl} />
       case 'image':
-        return <ImagePreview source={source} thumbnailUrl={thumbnailUrl} />
+        return (
+          <ImagePreview
+            source={source}
+            thumbnailUrl={thumbnailUrl}
+            onDismiss={() => router.back()}
+          />
+        )
       case 'video':
         return <VideoPreview source={source} />
       case 'audio':
@@ -324,11 +332,21 @@ export default function PreviewScreen() {
     }
   }
 
+  // Image viewer is fullscreen, no chrome. Swipe down dismisses; iOS
+  // edge-swipe / Android back button also work. Other kinds keep their
+  // header + footer.
+  const isImage = kind === 'image'
+
   return (
-    <View style={styles.container}>
-      <AppBar title={title} onBack={() => router.back()} />
+    <View
+      style={[
+        styles.container,
+        isImage && styles.containerTransparent
+      ]}
+    >
+      {!isImage ? <AppBar title={title} onBack={() => router.back()} /> : null}
       {isLoadingFile ? <LoadingState /> : renderViewer()}
-      {kind !== 'unsupported' && file ? (
+      {kind !== 'unsupported' && file && !isImage ? (
         <View style={styles.actions}>
           <Button
             mode="text"
@@ -350,6 +368,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
+  containerTransparent: { backgroundColor: 'transparent' },
   viewerContainer: { flex: 1 },
   pdf: { flex: 1, width: SCREEN_WIDTH, backgroundColor: '#000' },
   transparent: { backgroundColor: 'transparent' },

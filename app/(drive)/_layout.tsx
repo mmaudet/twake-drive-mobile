@@ -105,12 +105,6 @@ export default function DriveLayout() {
             href: null
           }}
         />
-        <Tabs.Screen
-          name="preview/[fileId]"
-          options={{
-            href: null
-          }}
-        />
       </Tabs>
     </SharingProvider>
   )
