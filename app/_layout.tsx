@@ -16,6 +16,7 @@ import { darkTheme, lightTheme } from '@/ui/theme'
 import { attachRevocationListener } from '@/auth/revocationListener'
 import { ErrorBoundary } from '@/ui/ErrorBoundary'
 import { PiPSessionProvider } from '@/preview/PiPSession'
+import { SharingProvider } from '@/sharing/SharingProvider'
 
 const InnerLayout = () => {
   const colorScheme = useColorScheme()
@@ -36,24 +37,30 @@ const InnerLayout = () => {
           <I18nextProvider i18n={i18n}>
             <BottomSheetModalProvider>
               <PiPSessionProvider>
-                <ErrorBoundary>
-                  <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="(auth)" />
-                    <Stack.Screen name="(drive)" />
-                    <Stack.Screen name="index" />
-                    <Stack.Screen
-                      name="preview/[fileId]"
-                      options={{
-                        // Native iOS pageSheet: rounded-corner modal that
-                        // the OS lets the user drag down to dismiss,
-                        // coordinated with any inner UIScrollView (PDF,
-                        // text). Works for every preview kind for free.
-                        presentation: 'pageSheet',
-                        animation: 'slide_from_bottom'
-                      }}
-                    />
-                  </Stack>
-                </ErrorBoundary>
+                <SharingProvider>
+                  <ErrorBoundary>
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen name="(auth)" />
+                      <Stack.Screen name="(drive)" />
+                      <Stack.Screen name="index" />
+                      <Stack.Screen
+                        name="preview/[fileId]"
+                        options={{
+                          // Native iOS pageSheet: rounded-corner modal that
+                          // the OS lets the user drag down to dismiss,
+                          // coordinated with any inner UIScrollView (PDF,
+                          // text). Works for every preview kind for free.
+                          presentation: 'pageSheet',
+                          animation: 'slide_from_bottom'
+                        }}
+                      />
+                      <Stack.Screen
+                        name="metadata/[fileId]"
+                        options={{ presentation: 'pageSheet', animation: 'slide_from_bottom' }}
+                      />
+                    </Stack>
+                  </ErrorBoundary>
+                </SharingProvider>
               </PiPSessionProvider>
             </BottomSheetModalProvider>
           </I18nextProvider>

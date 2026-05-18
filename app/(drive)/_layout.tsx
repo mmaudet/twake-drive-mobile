@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
 import { useClient } from 'cozy-client'
 
-import { SharingProvider } from '@/sharing/SharingProvider'
 import { OfflineBanner } from '@/ui/OfflineBanner'
 import { useForegroundSync } from '@/pouchdb/useForegroundSync'
 import { initOfflineSubsystem } from '@/offline/initOffline'
@@ -20,7 +19,7 @@ export default function DriveLayout() {
     void initOfflineSubsystem(client)
   }, [client])
   return (
-    <SharingProvider>
+    <>
       <OfflineBanner />
       <Tabs
         screenOptions={{
@@ -49,9 +48,7 @@ export default function DriveLayout() {
           name="recent"
           options={{
             title: t('drive.recent'),
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="clock-outline" color={color} size={size} />
-            )
+            tabBarIcon: ({ color, size }) => <Icon name="clock-outline" color={color} size={size} />
           }}
         />
         <Tabs.Screen
@@ -76,9 +73,7 @@ export default function DriveLayout() {
           name="settings"
           options={{
             title: t('settings.title'),
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="cog-outline" color={color} size={size} />
-            )
+            tabBarIcon: ({ color, size }) => <Icon name="cog-outline" color={color} size={size} />
           }}
         />
         <Tabs.Screen
@@ -106,6 +101,6 @@ export default function DriveLayout() {
           }}
         />
       </Tabs>
-    </SharingProvider>
+    </>
   )
 }
