@@ -13,6 +13,8 @@ Items to pick up later, captured in conversation. Order is rough, not strict.
 
 - **Pagination on file lists.** Long folders (>100 items) probably need infinite scroll or page-based loading. Currently we fetch everything via `client.query(folderFilesQuery(...))` without `limitBy`/`skip`. Add cursor-based pagination using cozy-client's `fetchMore` and a sentinel "loading more…" row at the bottom of the FlatList. Mirror twake-drive-web's behaviour.
 
+- **Swipe left / right in viewer to navigate between files.** When viewing a file inside a folder, swipe horizontally should jump to the previous / next file of the same folder context (without going back to the list). Needs the viewer to know its sibling list + index, and a horizontal pager (e.g. `react-native-pager-view` or `FlatList horizontal pagingEnabled`) wrapping the per-kind preview. Keep the vertical swipe-down dismiss intact.
+
 ## Features
 
 - **Receive shared content from the OS** (Share Extension). User taps a photo in Photos → "Share" → Twake Drive → file lands in a target folder. Requires:
@@ -33,6 +35,28 @@ Items to pick up later, captured in conversation. Order is rough, not strict.
   empty the trash on web → open Twake Drive mobile → Trash tab still full.
   Need to investigate whether the bulk delete emits a doc-level change the
   pouch sync picks up.
+
+- **Shared drives are poorly implemented.** The Shared Drives tab currently
+  reuses the regular drive listing pipeline but doesn't really account for
+  shared-drive specifics (membership, root listing, permissions, navigation).
+  Needs a proper audit against twake-drive-web's behaviour — how the root is
+  fetched, how each shared drive is entered, how the breadcrumb / back stack
+  behaves, and how sharing/permission-only actions are gated.
+
+- **Video PiP stays inside the preview modal.** When PiP is triggered, the
+  picture-in-picture window remains visually pinned inside the page-sheet
+  modal instead of detaching to a system-level floating window. Result: the
+  modal still covers the drive content, so the user can't continue browsing
+  while watching the video. Investigate `expo-video` PiP detach behaviour
+  on iOS and whether dismissing the modal (while keeping playback alive) is
+  the right pattern.
+
+- **`.ogg` audio files don't play.** Tapping an `.ogg` in the audio preview
+  yields no playback (silent / error). Likely a codec coverage issue in
+  `expo-video` / underlying AVPlayer on iOS (Ogg Vorbis is not natively
+  supported on iOS). Decide: transcode server-side, fall back to a different
+  player for `audio/ogg`, or show an explicit "not supported on this device"
+  state instead of a silent failure.
 
 ## Known limitations from prior sessions
 
