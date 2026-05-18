@@ -15,7 +15,6 @@
   "dependencies": {
     "@craftzdog/pouchdb-collate-react-native": "^7.3.0",
     "@craftzdog/react-native-buffer": "^6.1.2",
-    "@gorhom/bottom-sheet": "^5.2.13",
     "@op-engineering/op-sqlite": "15.0.7",
     "@react-native-community/netinfo": "^11.5.2",
     "cozy-client": "^60.24.0",

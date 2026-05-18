@@ -5,7 +5,6 @@ import { useColorScheme } from 'react-native'
 import { Provider as PaperProvider } from 'react-native-paper'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { Stack } from 'expo-router'
 import { CozyProvider } from 'cozy-client'
 import { I18nextProvider } from 'react-i18next'
@@ -35,38 +34,36 @@ const InnerLayout = () => {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <PaperProvider theme={theme}>
           <I18nextProvider i18n={i18n}>
-            <BottomSheetModalProvider>
-              <PiPSessionProvider>
-                <SharingProvider>
-                  <ErrorBoundary>
-                    <Stack screenOptions={{ headerShown: false }}>
-                      <Stack.Screen name="(auth)" />
-                      <Stack.Screen name="(drive)" />
-                      <Stack.Screen name="index" />
-                      <Stack.Screen
-                        name="preview/[fileId]"
-                        options={{
-                          // Native iOS pageSheet: rounded-corner modal that
-                          // the OS lets the user drag down to dismiss,
-                          // coordinated with any inner UIScrollView (PDF,
-                          // text). Works for every preview kind for free.
-                          presentation: 'pageSheet',
-                          animation: 'slide_from_bottom'
-                        }}
-                      />
-                      <Stack.Screen
-                        name="metadata/[fileId]"
-                        options={{ presentation: 'pageSheet', animation: 'slide_from_bottom' }}
-                      />
-                      <Stack.Screen
-                        name="share/[fileId]"
-                        options={{ presentation: 'pageSheet', animation: 'slide_from_bottom' }}
-                      />
-                    </Stack>
-                  </ErrorBoundary>
-                </SharingProvider>
-              </PiPSessionProvider>
-            </BottomSheetModalProvider>
+            <PiPSessionProvider>
+              <SharingProvider>
+                <ErrorBoundary>
+                  <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="(auth)" />
+                    <Stack.Screen name="(drive)" />
+                    <Stack.Screen name="index" />
+                    <Stack.Screen
+                      name="preview/[fileId]"
+                      options={{
+                        // Native iOS pageSheet: rounded-corner modal that
+                        // the OS lets the user drag down to dismiss,
+                        // coordinated with any inner UIScrollView (PDF,
+                        // text). Works for every preview kind for free.
+                        presentation: 'pageSheet',
+                        animation: 'slide_from_bottom'
+                      }}
+                    />
+                    <Stack.Screen
+                      name="metadata/[fileId]"
+                      options={{ presentation: 'pageSheet', animation: 'slide_from_bottom' }}
+                    />
+                    <Stack.Screen
+                      name="share/[fileId]"
+                      options={{ presentation: 'pageSheet', animation: 'slide_from_bottom' }}
+                    />
+                  </Stack>
+                </ErrorBoundary>
+              </SharingProvider>
+            </PiPSessionProvider>
           </I18nextProvider>
         </PaperProvider>
       </GestureHandlerRootView>
