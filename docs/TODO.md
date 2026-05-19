@@ -51,12 +51,41 @@ Items to pick up later, captured in conversation. Order is rough, not strict.
   on iOS and whether dismissing the modal (while keeping playback alive) is
   the right pattern.
 
-- **`.ogg` audio files don't play.** Tapping an `.ogg` in the audio preview
-  yields no playback (silent / error). Likely a codec coverage issue in
-  `expo-video` / underlying AVPlayer on iOS (Ogg Vorbis is not natively
-  supported on iOS). Decide: transcode server-side, fall back to a different
-  player for `audio/ogg`, or show an explicit "not supported on this device"
-  state instead of a silent failure.
+- **`.ogg` audio files don't play (v1 fix shipped, real fix pending).**
+  iOS AVPlayer refuses to parse the Ogg container, even when the codec
+  inside is Opus (which iOS would otherwise decode natively since iOS 11).
+  Confirmed example in the wild: Twake Meetings transcripts —
+  `file Réunion_…ogg` reports `Ogg data, Opus audio, 48000 Hz`. v1 fix:
+  detect `audio/ogg` in the audio preview and render an explicit
+  "format unsupported on this device" state with an "Open with…" button
+  that triggers `openFileNatively` (downloads + delegates to the OS share
+  sheet so VLC / another app can take over). Real fix options for v2,
+  ordered by long-term value:
+
+  1. **Server-side remux on cozy-stack.** Expose a content-negotiation
+     endpoint (e.g. `GET /files/<id>/audio?container=caf`) that demuxes
+     the Ogg pages and rewraps the Opus packets into CAF/m4a — zero
+     re-encoding, zero quality loss, sub-second op. One fix benefits
+     mobile + web + future clients (Safari has the same Ogg restriction).
+     Around ~20 lines of Go with an `oggopus` library.
+
+  2. **`ffmpeg-kit-react-native` on the mobile side.**
+     `ffmpeg -i input.ogg -c:a copy output.caf` does the remux locally
+     before handing the file to expo-audio. Adds ~20-30 MB to the iOS
+     bundle. Works offline (pinned transcripts stay playable without
+     network). Use this if (1) is not on the roadmap.
+
+  3. **Pure-JS remuxer.** Ogg → CAF is ~200 lines of TS (parse Ogg pages,
+     emit a CAF header + Opus packet stream). Zero native deps, no bundle
+     size hit, but maintenance burden + edge-case risk on large files.
+     Only worth it if (1) and (2) are both off the table.
+
+  4. **`react-native-vlc-media-player`.** Embeds MobileVLCKit (+50 MB) and
+     plays Ogg natively. Disproportionate now that we know the inner
+     codec is Opus (a container-only problem). Listed for completeness.
+
+  Reco: aim for (1). Ship v1 as the fallback UI. Track the backend PR
+  separately.
 
 ## Known limitations from prior sessions
 
