@@ -113,7 +113,17 @@ export default function MoveLayout() {
 
   return (
     <MoveContext.Provider value={value}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          // Mirror the file-screen drill UX: enable the iOS native swipe-back
+          // gesture. gestureEnabled is on by default but defaults to a small
+          // edge-only zone; fullScreenGestureEnabled extends it to the whole
+          // screen so it stays discoverable inside the page-sheet modal.
+          gestureEnabled: true,
+          fullScreenGestureEnabled: true
+        }}
+      />
       <Snackbar visible={!!snackbar} onDismiss={() => setSnackbar(null)} duration={3000}>
         {snackbar ?? ''}
       </Snackbar>

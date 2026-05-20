@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 
 import { ScreenContainer } from '@/ui/ScreenContainer'
@@ -9,23 +9,22 @@ import { FolderPicker } from '@/ui/FolderPicker'
 
 import { useMoveContext } from './_layout'
 
-export default function MoveScreen() {
+interface Props {
+  pathSegments: string[]
+}
+
+export const MoveScreen = ({ pathSegments }: Props): React.ReactElement => {
   const { t } = useTranslation()
   const router = useRouter()
-  const params = useLocalSearchParams<{ ids: string; path?: string | string[] }>()
-  const pathArr: string[] = Array.isArray(params.path)
-    ? params.path.filter(Boolean)
-    : params.path
-      ? [params.path]
-      : []
   const ctx = useMoveContext()
 
   const onDrillIn = useCallback(
     (item: { _id: string }) => {
-      const segments = [...pathArr, item._id].filter(Boolean).join('/')
-      router.push(`/move/${params.ids}/${segments}`)
+      const segments = [...pathSegments, item._id].filter(Boolean)
+      const ids = ctx.idList.join(',')
+      router.push(`/move/${ids}/${segments.join('/')}`)
     },
-    [pathArr, params.ids, router]
+    [pathSegments, ctx.idList, router]
   )
 
   const onBack = useCallback(() => {
@@ -48,7 +47,8 @@ export default function MoveScreen() {
   }
 
   const sourceDirId = ctx.firstDoc.dir_id ?? ''
-  const currentFolderId = pathArr.length > 0 ? pathArr[pathArr.length - 1] : sourceDirId
+  const currentFolderId =
+    pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] : sourceDirId
   const excludeIds = new Set<string>([...ctx.idList, sourceDirId].filter(Boolean))
 
   return (
@@ -57,7 +57,7 @@ export default function MoveScreen() {
       excludeIds={excludeIds}
       confirmLabel={t('drive.move.action')}
       isBusy={ctx.isBusy}
-      isAtRoot={pathArr.length === 0}
+      isAtRoot={pathSegments.length === 0}
       onDrillIn={onDrillIn}
       onBack={onBack}
       onConfirm={ctx.onConfirm}

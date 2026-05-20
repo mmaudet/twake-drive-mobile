@@ -132,7 +132,7 @@ export default function SharedScreen() {
             router.push(`/(drive)/shared/${[...(path ?? []), folder._id].join('/')}`)
           }
           onShare={folder => router.push(`/share/${folder._id}`)}
-          onMove={folder => router.push(`/move/${folder._id}` as never)}
+          onMove={folder => router.push(`/move/${folder._id}`)}
           onTogglePin={onToggleFolderPin}
         />
       )
@@ -148,7 +148,7 @@ export default function SharedScreen() {
           })
         }}
         onShare={file => router.push(`/share/${file._id}`)}
-        onMove={file => router.push(`/move/${file._id}` as never)}
+        onMove={file => router.push(`/move/${file._id}`)}
         onTogglePin={onToggleFilePin}
         onInfo={file => router.push(`/metadata/${file._id}`)}
       />
