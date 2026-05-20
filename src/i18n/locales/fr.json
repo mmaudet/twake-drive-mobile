@@ -5,7 +5,8 @@
     "loading": "Chargement…",
     "logout": "Se déconnecter",
     "cancel": "Annuler",
-    "confirm": "Confirmer"
+    "confirm": "Confirmer",
+    "back": "Retour"
   },
   "settings": {
     "title": "Paramètres"

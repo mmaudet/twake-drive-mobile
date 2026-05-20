@@ -5,7 +5,8 @@
     "loading": "Loading…",
     "logout": "Log out",
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "back": "Back"
   },
   "settings": {
     "title": "Settings"
