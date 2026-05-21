@@ -2,6 +2,7 @@ import * as WebBrowser from 'expo-web-browser'
 import * as Crypto from 'expo-crypto'
 import CozyClient from 'cozy-client'
 
+import { APP_SCOPES, APP_SCOPE_STRING } from './scopes'
 import { OidcCallback, Session, OAuthOptions, OAuthToken, UserCancelledError } from './types'
 
 const base64UrlEncode = (bytes: Uint8Array): string => {
@@ -38,7 +39,7 @@ const buildOauthOptions = (): Omit<OAuthOptions, 'clientID' | 'clientSecret'> =>
   redirectURI: REDIRECT_URL,
   clientKind: 'mobile',
   clientURI: 'https://twake.app',
-  scopes: ['*']
+  scopes: [...APP_SCOPES]
 })
 
 const normalizeRedirectUrl = (raw: string): string => {
@@ -69,7 +70,7 @@ export const registerSession = async (callback: OidcCallback): Promise<Session> 
   const client = new CozyClient({
     uri,
     oauth: buildOauthOptions(),
-    scope: ['*'],
+    scope: [...APP_SCOPES],
     appMetadata: { slug: 'twake-drive-mobile', version: '0.1.0' }
   })
 
@@ -91,7 +92,7 @@ export const registerSession = async (callback: OidcCallback): Promise<Session> 
       code: callback.code,
       client_id: oauthOptions.clientID,
       client_secret: oauthOptions.clientSecret,
-      scope: '*'
+      scope: APP_SCOPE_STRING
     })) as OidcResponse
   } catch (e) {
     console.error('[registerSession] /oidc/access_token failed', (e as Error).message, e)
@@ -106,7 +107,7 @@ export const registerSession = async (callback: OidcCallback): Promise<Session> 
       accessToken: oidcResponse.access_token,
       refreshToken: oidcResponse.refresh_token ?? '',
       tokenType: oidcResponse.token_type ?? 'bearer',
-      scope: oidcResponse.scope ?? '*'
+      scope: oidcResponse.scope ?? APP_SCOPE_STRING
     }
   } else if (oidcResponse.session_code) {
     console.log('[registerSession] session_code received, going through /auth/authorize')
@@ -125,7 +126,7 @@ export const registerSession = async (callback: OidcCallback): Promise<Session> 
       accessToken: authorizeResult.token.accessToken,
       refreshToken: authorizeResult.token.refreshToken,
       tokenType: authorizeResult.token.tokenType ?? 'bearer',
-      scope: authorizeResult.token.scope ?? '*'
+      scope: authorizeResult.token.scope ?? APP_SCOPE_STRING
     }
   } else {
     throw new Error(

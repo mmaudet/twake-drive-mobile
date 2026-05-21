@@ -1,6 +1,7 @@
 import CozyClient from 'cozy-client'
 import flag from 'cozy-flags'
 
+import { APP_SCOPES } from '@/auth/scopes'
 import { Session } from '@/auth/types'
 import { configureNetInfo } from '@/network/netInfoConfig'
 import { getLinks } from '@/pouchdb/getLinks'
@@ -32,7 +33,7 @@ export const createClient = async (session: Session): Promise<CozyClient> => {
   const client = new CozyClient({
     uri: session.uri,
     oauth: { ...session.oauthOptions, token: session.token },
-    scope: ['*'],
+    scope: [...APP_SCOPES],
     appMetadata: {
       slug: 'twake-drive-mobile',
       version: '0.1.0'
