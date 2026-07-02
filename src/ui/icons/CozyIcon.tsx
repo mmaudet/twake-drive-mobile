@@ -10,7 +10,7 @@ export function CozyIcon({ name, size = 24, color = '#000000' }: Props) {
   return (
     <Svg width={size} height={size} viewBox={def.viewBox}>
       {def.paths.map((p, i) => (
-        <Path key={i} d={p.d} fill={p.fill ?? color} />
+        <Path key={i} d={p.d} fill={p.fill ?? color} stroke={p.stroke} strokeWidth={p.strokeWidth} />
       ))}
     </Svg>
   )
