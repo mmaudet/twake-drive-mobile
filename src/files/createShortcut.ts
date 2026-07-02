@@ -49,11 +49,11 @@ export const createShortcut = async (
     url: trimmedUrl
   })
 
-  triggerPouchReplication(client, 'io.cozy.files')
-
   const data = result.data
   const id = data._id ?? data.id
   if (!id) throw new Error('Shortcut creation returned no id')
+
+  triggerPouchReplication(client, 'io.cozy.files')
   return {
     _id: id,
     name: data.attributes?.name ?? data.name ?? trimmedName
