@@ -138,6 +138,20 @@ android {
     }
 }
 
+// @react-native/gradle-plugin's JdkConfiguratorUtils unconditionally pins this project's Kotlin
+// toolchain to Java 17 (see configureJavaToolChains/jvmToolchain(17)), which AGP's unit test task
+// launcher inherits regardless of the JAVA_HOME the build was invoked with. Robolectric >=4.16
+// requires the *test-executing* JVM itself to be Java 21 to instantiate an SDK 36 (Baklava)
+// sandbox ("Android SDK 36 requires Java 21"), so pin just the Test task's launcher to 21 here.
+// Compilation (javac/kotlinc target bytecode) is untouched and stays on RNGP's Java 17 toolchain;
+// Java 17 bytecode runs fine on a Java 21 launcher, so this does not affect the non-Robolectric
+// unit tests (CozyStackApiTest, SessionStoreTest) or the app's real debug/release builds.
+tasks.withType(Test).configureEach {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 // Apply static values from `gradle.properties` to the `android.packagingOptions`
 // Accepts values in comma delimited lists, example:
 // android.packagingOptions.pickFirsts=/LICENSE,**/picasa.ini
@@ -190,7 +204,14 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.robolectric:robolectric:4.14.1")
+    // Robolectric must be >=4.16 to run against this app's compileSdk/targetSdk 36 (Android
+    // Baklava): 4.14.1 (the version originally pinned here) predates Baklava support and
+    // DefaultSdkPicker hard-fails with "targetSdkVersion=36 > maxSdkVersion=35". Per the
+    // Robolectric 4.16 release notes: "Robolectric 4.16 supports Android Baklava (SDK 36),
+    // and you need to use JDK 21 if running tests with SDK 36 target" — this project's build
+    // already requires JDK 21, so 4.16.1 (latest stable patch on that line, verified on Maven
+    // Central) is the correct fix rather than pinning tests to an older simulated SDK.
+    testImplementation("org.robolectric:robolectric:4.16.1")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     // Real org.json implementation for plain (non-Robolectric) unit tests: the Android
