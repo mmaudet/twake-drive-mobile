@@ -53,7 +53,8 @@
             "deploymentTarget": "16.0"
           }
         }
-      ]
+      ],
+      "./plugins/withTwakeDocumentsProvider"
     ],
     "experiments": {
       "typedRoutes": true
