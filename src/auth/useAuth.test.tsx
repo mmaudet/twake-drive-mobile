@@ -26,7 +26,10 @@ jest.mock('cozy-client', () => ({
     }),
     registerPlugin: jest.fn(),
     login: jest.fn().mockResolvedValue(undefined),
-    logout: jest.fn()
+    logout: jest.fn(),
+    // Real CozyClient exposes a `links` array; triggerPouchReplication reads
+    // client.links.find(...). Without it the bootstrap throws before auth resolves.
+    links: []
   })),
   StackLink: jest.fn()
 }))

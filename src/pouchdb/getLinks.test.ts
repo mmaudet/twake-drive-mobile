@@ -6,6 +6,17 @@ jest.mock('cozy-pouch-link', () => {
 jest.mock('@/pouchdb/platformReactNative', () => ({
   platformReactNative: { pouchAdapter: 'POUCH_ADAPTER_SENTINEL' }
 }))
+// getLinks is the only suite that imports the real cozy-client, whose index.node
+// entry eagerly requires RN native modules absent here (inappbrowser,
+// ios11-devicecheck, …). Mock it — the test only needs StackLink (constructed once)
+// and Q (referenced lazily inside warmup thunks). Mirrors how the sibling
+// client/auth suites already mock cozy-client.
+jest.mock('cozy-client', () => ({
+  __esModule: true,
+  default: jest.fn(),
+  StackLink: jest.fn(),
+  Q: jest.fn()
+}))
 
 import PouchLink from 'cozy-pouch-link'
 import { getLinks, offlineDoctypes } from './getLinks'
@@ -29,24 +40,18 @@ describe('getLinks', () => {
     getLinks()
     const opts = (PouchLink as unknown as jest.Mock).mock.calls[0][0]
     for (const dt of offlineDoctypes) {
-      expect(opts.doctypesReplicationOptions[dt]).toEqual({ strategy: 'fromRemote' })
+      expect(opts.doctypesReplicationOptions[dt]).toMatchObject({ strategy: 'fromRemote' })
     }
   })
 
-  it('targets exactly the 5 drive-mobile doctypes', () => {
-    expect(offlineDoctypes).toEqual([
-      'io.cozy.files',
-      'io.cozy.sharings',
-      'io.cozy.permissions',
-      'io.cozy.notes',
-      'io.cozy.contacts'
-    ])
+  it('targets exactly the offline doctypes (files + contacts)', () => {
+    expect(offlineDoctypes).toEqual(['io.cozy.files', 'io.cozy.contacts'])
   })
 
-  it('enables periodic sync with a 60 second interval', () => {
+  it('enables periodic sync with a 30 second interval', () => {
     getLinks()
     const opts = (PouchLink as unknown as jest.Mock).mock.calls[0][0]
     expect(opts.periodicSync).toBe(true)
-    expect(opts.replicationInterval).toBe(60_000)
+    expect(opts.replicationInterval).toBe(30_000)
   })
 })

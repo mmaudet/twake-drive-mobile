@@ -62,6 +62,7 @@ jest.mock('react-native-mmkv', () => ({
 }))
 
 jest.mock('@react-native-community/netinfo', () => ({
+  configure: jest.fn(),
   addEventListener: jest.fn(() => () => undefined),
   fetch: jest.fn().mockResolvedValue({ isConnected: true, isInternetReachable: true })
 }))
