@@ -1,6 +1,9 @@
 jest.mock('react-native', () => ({
   NativeModules: {
-    TwakeAuthBridge: { syncSession: jest.fn(async () => true), clearSession: jest.fn(async () => true) }
+    TwakeAuthBridge: {
+      syncSession: jest.fn(async () => true),
+      clearSession: jest.fn(async () => true)
+    }
   },
   Platform: { OS: 'android' }
 }))
@@ -18,8 +21,14 @@ const { syncSession, clearSession } = NativeModules.TwakeAuthBridge as {
 const session: Session = {
   uri: 'https://alice.mycozy.cloud',
   oauthOptions: {
-    clientID: 'cid', clientSecret: 'secret', clientName: 'x', softwareID: 'y',
-    redirectURI: 'z', clientKind: 'mobile', clientURI: 'u', scopes: []
+    clientID: 'cid',
+    clientSecret: 'secret',
+    clientName: 'x',
+    softwareID: 'y',
+    redirectURI: 'z',
+    clientKind: 'mobile',
+    clientURI: 'u',
+    scopes: []
   },
   token: { accessToken: 'at', refreshToken: 'rt', tokenType: 'bearer', scope: '' }
 }

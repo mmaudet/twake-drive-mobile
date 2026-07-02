@@ -7,8 +7,9 @@ interface TwakeAuthBridgeNative {
   clearSession: () => Promise<boolean>
 }
 
-const native: TwakeAuthBridgeNative | undefined =
-  NativeModules.TwakeAuthBridge as TwakeAuthBridgeNative | undefined
+const native: TwakeAuthBridgeNative | undefined = NativeModules.TwakeAuthBridge as
+  | TwakeAuthBridgeNative
+  | undefined
 
 /**
  * Mirror the durable OAuth creds into the native EncryptedSharedPreferences the
