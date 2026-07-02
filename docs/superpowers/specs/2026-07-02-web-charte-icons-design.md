@@ -23,7 +23,8 @@ Résultats de l'analyse du source `linagora/twake-drive` (cozy-drive v1.105, Rea
 
 - **L'apparence du web vient presque entièrement de `cozy-ui`** (design-system externe, `cozy-ui@^139.2.0` + `cozy-ui-plus@^7.1.0`), pas du repo applicatif. Les **couleurs sont injectées au runtime par le serveur** via `{{.ThemeCSS}}` sous forme de variables CSS (`--primaryColor`, `--secondaryColor`, `--errorColor`, `--white`, `--shadow*`…). L'accent fonctionnel par défaut de cozy-ui est un **bleu**.
 - **Marque Twake** (propre au repo) : logo cloud dégradé **`#FF4759` → `#FFD600`** (`src/components/Icons/Drive.jsx`, rect arrondi `rx=10.57` + moulinet blanc), wordmark « Drive » dégradé rouge `#FF6372 → #FF3347` (`DriveText.jsx`), nom **« Twake Workplace »** (`manifest.webapp` : `name_prefix: "Twake"`, `developer.name: "Twake Workplace"`). Statique : `public/app-icon.svg`.
-- **Typographie** : police de base cozy-ui = **Lato** (non redéfinie dans l'app).
+- **Typographie** : la charte Twake utilise **Inter** — l'instance injecte `--primaryFont: "Inter", -apple-system, …` (vérifié sur `mmaudet.twake.linagora.com/assets/styles/theme.css`). (cozy-ui historique = Lato, mais Twake surcharge en Inter.)
+- **Palette réelle** (instance + défauts cozy-ui) : `--primaryColor: #3b82f7` (bleu Twake) ; cozy-ui `frenchPass #C2DCFF`, `pomegranate #F52D2D`, `puertoRico #0DCBCF`, `zircon #F5FAFF`, `dodgerBlue #297EF2` (défaut primary).
 - **Icônes** : composant cozy-ui `<Icon icon={…}/>` + jeu `cozy-ui/transpiled/react/Icons/*`. 4 icônes de types de doc sont des **SVG locaux** au repo web (`src/assets/icons/` : `icon-docs.svg` `#000091/#C9191E`, `icon-excalidraw.svg` `#6965db`, `icon-grist.svg` `#16B378`, `icon-nextcloud.svg` `#0082C9`).
 
 **Conséquence pour le port :** cozy-ui ne tourne pas en React Native → on **réplique ses tokens et ses icônes** dans l'app mobile (re-skin fidèle sur React Native Paper), on ne l'embarque pas. Le bleu applicatif mobile actuel (`#0072B2`) est déjà proche ; on l'aligne sur la valeur cozy-ui exacte.
@@ -41,17 +42,16 @@ Résultats de l'analyse du source `linagora/twake-drive` (cozy-drive v1.105, Rea
 
 Reconstruire le thème autour de la palette cozy-ui, en conservant la forme MD3 exigée par Paper mais en surchargeant les slots de marque.
 
-- Extraire les **hex exacts** depuis la feuille de style publiée `cozy-ui@139.2.0` (variables `:root` `--primaryColor`, `--secondaryColor`, `--errorColor`, `--paperBackground`/`--defaultBackground`, gris de texte, `--shadow*`), en light **et** dark. Procédé : `npm pack cozy-ui@139.2.0` (ou téléchargement du `stylesheet.css`), extraction des variables, consignation des valeurs dans le code avec un commentaire de provenance.
+- **Sources des couleurs** (palette injectée au runtime, PAS dans le stylesheet) : `primary` vient du thème de l'instance — `--primaryColor: #3b82f7` (vérifié sur `mmaudet.twake.linagora.com/assets/styles/theme.css`) ; les autres slots des couleurs nommées de `cozy-ui@139.2.0/react/palette.js` : `frenchPass #C2DCFF` (primaryContainer), `puertoRico #0DCBCF` (secondary), `pomegranate #F52D2D` (error), `zircon #F5FAFF` (background), blanc (surface). Défaut cozy-ui `dodgerBlue #297EF2` documenté en repli. Consigner ces valeurs avec commentaire de provenance.
 - Mapper vers les slots Paper MD3 : `primary` (= `--primaryColor`, remplace `#0072B2`), `primaryContainer`, `secondary`, `error`, `background`/`surface` (= backgrounds cozy-ui), `onSurface`/`onSurfaceVariant` (= gris de texte).
 - Exposer un objet complémentaire **`cozyTokens`** (ombres, gris, rayons) pour les besoins non couverts par la palette Paper.
 - Conserver `lightTheme` **et** `darkTheme`. Aucune couleur en dur hors de `theme.ts` (règle projet).
 
-### 4.2 Typographie — Lato (`expo-font`)
+### 4.2 Typographie — Inter (`@expo-google-fonts/inter`)
 
-- Embarquer **Lato** (au minimum Regular 400 + Bold 700 ; Black 900 pour les gros titres si utile) dans `assets/fonts/`, chargées via `expo-font` (`useFonts`) au `app/_layout.tsx`, avec maintien du splash tant que les polices ne sont pas prêtes.
-- Brancher la **config `fonts` de Paper** (MD3 `configureFonts`) sur la famille Lato → tous les composants Paper (`Text`, `List.Item`, `Appbar`, `Button`…) héritent de Lato.
+- Embarquer **Inter** (Regular 400 + Medium 500 + SemiBold 600 + Bold 700) via **`@expo-google-fonts/inter`** + `expo-font` (`useFonts`) au `app/_layout.tsx`, avec maintien du splash tant que les polices ne sont pas prêtes. Charte Twake = Inter (cf. §2).
+- Brancher la **config `fonts` de Paper** (MD3 `configureFonts`) sur la famille Inter → tous les composants Paper (`Text`, `List.Item`, `Appbar`, `Button`…) héritent d'Inter.
 - Fallback : si le chargement échoue, l'app reste utilisable en police système (ne pas bloquer le rendu indéfiniment).
-- Plugin `expo-font` déjà implicite via Expo ; ajouter la déclaration des assets si nécessaire.
 
 ### 4.3 Module d'icônes cozy-ui (`src/ui/icons/`)
 
