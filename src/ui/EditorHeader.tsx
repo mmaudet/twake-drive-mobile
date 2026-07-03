@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StatusBar, StyleSheet, View } from 'react-native'
 import { Appbar } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { TwakeLogo } from '@/ui/icons/TwakeLogo'
@@ -19,8 +19,12 @@ interface Props {
  *  the phone clock/icons visible above the header on EVERY editor. */
 export const EditorHeader = ({ title, onBack, onShare }: Props): React.ReactElement => {
   const insets = useSafeAreaInsets()
+  // Inside the editor pageSheet the safe-area top inset comes back as 0, so
+  // fall back to Android's native status-bar height constant to guarantee the
+  // header sits below the clock/icons on every editor (Note/OnlyOffice/Docs).
+  const topInset = insets.top || StatusBar.currentHeight || 0
   return (
-    <Appbar.Header statusBarHeight={insets.top}>
+    <Appbar.Header statusBarHeight={topInset}>
       <Appbar.BackAction onPress={onBack} />
       <View style={styles.logo}>
         <TwakeLogo size={28} />
