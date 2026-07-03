@@ -36,6 +36,8 @@ jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 })
 }))
 
+jest.mock('expo-status-bar', () => ({ StatusBar: () => null }))
+
 // Screen only pulls the FileQueryResult TYPE from here — stub to avoid loading
 // the real query module (which reaches for the cozy-client Q() builder).
 jest.mock('@/client/queries', () => ({}))

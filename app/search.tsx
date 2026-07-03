@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { FlatList } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { StatusBar } from 'expo-status-bar'
 import { Searchbar } from 'react-native-paper'
 import { useRouter } from 'expo-router'
 import { useClient } from 'cozy-client'
@@ -57,6 +58,9 @@ export default function SearchScreen() {
 
   return (
     <ScreenContainer style={{ paddingTop: insets.top }}>
+      {/* This screen is a slide-up modal and doesn't inherit the app's status-bar
+          style — force icons that contrast the (theme-colored) safe-area strip. */}
+      <StatusBar style="auto" />
       <Searchbar
         placeholder={t('drive.search.placeholder')}
         value={term}
