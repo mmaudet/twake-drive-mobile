@@ -33,6 +33,12 @@ yarn-error.*
 # local env files
 .env*.local
 
+# signing / release secrets (values must never be committed)
+.release-secrets.env
+*-release.keystore
+/android/app/release.keystore
+gcp-service-account*.json
+
 # typescript
 *.tsbuildinfo
 

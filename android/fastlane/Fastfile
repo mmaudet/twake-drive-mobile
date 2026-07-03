@@ -1,0 +1,39 @@
+default_platform(:android)
+
+# Twake Drive Android release lanes. Signing config is env-driven in
+# android/app/build.gradle (KEYSTORE_PATH/PASSWORD, KEY_ALIAS/PASSWORD); the
+# workflow decodes the keystore + exports those before calling these lanes.
+# See docs/ci-cd-signed-release.md.
+PACKAGE_NAME = "com.linagora.twakedrive"
+
+platform :android do
+  desc "Build a signed release APK and distribute it via Firebase App Distribution"
+  lane :distribute do
+    gradle(
+      task: "assembleRelease",
+      project_dir: "."
+    )
+
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID"],
+      service_credentials_file: ENV["GOOGLE_APPLICATION_CREDENTIALS"],
+      groups: "testers",
+      release_notes: ENV["RELEASE_NOTES"].to_s.empty? ? "Build #{ENV['GITHUB_RUN_NUMBER'] || 'local'} — #{`git log -1 --pretty=%s`.strip}" : ENV["RELEASE_NOTES"]
+    )
+  end
+
+  desc "Build a signed AAB and upload it to Google Play (internal track)"
+  lane :release do
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      project_dir: "."
+    )
+    supply(
+      track: "internal",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      json_key: ENV["SUPPLY_JSON_KEY_PATH"],
+      package_name: PACKAGE_NAME
+    )
+  end
+end

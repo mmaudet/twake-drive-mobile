@@ -1,12 +1,12 @@
 name: Build iOS (Simulator)
 
-# Not on every PR — macOS runner minutes cost ~10x. Runs on main pushes,
-# manual dispatch, and release tags. Enable pull_request later if desired.
+# Not on every PR — macOS runner minutes cost ~10x. Runs on main pushes and
+# manual dispatch. Release tags (vX.Y.Z) are handled by release-ios.yml (signed
+# IPA → TestFlight), so this unsigned Simulator build deliberately skips tags to
+# avoid a redundant macOS build per release.
 on:
   push:
     branches: [main]
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*'
   workflow_dispatch:
 
 concurrency:

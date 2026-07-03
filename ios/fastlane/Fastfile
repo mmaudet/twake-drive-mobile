@@ -1,0 +1,95 @@
+default_platform(:ios)
+
+# Twake Drive iOS release lanes. Signing uses fastlane match (App Store
+# distribution certs + profiles stored, encrypted, in a shared git repo — the
+# SAME repo/cert as visio-mobile since both live under Apple team KUT463DS29;
+# twake's profiles are seeded once with `fastlane match appstore`). CI never
+# generates certs (readonly: true). See docs/ci-cd-signed-release.md.
+APP_IDENTIFIER = "com.linagora.twakedrive"
+
+platform :ios do
+  desc "Build a signed IPA and upload it to TestFlight"
+  lane :distribute do
+    setup_ci
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
+      is_key_content_base64: true
+    )
+
+    match(
+      type: "appstore",
+      app_identifier: APP_IDENTIFIER,
+      git_url: ENV["MATCH_GIT_URL"],
+      api_key: api_key,
+      readonly: true
+    )
+
+    # Marketing version comes from the git tag (vX.Y.Z -> X.Y.Z), build number
+    # from the monotonic CI run number. Both are optional so a bare local run
+    # still works. agvtool needs the project on "Apple Generic" versioning
+    # (Expo default); if it errors "No values were found", set Versioning System
+    # = Apple Generic in Build Settings (see runbook).
+    unless ENV["MARKETING_VERSION"].to_s.empty?
+      increment_version_number(
+        version_number: ENV["MARKETING_VERSION"],
+        xcodeproj: "TwakeDrive.xcodeproj"
+      )
+    end
+
+    increment_build_number(
+      build_number: ENV["GITHUB_RUN_NUMBER"] || "1",
+      xcodeproj: "TwakeDrive.xcodeproj"
+    )
+
+    # Expo/RN app: build the WORKSPACE (Pods), not the bare project. Force manual
+    # signing with the match-managed App Store profile.
+    gym(
+      scheme: "TwakeDrive",
+      workspace: "TwakeDrive.xcworkspace",
+      export_method: "app-store",
+      output_directory: "build",
+      output_name: "TwakeDrive.ipa",
+      clean: true,
+      xcargs: "DEVELOPMENT_TEAM='#{ENV["APPLE_TEAM_ID"]}' CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER='match AppStore #{APP_IDENTIFIER}' CODE_SIGN_IDENTITY='Apple Distribution'",
+      export_options: {
+        teamID: ENV["APPLE_TEAM_ID"],
+        signingStyle: "manual",
+        provisioningProfiles: {
+          APP_IDENTIFIER => "match AppStore #{APP_IDENTIFIER}"
+        }
+      }
+    )
+
+    pilot(
+      api_key: api_key,
+      ipa: "build/TwakeDrive.ipa",
+      distribute_external: true,
+      groups: ["Beta Testers"],
+      changelog: ENV["RELEASE_NOTES"].to_s.empty? ? "Build #{ENV['GITHUB_RUN_NUMBER'] || 'local'} — #{`git log -1 --pretty=%s`.strip}" : ENV["RELEASE_NOTES"]
+    )
+  end
+
+  desc "Push App Store metadata (binary already uploaded by :distribute)"
+  lane :release do
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
+      is_key_content_base64: true
+    )
+
+    deliver(
+      api_key: api_key,
+      app_identifier: APP_IDENTIFIER,
+      submit_for_review: false,
+      force: true,
+      skip_binary_upload: true,
+      metadata_path: "./fastlane/metadata",
+      skip_screenshots: true,
+      precheck_include_in_app_purchases: false
+    )
+  end
+end

@@ -1,0 +1,115 @@
+name: Release iOS (signed → TestFlight)
+
+# Signed IPA build + TestFlight upload via fastlane (match + gym + pilot).
+# Fires on version tags (vX.Y.Z, pushed by scripts/release.sh) and manual
+# dispatch. Requires the iOS signing secrets + the fastlane match repo —
+# see docs/ci-cd-signed-release.md.
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: "Release notes for TestFlight testers"
+        required: false
+        default: ""
+      publish_to_app_store:
+        description: "Also push App Store metadata (fastlane deliver)"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  release-ios:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      # Restore Pods keyed on Podfile.lock (same as the unsigned build-ios.yml).
+      - name: Cache CocoaPods
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            ios/Pods
+            ~/Library/Caches/CocoaPods
+          key: pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            pods-
+
+      - name: Install CocoaPods
+        working-directory: ios
+        run: pod install
+
+      - name: Set up Ruby (fastlane)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      # match certs + profiles live in a private git repo; this deploy key grants
+      # CI read access to it (webfactory/ssh-agent loads it for the match fetch).
+      - name: Authorize the fastlane match certificates repo
+        uses: webfactory/ssh-agent@e83874834305fe9a4a2997156cb26c5de65a8555 # v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.MATCH_DEPLOY_KEY }}
+
+      - name: Derive marketing version from tag
+        id: version
+        run: |
+          REF="${GITHUB_REF_NAME}"
+          if [[ "$REF" == v* ]]; then
+            echo "marketing=${REF#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "marketing=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build signed IPA & upload to TestFlight
+        working-directory: ios
+        env:
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          MARKETING_VERSION: ${{ steps.version.outputs.marketing }}
+          RELEASE_NOTES: ${{ github.event.inputs.release_notes }}
+        run: bundle exec fastlane ios distribute
+
+      - name: Push App Store metadata (optional)
+        if: inputs.publish_to_app_store == true
+        working-directory: ios
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: bundle exec fastlane ios release
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        if: always()
+        with:
+          name: twake-drive-ios-ipa-${{ github.run_number }}
+          path: ios/build/TwakeDrive.ipa
+          if-no-files-found: warn
+          retention-days: 14

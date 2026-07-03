@@ -92,8 +92,11 @@ android {
         applicationId 'com.linagora.twakedrive'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "0.1.0"
+        // Signed release builds override these via env (VERSION_CODE = CI run
+        // number, VERSION_NAME = the vX.Y.Z tag). Local/PR builds keep the
+        // committed defaults so the secret-free test-APK build still works.
+        versionCode System.getenv("VERSION_CODE") ? System.getenv("VERSION_CODE").toInteger() : 1
+        versionName System.getenv("VERSION_NAME") ?: "0.1.0"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }
@@ -104,15 +107,24 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        // Env-driven release signing. When KEYSTORE_* are unset (local + PR
+        // test builds) it falls back to the committed debug keystore, so the
+        // secret-free `assembleRelease` still produces an installable APK.
+        release {
+            storeFile file(System.getenv("KEYSTORE_PATH") ?: "debug.keystore")
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: "android"
+            keyAlias System.getenv("KEY_ALIAS") ?: "androiddebugkey"
+            keyPassword System.getenv("KEY_PASSWORD") ?: "android"
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            // Signed with the env-driven release config: the real keystore in CI
+            // (decoded from secrets), the debug keystore as a local fallback.
+            signingConfig signingConfigs.release
             def enableShrinkResources = findProperty('android.enableShrinkResourcesInReleaseBuilds') ?: 'false'
             shrinkResources enableShrinkResources.toBoolean()
             minifyEnabled enableMinifyInReleaseBuilds

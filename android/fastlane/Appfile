@@ -1,0 +1,2 @@
+json_key_file("") # Not used — Firebase/Play auth comes from a service account passed via env.
+package_name("com.linagora.twakedrive")

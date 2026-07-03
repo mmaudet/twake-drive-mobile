@@ -1,0 +1,141 @@
+name: Release Android (signed → Firebase/Play)
+
+# Signed APK build + Firebase App Distribution (and optional Play internal AAB).
+# Fires on version tags (vX.Y.Z, pushed by scripts/release.sh) and manual
+# dispatch. Requires the Android signing + Firebase/Play secrets —
+# see docs/ci-cd-signed-release.md.
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: "Release notes for Firebase testers"
+        required: false
+        default: ""
+      publish_to_play_store:
+        description: "Also upload the AAB to Google Play (internal track)"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write # create a GitHub Release and attach the signed APK
+
+jobs:
+  release-android:
+    runs-on: ubuntu-24.04
+    # Same ccache tuning as build-android.yml so the New-Arch native compile
+    # reuses objects across runs (shared cache key with the test build).
+    env:
+      CMAKE_C_COMPILER_LAUNCHER: ccache
+      CMAKE_CXX_COMPILER_LAUNCHER: ccache
+      CCACHE_COMPILERCHECK: content
+      CCACHE_BASEDIR: ${{ github.workspace }}
+      CCACHE_NOHASHDIR: 'true'
+      CCACHE_SLOPPINESS: time_macros,include_file_mtime,include_file_ctime,pch_defines
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@d62db5f07c26379fc4b4e0916f098a92573c3b03 # v1.2.23
+        with:
+          key: android-ccache
+          max-size: 2G
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Set up Ruby (fastlane)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Decode release keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release.keystore
+
+      - name: Decode Firebase / Play service account
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}" | base64 -d > "${{ runner.temp }}/gcp-sa.json"
+
+      - name: Derive marketing version from tag
+        id: version
+        run: |
+          REF="${GITHUB_REF_NAME}"
+          if [[ "$REF" == v* ]]; then
+            echo "marketing=${REF#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "marketing=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build signed APK & distribute via Firebase
+        working-directory: android
+        env:
+          KEYSTORE_PATH: release.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/gcp-sa.json
+          VERSION_CODE: ${{ github.run_number }}
+          VERSION_NAME: ${{ steps.version.outputs.marketing }}
+          RELEASE_NOTES: ${{ github.event.inputs.release_notes }}
+        run: bundle exec fastlane android distribute
+
+      - name: Build signed AAB & upload to Play internal (optional)
+        if: inputs.publish_to_play_store == true
+        working-directory: android
+        env:
+          KEYSTORE_PATH: release.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          SUPPLY_JSON_KEY_PATH: ${{ runner.temp }}/gcp-sa.json
+          VERSION_CODE: ${{ github.run_number }}
+          VERSION_NAME: ${{ steps.version.outputs.marketing }}
+        run: bundle exec fastlane android release
+
+      - name: Locate signed APK
+        id: apk
+        if: always()
+        run: |
+          APK=$(find android/app/build/outputs/apk/release -name "*.apk" | head -1)
+          if [ -n "$APK" ]; then echo "path=$APK" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        if: steps.apk.outputs.path != ''
+        with:
+          name: twake-drive-android-signed-${{ github.run_number }}
+          path: ${{ steps.apk.outputs.path }}
+          retention-days: 14
+
+      - name: Attach signed APK to a GitHub Release
+        if: startsWith(github.ref, 'refs/tags/') && steps.apk.outputs.path != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOTES="${{ github.event.inputs.release_notes }}"
+          [ -z "$NOTES" ] && NOTES="Release ${GITHUB_REF_NAME}"
+          gh release create "${GITHUB_REF_NAME}" "${{ steps.apk.outputs.path }}" \
+            --title "Twake Drive ${GITHUB_REF_NAME}" --notes "$NOTES" --prerelease \
+          || gh release upload "${GITHUB_REF_NAME}" "${{ steps.apk.outputs.path }}" --clobber
