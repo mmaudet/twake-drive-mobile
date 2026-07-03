@@ -43,10 +43,9 @@ interface Props {
   selection?: AppBarSelection
 }
 
-// Two search entry points coexist after the android↔web track merge: the
-// android/web-search track's `onSearch` (Appbar.Action magnify) and main's
-// `showSearch` (Pressable → /(drive)/search) + help button. Both props are kept
-// so every existing caller keeps working; unifying them is a follow-up cleanup.
+// `showSearch` renders the search loupe (→ /search, the server-side search screen)
+// plus a help button. `onSearch` is the legacy magnify Action from the web-search
+// track — no screen wires it anymore, kept only for backward compatibility.
 export const AppBar = ({ title, onBack, onLogout, onSearch, showSearch, selection }: Props) => {
   const { t } = useTranslation()
   const [menuVisible, setMenuVisible] = useState(false)
@@ -95,8 +94,8 @@ export const AppBar = ({ title, onBack, onLogout, onSearch, showSearch, selectio
       <SyncIndicator />
       {showSearch ? (
         <Pressable
-          onPress={() => router.push('/(drive)/search')}
-          accessibilityLabel={t('drive.search')}
+          onPress={() => router.push('/search')}
+          accessibilityLabel={t('drive.search.action')}
           style={styles.searchButton}
         >
           <CozyIcon name="magnifier" size={24} color={theme.colors.onSurface} />
