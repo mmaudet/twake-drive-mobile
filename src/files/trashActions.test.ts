@@ -5,10 +5,7 @@ jest.mock('@/pouchdb/triggerReplication', () => ({
 import { triggerPouchReplication } from '@/pouchdb/triggerReplication'
 import { restoreEntry, emptyTrash } from './trashActions'
 
-const buildClient = (methods: {
-  restore?: jest.Mock
-  emptyTrash?: jest.Mock
-}) =>
+const buildClient = (methods: { restore?: jest.Mock; emptyTrash?: jest.Mock }) =>
   ({
     collection: jest.fn(() => ({
       restore: methods.restore ?? jest.fn(),

@@ -13,10 +13,7 @@ export const OfflineBanner = (): React.ReactElement | null => {
   const online = useIsOnline()
   if (online) return null
   return (
-    <View
-      pointerEvents="none"
-      style={[styles.wrap, { top: insets.top + 8 }]}
-    >
+    <View pointerEvents="none" style={[styles.wrap, { top: insets.top + 8 }]}>
       <View
         style={[
           styles.pill,

@@ -33,10 +33,7 @@ describe('Breadcrumb', () => {
     const handler = jest.fn()
     render(
       wrap(
-        <Breadcrumb
-          segments={[{ id: 'root', name: 'Mes fichiers' }]}
-          onSegmentPress={handler}
-        />
+        <Breadcrumb segments={[{ id: 'root', name: 'Mes fichiers' }]} onSegmentPress={handler} />
       )
     )
     fireEvent.press(screen.getByText('Mes fichiers'))

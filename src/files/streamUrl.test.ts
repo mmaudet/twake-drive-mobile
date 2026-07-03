@@ -73,8 +73,7 @@ describe('getPreviewKind', () => {
 })
 
 describe('buildThumbnailUrl', () => {
-  const client = (uri: string | undefined): never =>
-    ({ getStackClient: () => ({ uri }) }) as never
+  const client = (uri: string | undefined): never => ({ getStackClient: () => ({ uri }) }) as never
 
   it('prefers the requested size', () => {
     const url = buildThumbnailUrl(
@@ -96,9 +95,9 @@ describe('buildThumbnailUrl', () => {
   })
 
   it('strips trailing slash from stack URI and prefixes / when missing', () => {
-    expect(
-      buildThumbnailUrl(client('https://x.cozy.test/'), { medium: 'm' }, 'medium')
-    ).toBe('https://x.cozy.test/m')
+    expect(buildThumbnailUrl(client('https://x.cozy.test/'), { medium: 'm' }, 'medium')).toBe(
+      'https://x.cozy.test/m'
+    )
   })
 
   it('returns null when links/uri are missing', () => {

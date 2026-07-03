@@ -5,9 +5,13 @@ jest.mock('@react-native-community/netinfo', () => {
   return {
     addEventListener: jest.fn((cb: (s: Partial<NetInfoState>) => void) => {
       listener = cb
-      return () => { listener = undefined }
+      return () => {
+        listener = undefined
+      }
     }),
-    fetch: jest.fn().mockResolvedValue({ isConnected: true, isInternetReachable: true, type: 'wifi' }),
+    fetch: jest
+      .fn()
+      .mockResolvedValue({ isConnected: true, isInternetReachable: true, type: 'wifi' }),
     __emit: (s: Partial<NetInfoState>) => listener?.(s)
   }
 })
@@ -55,7 +59,10 @@ describe('OnlineMonitor', () => {
   it('current() is false only when both signals say offline; subscribers notified', async () => {
     // Both NetInfo offline AND probe failure required to flip to offline.
     fetchMock.mockResolvedValue({ status: 0 } as unknown as Response) // make probe also fail
-    const mon = createOnlineMonitor({ probeUri: 'https://stack.example.com', probeIntervalMs: 1000 })
+    const mon = createOnlineMonitor({
+      probeUri: 'https://stack.example.com',
+      probeIntervalMs: 1000
+    })
     await flush()
     const listener = jest.fn()
     mon.subscribe(listener)

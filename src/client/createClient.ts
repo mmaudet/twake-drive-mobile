@@ -33,13 +33,15 @@ export const createClient = async (session: Session): Promise<CozyClient> => {
   const client = new CozyClient({
     uri: session.uri,
     oauth: { ...session.oauthOptions, token: session.token },
+    // `scope` is absent from cozy-client's ClientOptions type but accepted at
+    // runtime to request specific OAuth doctype scopes (see @/auth/scopes).
     scope: [...APP_SCOPES],
     appMetadata: {
       slug: 'twake-drive-mobile',
       version: '0.1.0'
     },
     links: getLinks()
-  })
+  } as ConstructorParameters<typeof CozyClient>[0] & { scope: string[] })
 
   try {
     await client.registerPlugin(flag.plugin, null)

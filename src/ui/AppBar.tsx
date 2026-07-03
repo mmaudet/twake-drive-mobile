@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
-import { Appbar, Menu } from 'react-native-paper'
+import { Linking, Pressable, StyleSheet, View } from 'react-native'
+import { Appbar, Avatar, Menu, useTheme } from 'react-native-paper'
 import { useTranslation } from 'react-i18next'
+import { useRouter } from 'expo-router'
 
 import { SyncIndicator } from './SyncIndicator'
+import { TwakeLogo } from '@/ui/icons/TwakeLogo'
+import { CozyIcon } from '@/ui/icons/CozyIcon'
 
 export interface AppBarSelectionAction {
   icon: string
@@ -25,6 +29,11 @@ interface Props {
   onBack?: () => void
   onLogout?: () => void
   /**
+   * When true, a magnifier icon button is rendered to the left of the avatar
+   * menu. Tapping it navigates to the file-name search screen.
+   */
+  showSearch?: boolean
+  /**
    * When set, the AppBar swaps to selection mode: the title shows the
    * count, the back/menu controls are replaced with a close action, and
    * the provided actions are rendered on the right.
@@ -32,15 +41,18 @@ interface Props {
   selection?: AppBarSelection
 }
 
-export const AppBar = ({ title, onBack, onLogout, selection }: Props) => {
+export const AppBar = ({ title, onBack, onLogout, showSearch, selection }: Props) => {
   const { t } = useTranslation()
   const [menuVisible, setMenuVisible] = useState(false)
+  const theme = useTheme()
+  const router = useRouter()
+  const initials = 'MM'
 
   if (selection) {
     return (
       <Appbar.Header>
         <Appbar.Action
-          icon="close"
+          icon={p => <CozyIcon name="cross" size={p?.size ?? 24} color={p?.color} />}
           onPress={selection.onCancel}
           accessibilityLabel={t('common.cancel')}
         />
@@ -63,23 +75,82 @@ export const AppBar = ({ title, onBack, onLogout, selection }: Props) => {
   return (
     <Appbar.Header>
       {onBack ? <Appbar.BackAction onPress={onBack} /> : null}
+      <View style={styles.logo}>
+        <TwakeLogo size={28} />
+      </View>
       <Appbar.Content title={title} />
       <SyncIndicator />
+      {showSearch ? (
+        <Pressable
+          onPress={() => router.push('/(drive)/search')}
+          accessibilityLabel={t('drive.search')}
+          style={styles.searchButton}
+        >
+          <CozyIcon name="magnifier" size={24} color={theme.colors.onSurface} />
+        </Pressable>
+      ) : null}
+      {showSearch ? (
+        <Pressable
+          onPress={() => Linking.openURL('https://twake.app')}
+          accessibilityLabel={t('common.help')}
+          style={styles.searchButton}
+          testID="appbar-help-button"
+        >
+          <CozyIcon name="info" size={24} color={theme.colors.onSurface} />
+        </Pressable>
+      ) : null}
       {onLogout ? (
         <Menu
           visible={menuVisible}
           onDismiss={() => setMenuVisible(false)}
-          anchor={<Appbar.Action icon="dots-vertical" onPress={() => setMenuVisible(true)} />}
+          anchor={
+            <Pressable onPress={() => setMenuVisible(true)}>
+              <Avatar.Text size={32} label={initials} />
+            </Pressable>
+          }
         >
+          <Menu.Item
+            onPress={() => {
+              setMenuVisible(false)
+              router.push('/(drive)/settings')
+            }}
+            title={t('settings.title')}
+            leadingIcon={() => <CozyIcon name="cog" size={24} color={theme.colors.onSurface} />}
+          />
+          <Menu.Item
+            onPress={() => {
+              setMenuVisible(false)
+              router.push('/(drive)/shareddrives')
+            }}
+            title={t('drive.sharedDrives')}
+            leadingIcon={() => (
+              <CozyIcon name="folderMultiple" size={24} color={theme.colors.onSurface} />
+            )}
+          />
           <Menu.Item
             onPress={() => {
               setMenuVisible(false)
               onLogout()
             }}
             title={t('common.logout')}
+            leadingIcon={() => <CozyIcon name="logout" size={24} color={theme.colors.onSurface} />}
           />
         </Menu>
       ) : null}
     </Appbar.Header>
   )
 }
+
+const styles = StyleSheet.create({
+  logo: {
+    marginLeft: 4,
+    marginRight: 4,
+    justifyContent: 'center'
+  },
+  searchButton: {
+    marginHorizontal: 4,
+    padding: 6,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+})

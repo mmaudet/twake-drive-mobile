@@ -17,10 +17,7 @@ export const PERIODIC_SYNC_INTERVAL_MS = 30 * 1000
 // initial replication hangs on fetchRemoteLastSequence — and the data is
 // only useful online anyway (share sheet, viewers). They go directly to
 // StackLink.
-export const offlineDoctypes = [
-  'io.cozy.files',
-  'io.cozy.contacts'
-] as const
+export const offlineDoctypes = ['io.cozy.files', 'io.cozy.contacts'] as const
 
 // Warmup queries are GATES: until they complete on the first replication
 // loop, every query for the doctype is FORWARDED to the next link (StackLink)
@@ -96,9 +93,7 @@ const PERSISTED_WARMUP_KEY = 'cozy-client-pouch-link-warmupedqueries'
 const expectedAliasesByDoctype = (): Record<string, string[]> => {
   const out: Record<string, string[]> = {}
   for (const [doctype, opts] of Object.entries(doctypesReplicationOptions)) {
-    out[doctype] = (opts.warmupQueries as Array<{ options: { as: string } }>).map(
-      q => q.options.as
-    )
+    out[doctype] = (opts.warmupQueries as Array<{ options: { as: string } }>).map(q => q.options.as)
   }
   return out
 }

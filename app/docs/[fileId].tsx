@@ -32,9 +32,8 @@ export default function DocsScreen() {
   })
   const lookupData = fileLookup.data
   const lookupDoc = Array.isArray(lookupData) ? lookupData[0] : lookupData
-  const externalId = (
-    lookupDoc as { metadata?: { externalId?: string } } | null | undefined
-  )?.metadata?.externalId
+  const externalId = (lookupDoc as { metadata?: { externalId?: string } } | null | undefined)
+    ?.metadata?.externalId
 
   useEffect(() => {
     let cancelled = false
@@ -58,8 +57,7 @@ export default function DocsScreen() {
     }
   }, [client, fileId, externalId, reloadTick])
 
-  const missingExternalId =
-    fileLookup.fetchStatus === 'loaded' && !!lookupDoc && !externalId
+  const missingExternalId = fileLookup.fetchStatus === 'loaded' && !!lookupDoc && !externalId
 
   return (
     <ScreenContainer>

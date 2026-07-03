@@ -16,7 +16,7 @@ describe('getLinks', () => {
   it('returns [PouchLink, StackLink] in that order', () => {
     const links = getLinks()
     expect(links).toHaveLength(2)
-    expect((PouchLink as unknown as jest.Mock)).toHaveBeenCalledTimes(1)
+    expect(PouchLink as unknown as jest.Mock).toHaveBeenCalledTimes(1)
   })
 
   it('passes platformReactNative.pouchAdapter to PouchLink (not pouchdb-browser)', () => {
@@ -29,24 +29,22 @@ describe('getLinks', () => {
     getLinks()
     const opts = (PouchLink as unknown as jest.Mock).mock.calls[0][0]
     for (const dt of offlineDoctypes) {
-      expect(opts.doctypesReplicationOptions[dt]).toEqual({ strategy: 'fromRemote' })
+      // Each doctype also carries warmupQueries (gate + files indexes); assert
+      // the replication strategy without pinning the exact object shape.
+      expect(opts.doctypesReplicationOptions[dt].strategy).toBe('fromRemote')
     }
   })
 
-  it('targets exactly the 5 drive-mobile doctypes', () => {
-    expect(offlineDoctypes).toEqual([
-      'io.cozy.files',
-      'io.cozy.sharings',
-      'io.cozy.permissions',
-      'io.cozy.notes',
-      'io.cozy.contacts'
-    ])
+  it('targets exactly the offline doctypes (files + contacts)', () => {
+    // sharings/permissions/notes were dropped (online-only; their initial
+    // replication hangs on fetchRemoteLastSequence) — see getLinks.ts.
+    expect(offlineDoctypes).toEqual(['io.cozy.files', 'io.cozy.contacts'])
   })
 
-  it('enables periodic sync with a 60 second interval', () => {
+  it('enables periodic sync with a 30 second interval', () => {
     getLinks()
     const opts = (PouchLink as unknown as jest.Mock).mock.calls[0][0]
     expect(opts.periodicSync).toBe(true)
-    expect(opts.replicationInterval).toBe(60_000)
+    expect(opts.replicationInterval).toBe(30_000)
   })
 })

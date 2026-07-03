@@ -22,9 +22,7 @@ describe('renameEntry', () => {
   })
 
   it('returns the updated doc', async () => {
-    const updateAttributes = jest
-      .fn()
-      .mockResolvedValue({ data: { _id: 'abc', name: 'new' } })
+    const updateAttributes = jest.fn().mockResolvedValue({ data: { _id: 'abc', name: 'new' } })
     const res = await renameEntry(buildClient(updateAttributes), 'abc', 'new')
     expect(res).toEqual({ _id: 'abc', name: 'new' })
   })
@@ -54,9 +52,7 @@ describe('renameEntry', () => {
   })
 
   it('triggers a pouch replication on success', async () => {
-    const updateAttributes = jest
-      .fn()
-      .mockResolvedValue({ data: { _id: 'abc', name: 'new' } })
+    const updateAttributes = jest.fn().mockResolvedValue({ data: { _id: 'abc', name: 'new' } })
     const client = buildClient(updateAttributes)
     await renameEntry(client, 'abc', 'new')
     expect(triggerPouchReplication).toHaveBeenCalledWith(client, 'io.cozy.files')

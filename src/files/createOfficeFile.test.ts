@@ -67,7 +67,9 @@ describe('createOfficeFile', () => {
     const createFile = jest.fn().mockResolvedValue({
       data: { id: 'fallback-id', attributes: { name: 'X.xlsx' } }
     })
-    const client = { collection: () => ({ createFile }) } as unknown as import('cozy-client').default
+    const client = {
+      collection: () => ({ createFile })
+    } as unknown as import('cozy-client').default
 
     const result = await createOfficeFile(client, 'sheet', 'X', 'p')
     expect(result._id).toBe('fallback-id')
@@ -75,7 +77,9 @@ describe('createOfficeFile', () => {
 
   it('throws when no id is returned', async () => {
     const createFile = jest.fn().mockResolvedValue({ data: {} })
-    const client = { collection: () => ({ createFile }) } as unknown as import('cozy-client').default
+    const client = {
+      collection: () => ({ createFile })
+    } as unknown as import('cozy-client').default
 
     await expect(createOfficeFile(client, 'slide', 'X', 'p')).rejects.toThrow(/no id/)
   })

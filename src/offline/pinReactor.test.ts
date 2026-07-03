@@ -2,11 +2,15 @@ const mockStore = new Map<string, string>()
 
 jest.mock('react-native-mmkv', () => ({
   createMMKV: () => ({
-    set: (k: string, v: string): void => { mockStore.set(k, v) },
+    set: (k: string, v: string): void => {
+      mockStore.set(k, v)
+    },
     getString: (k: string): string | undefined => mockStore.get(k),
     remove: (k: string): boolean => mockStore.delete(k),
     getAllKeys: (): string[] => Array.from(mockStore.keys()),
-    clearAll: (): void => { mockStore.clear() }
+    clearAll: (): void => {
+      mockStore.clear()
+    }
   })
 }))
 
@@ -86,7 +90,10 @@ describe('pinReactor', () => {
     OfflineFilesStore.pin('f1', { rev: '1', md5sum: 'm', size: 1, name: 'a' })
     OfflineFilesStore.markDownloaded('f1')
     const pouch = makeFakePouch()
-    pouch.emit({ id: 'f1', doc: { _id: 'f1', _rev: '2', md5sum: 'm', type: 'file', trashed: true } })
+    pouch.emit({
+      id: 'f1',
+      doc: { _id: 'f1', _rev: '2', md5sum: 'm', type: 'file', trashed: true }
+    })
     await new Promise(r => setImmediate(r))
     expect(OfflineFilesStore.get('f1')).toBeUndefined()
   })
@@ -96,7 +103,15 @@ describe('pinReactor', () => {
     const pouch = makeFakePouch()
     pouch.emit({
       id: 'fnew',
-      doc: { _id: 'fnew', _rev: '1', md5sum: 'x', size: 5, name: 'new.pdf', type: 'file', dir_id: 'd1' }
+      doc: {
+        _id: 'fnew',
+        _rev: '1',
+        md5sum: 'x',
+        size: 5,
+        name: 'new.pdf',
+        type: 'file',
+        dir_id: 'd1'
+      }
     })
     expect(mockEnqueue).toHaveBeenCalledWith('fnew')
     expect(OfflineFilesStore.get('fnew')?.parentFolderPins).toEqual(['d1'])

@@ -4,6 +4,7 @@ import { Appbar, Button, Portal, useTheme } from 'react-native-paper'
 import { useTranslation } from 'react-i18next'
 import { useClient, useQuery } from 'cozy-client'
 
+import { CozyIcon } from '@/ui/icons/CozyIcon'
 import { ScreenContainer } from '@/ui/ScreenContainer'
 import { LoadingState } from '@/ui/LoadingState'
 import { EmptyState } from '@/ui/EmptyState'
@@ -115,7 +116,7 @@ export const FolderPicker = ({
           )}
           <Appbar.Content title={title} />
           <Appbar.Action
-            icon="folder-plus"
+            icon={p => <CozyIcon name="folderAdd" size={p?.size ?? 24} color={p?.color} />}
             accessibilityLabel={t('drive.move.newFolder')}
             onPress={() => setCreatingFolder(true)}
           />

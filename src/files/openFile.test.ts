@@ -66,9 +66,9 @@ describe('openFileNatively', () => {
   })
 
   it('throws when no token is available', async () => {
-    await expect(
-      openFileNatively(makeClient(null), { _id: 'abc', name: 't.pdf' })
-    ).rejects.toThrow(/access token/)
+    await expect(openFileNatively(makeClient(null), { _id: 'abc', name: 't.pdf' })).rejects.toThrow(
+      /access token/
+    )
   })
 
   it('throws when download status is non-2xx', async () => {
@@ -76,16 +76,16 @@ describe('openFileNatively', () => {
       status: 404,
       uri: 'file:///cache/twake-drive/abc-test.pdf'
     })
-    await expect(
-      openFileNatively(makeClient(), { _id: 'abc', name: 't.pdf' })
-    ).rejects.toThrow(/HTTP 404/)
+    await expect(openFileNatively(makeClient(), { _id: 'abc', name: 't.pdf' })).rejects.toThrow(
+      /HTTP 404/
+    )
   })
 
   it('copies the pinned blob to cache (with extension) then opens it', async () => {
     mockIsPinnedAndDownloaded.mockReturnValueOnce(true)
     ;(FileSystem.getInfoAsync as jest.Mock)
       .mockResolvedValueOnce({ exists: true, size: 1024 }) // blob check
-      .mockResolvedValueOnce({ exists: false })            // alias check (missing)
+      .mockResolvedValueOnce({ exists: false }) // alias check (missing)
       .mockResolvedValueOnce({ exists: true, size: 1024 }) // alias post-copy
     await openFileNatively(makeClient(), { _id: 'abc', name: 't.pdf' })
     expect(FileSystem.downloadAsync).not.toHaveBeenCalled()
@@ -116,9 +116,9 @@ describe('openFileNatively', () => {
   it('throws when the pinned blob is missing on disk', async () => {
     mockIsPinnedAndDownloaded.mockReturnValueOnce(true)
     ;(FileSystem.getInfoAsync as jest.Mock).mockResolvedValueOnce({ exists: false })
-    await expect(
-      openFileNatively(makeClient(), { _id: 'abc', name: 't.pdf' })
-    ).rejects.toThrow(/missing on disk/)
+    await expect(openFileNatively(makeClient(), { _id: 'abc', name: 't.pdf' })).rejects.toThrow(
+      /missing on disk/
+    )
   })
 
   it('sanitizes filename slashes', async () => {

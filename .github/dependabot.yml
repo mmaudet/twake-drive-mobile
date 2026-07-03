@@ -1,0 +1,25 @@
+# Dependabot — native dependency hygiene, no secret, no app install.
+# Covers npm deps + the pinned GitHub Actions SHAs. Security PRs come from
+# "Dependabot security updates" (repo Settings → Code security), complementing
+# the npm `overrides` CVE patches in package.json.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    labels: ["dependencies"]
+    # Group low-risk bumps into one PR to cut noise; majors stay separate.
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels: ["ci", "dependencies"]
+    groups:
+      actions:
+        patterns: ["*"]

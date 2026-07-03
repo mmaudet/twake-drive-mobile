@@ -25,13 +25,13 @@ export const BigFolderConfirmDialog = ({
       <Dialog visible={visible} onDismiss={onCancel}>
         <Dialog.Title>{t('drive.offline.bigFolderTitle')}</Dialog.Title>
         <Dialog.Content>
-          <Text>
-            {t('drive.offline.folderConfirm', { count, size: formatFileSize(bytes) })}
-          </Text>
+          <Text>{t('drive.offline.folderConfirm', { count, size: formatFileSize(bytes) })}</Text>
         </Dialog.Content>
         <Dialog.Actions>
           <Button onPress={onCancel}>{t('common.cancel')}</Button>
-          <Button onPress={onConfirm} mode="contained">{t('common.confirm')}</Button>
+          <Button onPress={onConfirm} mode="contained">
+            {t('common.confirm')}
+          </Button>
         </Dialog.Actions>
       </Dialog>
     </Portal>

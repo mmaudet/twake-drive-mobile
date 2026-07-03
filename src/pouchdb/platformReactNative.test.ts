@@ -15,7 +15,11 @@ jest.mock('pouchdb-core', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mock: any = {
     plugin: jest.fn(function (this: unknown, p: unknown) {
-      if (typeof p === 'function') (p as (db: unknown) => void)(mock)
+      // Cast to `any` rather than a function type: naming a type param (`db`)
+      // inside a jest.mock factory trips babel-plugin-jest-hoist's out-of-scope
+      // variable check (it inspects the source before TS types are stripped).
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (typeof p === 'function') (p as any)(mock)
       return mock
     }),
     adapter: jest.fn((name: string, impl: unknown) => {

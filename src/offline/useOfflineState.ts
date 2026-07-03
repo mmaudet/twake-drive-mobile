@@ -64,10 +64,7 @@ const computeFolderState = (dirId: string): OfflineFolderState => {
   // Priority: any download in-flight wins, then failures, then pending,
   // otherwise fully downloaded.
   const aggregate: OfflineFileState =
-    downloading > 0 ? 'downloading'
-    : failed > 0 ? 'failed'
-    : pending > 0 ? 'pending'
-    : 'downloaded'
+    downloading > 0 ? 'downloading' : failed > 0 ? 'failed' : pending > 0 ? 'pending' : 'downloaded'
   return { pinned: true, aggregate, total, downloaded, downloading, pending, failed }
 }
 
@@ -75,7 +72,15 @@ export const useOfflineFolderState = (dirId: string | undefined): OfflineFolderS
   const [state, setState] = useState<OfflineFolderState>(() =>
     dirId
       ? computeFolderState(dirId)
-      : { pinned: false, aggregate: null, total: 0, downloaded: 0, downloading: 0, pending: 0, failed: 0 }
+      : {
+          pinned: false,
+          aggregate: null,
+          total: 0,
+          downloaded: 0,
+          downloading: 0,
+          pending: 0,
+          failed: 0
+        }
   )
   useEffect(() => {
     if (!dirId) return

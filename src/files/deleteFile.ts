@@ -20,10 +20,7 @@ export interface DeletableEntry {
  * result. Same path twake-drive-web uses; without it the deleted file lingers
  * in the folder listing until a hard reload.
  */
-export const softDeleteEntry = async (
-  client: CozyClient,
-  entry: DeletableEntry
-): Promise<void> => {
+export const softDeleteEntry = async (client: CozyClient, entry: DeletableEntry): Promise<void> => {
   await client.destroy({
     _id: entry._id,
     _rev: entry._rev,

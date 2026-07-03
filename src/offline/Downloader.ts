@@ -93,14 +93,10 @@ const startDownload = async (fileId: string): Promise<void> => {
     } catch {
       // best-effort; leave undefined
     }
-    if (
-      localBytes !== undefined &&
-      entry.size > 0 &&
-      localBytes < entry.size * 0.5
-    ) {
+    if (localBytes !== undefined && entry.size > 0 && localBytes < entry.size * 0.5) {
       console.warn(
         `[offline] short download for ${fileId} (${entry.name || ''}): ` +
-        `${localBytes}B on disk vs ${entry.size}B claimed by stack`
+          `${localBytes}B on disk vs ${entry.size}B claimed by stack`
       )
     }
     OfflineFilesStore.update(fileId, e => ({
@@ -131,7 +127,7 @@ const startDownload = async (fileId: string): Promise<void> => {
       queue.unshift(fileId)
       return
     }
-    const retryCount = (OfflineFilesStore.get(fileId)?.retryCount ?? 0)
+    const retryCount = OfflineFilesStore.get(fileId)?.retryCount ?? 0
     if (retryCount >= BACKOFF_DELAYS_MS.length) {
       OfflineFilesStore.setState(fileId, 'failed', {
         lastError: err instanceof Error ? err.message : String(err)
@@ -180,10 +176,17 @@ export const Downloader = {
     const idx = queue.indexOf(fileId)
     if (idx >= 0) queue.splice(idx, 1)
     const timer = retryTimers.get(fileId)
-    if (timer) { clearTimeout(timer); retryTimers.delete(fileId) }
+    if (timer) {
+      clearTimeout(timer)
+      retryTimers.delete(fileId)
+    }
     const inFlt = inFlight.get(fileId)
     if (inFlt?.resumable) {
-      try { await inFlt.resumable.cancelAsync() } catch { /* ignore */ }
+      try {
+        await inFlt.resumable.cancelAsync()
+      } catch {
+        /* ignore */
+      }
     }
     inFlight.delete(fileId)
     OfflineFilesStore.update(fileId, e => ({ ...e, state: 'pending', bytesDownloaded: undefined }))
@@ -193,7 +196,11 @@ export const Downloader = {
     for (const id of Array.from(inFlight.keys())) {
       const inFlt = inFlight.get(id)
       if (inFlt?.resumable) {
-        try { await inFlt.resumable.cancelAsync() } catch { /* ignore */ }
+        try {
+          await inFlt.resumable.cancelAsync()
+        } catch {
+          /* ignore */
+        }
       }
       OfflineFilesStore.update(id, e => ({ ...e, state: 'pending', bytesDownloaded: undefined }))
       if (!queue.includes(id)) queue.unshift(id)

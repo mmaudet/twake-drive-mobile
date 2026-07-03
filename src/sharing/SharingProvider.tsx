@@ -56,9 +56,7 @@ export const SharingContext = createContext<ContextValue>({
 
 const sharingFilesIds = (s: SharingDoc): string[] => {
   const rules = s.attributes?.rules ?? s.rules ?? []
-  return rules
-    .filter(r => !r.doctype || r.doctype === 'io.cozy.files')
-    .flatMap(r => r.values ?? [])
+  return rules.filter(r => !r.doctype || r.doctype === 'io.cozy.files').flatMap(r => r.values ?? [])
 }
 
 const linkFilesIds = (p: PublicLinkPermission): string[] => {
@@ -66,11 +64,9 @@ const linkFilesIds = (p: PublicLinkPermission): string[] => {
   return Object.values(perms).flatMap(v => v.values ?? [])
 }
 
-const sharingMembers = (s: SharingDoc): SharingMember[] =>
-  s.attributes?.members ?? s.members ?? []
+const sharingMembers = (s: SharingDoc): SharingMember[] => s.attributes?.members ?? s.members ?? []
 
-const sharingOwner = (s: SharingDoc): boolean | undefined =>
-  s.attributes?.owner ?? s.owner
+const sharingOwner = (s: SharingDoc): boolean | undefined => s.attributes?.owner ?? s.owner
 
 /**
  * Pure builder used by both the provider and its tests. Folds the two
@@ -162,9 +158,7 @@ export const SharingProvider = ({ children }: { children: React.ReactNode }) => 
 
     const run = async () => {
       try {
-        const sharingCol = client.collection(
-          'io.cozy.sharings'
-        ) as unknown as SharingsCollectionApi
+        const sharingCol = client.collection('io.cozy.sharings') as unknown as SharingsCollectionApi
         const permCol = client.collection(
           'io.cozy.permissions'
         ) as unknown as PermissionsCollectionApi
@@ -224,8 +218,7 @@ export const useFileSharingStatus = (fileId: string | undefined): FileSharingSta
  * the provider to re-fetch and rebuild its map. The returned promise
  * resolves once the next fetch is applied to the context.
  */
-export const useRefreshSharings = (): (() => Promise<void>) =>
-  useContext(SharingContext).refresh
+export const useRefreshSharings = (): (() => Promise<void>) => useContext(SharingContext).refresh
 
 /**
  * Read-side hook for the ShareSheet — returns the full entry plus the

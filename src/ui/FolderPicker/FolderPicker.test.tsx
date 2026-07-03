@@ -94,14 +94,7 @@ describe('FolderPicker', () => {
 
   it('renders the current folder name and its subfolders', () => {
     setupQueries('Work', [subfolder('a', 'Q1'), subfolder('b', 'Q2')])
-    render(
-      wrap(
-        <FolderPicker
-          {...defaultProps}
-          currentFolderId="src"
-        />
-      )
-    )
+    render(wrap(<FolderPicker {...defaultProps} currentFolderId="src" />))
     expect(screen.getByText('Work')).toBeOnTheScreen()
     expect(screen.getByText('Q1')).toBeOnTheScreen()
     expect(screen.getByText('Q2')).toBeOnTheScreen()
@@ -110,13 +103,7 @@ describe('FolderPicker', () => {
   it('disables "Move here" when current folder is in excludeIds', () => {
     setupQueries('Work', [])
     render(
-      wrap(
-        <FolderPicker
-          {...defaultProps}
-          currentFolderId="src"
-          excludeIds={new Set(['src'])}
-        />
-      )
+      wrap(<FolderPicker {...defaultProps} currentFolderId="src" excludeIds={new Set(['src'])} />)
     )
     const button = screen.getByRole('button', { name: 'Move here' })
     expect(button.props.accessibilityState?.disabled).toBe(true)
@@ -125,15 +112,7 @@ describe('FolderPicker', () => {
   it('calls onConfirm with the current folder on tap', () => {
     setupQueries('Work', [])
     const onConfirm = jest.fn()
-    render(
-      wrap(
-        <FolderPicker
-          {...defaultProps}
-          currentFolderId="src"
-          onConfirm={onConfirm}
-        />
-      )
-    )
+    render(wrap(<FolderPicker {...defaultProps} currentFolderId="src" onConfirm={onConfirm} />))
     fireEvent.press(screen.getByText('Move here'))
     expect(onConfirm).toHaveBeenCalledWith(expect.objectContaining({ _id: 'src', name: 'Work' }))
   })
@@ -141,85 +120,42 @@ describe('FolderPicker', () => {
   it('calls onCancel when the Cancel button is tapped', () => {
     setupQueries('Work', [])
     const onCancel = jest.fn()
-    render(
-      wrap(
-        <FolderPicker
-          {...defaultProps}
-          onCancel={onCancel}
-        />
-      )
-    )
+    render(wrap(<FolderPicker {...defaultProps} onCancel={onCancel} />))
     fireEvent.press(screen.getByText('common.cancel'))
     expect(onCancel).toHaveBeenCalled()
   })
 
   it('renders disabled files in the list', () => {
     setupQueries('Work', [subfolder('a', 'Q1'), file('f', 'budget.xlsx')])
-    render(
-      wrap(
-        <FolderPicker
-          {...defaultProps}
-          currentFolderId="src"
-        />
-      )
-    )
+    render(wrap(<FolderPicker {...defaultProps} currentFolderId="src" />))
     expect(screen.getByText('budget.xlsx')).toBeOnTheScreen()
   })
 
   it('calls onDrillIn when a folder row is tapped', () => {
     setupQueries('Work', [subfolder('a', 'Q1')])
     const onDrillIn = jest.fn()
-    render(
-      wrap(
-        <FolderPicker
-          {...defaultProps}
-          currentFolderId="src"
-          onDrillIn={onDrillIn}
-        />
-      )
-    )
+    render(wrap(<FolderPicker {...defaultProps} currentFolderId="src" onDrillIn={onDrillIn} />))
     fireEvent.press(screen.getByText('Q1'))
     expect(onDrillIn).toHaveBeenCalledWith({ _id: 'a', name: 'Q1', type: 'directory' })
   })
 
   it('does not render the back arrow when isAtRoot=true', () => {
     setupQueries('Work', [])
-    render(
-      wrap(
-        <FolderPicker
-          {...defaultProps}
-          isAtRoot={true}
-        />
-      )
-    )
+    render(wrap(<FolderPicker {...defaultProps} isAtRoot={true} />))
     expect(screen.queryByLabelText('common.back')).toBeNull()
   })
 
   it('calls onBack when the back arrow is tapped (isAtRoot=false)', () => {
     setupQueries('Work', [])
     const onBack = jest.fn()
-    render(
-      wrap(
-        <FolderPicker
-          {...defaultProps}
-          isAtRoot={false}
-          onBack={onBack}
-        />
-      )
-    )
+    render(wrap(<FolderPicker {...defaultProps} isAtRoot={false} onBack={onBack} />))
     fireEvent.press(screen.getByLabelText('common.back'))
     expect(onBack).toHaveBeenCalled()
   })
 
   it('opens the create-folder dialog when the "+ New folder" button is tapped', () => {
     setupQueries('Work', [])
-    render(
-      wrap(
-        <FolderPicker
-          {...defaultProps}
-        />
-      )
-    )
+    render(wrap(<FolderPicker {...defaultProps} />))
     fireEvent.press(screen.getByLabelText('drive.move.newFolder'))
     // CreateFolderDialog renders a title whose translation key is returned as-is.
     expect(screen.getByText('drive.createFolder.title')).toBeOnTheScreen()

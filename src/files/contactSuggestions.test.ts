@@ -77,9 +77,12 @@ describe('toSuggestion', () => {
   })
 
   it('falls back displayName to primary email when no name available', () => {
-    expect(
-      toSuggestion(c({ _id: '1', email: [{ address: 'only@x.tld' }] }))
-    ).toEqual({ _id: '1', displayName: 'only@x.tld', email: 'only@x.tld', secondaryEmails: [] })
+    expect(toSuggestion(c({ _id: '1', email: [{ address: 'only@x.tld' }] }))).toEqual({
+      _id: '1',
+      displayName: 'only@x.tld',
+      email: 'only@x.tld',
+      secondaryEmails: []
+    })
   })
 
   it('lists secondary emails distinct from primary', () => {
@@ -105,8 +108,16 @@ describe('toSuggestion', () => {
 
 describe('filterContactSuggestions', () => {
   const contacts: ContactQueryResult[] = [
-    c({ _id: '1', fullname: 'Alice Doe', email: [{ address: 'alice@example.com', primary: true }] }),
-    c({ _id: '2', name: { givenName: 'Bob', familyName: 'Jones' }, email: [{ address: 'bob@example.com' }] }),
+    c({
+      _id: '1',
+      fullname: 'Alice Doe',
+      email: [{ address: 'alice@example.com', primary: true }]
+    }),
+    c({
+      _id: '2',
+      name: { givenName: 'Bob', familyName: 'Jones' },
+      email: [{ address: 'bob@example.com' }]
+    }),
     c({ _id: '3', fullname: 'No Email Person' }),
     c({
       _id: '4',
@@ -116,7 +127,11 @@ describe('filterContactSuggestions', () => {
         { address: 'carol.work@example.com' }
       ]
     }),
-    c({ _id: '5', fullname: 'Already Added', email: [{ address: 'added@example.com', primary: true }] })
+    c({
+      _id: '5',
+      fullname: 'Already Added',
+      email: [{ address: 'added@example.com', primary: true }]
+    })
   ]
 
   it('returns reachable contacts (with email) on empty query, capped at 8', () => {

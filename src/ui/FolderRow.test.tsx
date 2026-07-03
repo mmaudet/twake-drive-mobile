@@ -4,7 +4,7 @@ import { fireEvent, render, screen } from '@testing-library/react-native'
 
 jest.mock('cozy-client', () => ({
   __esModule: true,
-  useClient: () => null
+  useClient: () => ({})
 }))
 
 jest.mock('@/offline/useOfflineState', () => ({
@@ -24,6 +24,16 @@ jest.mock('@/network/useIsOnline', () => ({
   useIsOnline: () => true
 }))
 
+jest.mock('@/files/favorites', () => ({
+  isFavorite: jest.fn().mockReturnValue(false),
+  toggleFavorite: jest.fn().mockResolvedValue(undefined)
+}))
+
+jest.mock('@/pouchdb/triggerReplication', () => ({
+  triggerPouchReplication: jest.fn()
+}))
+
+import { isFavorite, toggleFavorite } from '@/files/favorites'
 import { FolderRow, FolderItem } from './FolderRow'
 
 const folder: FolderItem = { _id: 'd1', name: 'Documents' }
@@ -59,5 +69,37 @@ describe('FolderRow', () => {
     fireEvent.press(screen.getByLabelText('folder actions'))
     fireEvent.press(screen.getByText('drive.fileMeta.move'))
     expect(onMove).toHaveBeenCalledWith(folder)
+  })
+
+  describe('favorite menu item', () => {
+    it('shows "Add to favorites" label when folder is not a favorite', () => {
+      ;(isFavorite as jest.Mock).mockReturnValue(false)
+      render(wrap(<FolderRow folder={folder} onPress={() => {}} onShare={jest.fn()} />))
+      fireEvent.press(screen.getByLabelText('folder actions'))
+      expect(screen.getByText('drive.fileMeta.favorite')).toBeOnTheScreen()
+    })
+
+    it('shows "Remove from favorites" label when folder is a favorite', () => {
+      ;(isFavorite as jest.Mock).mockReturnValue(true)
+      render(wrap(<FolderRow folder={folder} onPress={() => {}} onShare={jest.fn()} />))
+      fireEvent.press(screen.getByLabelText('folder actions'))
+      expect(screen.getByText('drive.fileMeta.unfavorite')).toBeOnTheScreen()
+    })
+
+    it('calls toggleFavorite when the favorite menu item is tapped', () => {
+      ;(isFavorite as jest.Mock).mockReturnValue(false)
+      render(wrap(<FolderRow folder={folder} onPress={() => {}} onShare={jest.fn()} />))
+      fireEvent.press(screen.getByLabelText('folder actions'))
+      fireEvent.press(screen.getByText('drive.fileMeta.favorite'))
+      expect(toggleFavorite).toHaveBeenCalledWith(expect.anything(), folder, true)
+    })
+
+    it('calls toggleFavorite with next=false when folder is already a favorite', () => {
+      ;(isFavorite as jest.Mock).mockReturnValue(true)
+      render(wrap(<FolderRow folder={folder} onPress={() => {}} onShare={jest.fn()} />))
+      fireEvent.press(screen.getByLabelText('folder actions'))
+      fireEvent.press(screen.getByText('drive.fileMeta.unfavorite'))
+      expect(toggleFavorite).toHaveBeenCalledWith(expect.anything(), folder, false)
+    })
   })
 })

@@ -74,7 +74,7 @@ export default function MoveLayout() {
           const target: MoveEntryTarget = {
             _id: id,
             name: id === firstDoc._id ? firstDoc.name : '',
-            type: id === firstDoc._id ? firstDoc.type ?? 'file' : 'file',
+            type: id === firstDoc._id ? (firstDoc.type ?? 'file') : 'file',
             dir_id: firstDoc.dir_id ?? ''
           }
           await moveEntry(client, target, dest._id, { force: true })

@@ -1,8 +1,8 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Button, Text, useTheme } from 'react-native-paper'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
+import { CozyIcon } from '@/ui/icons/CozyIcon'
 
 interface Props {
   message: string
@@ -10,12 +10,12 @@ interface Props {
   icon?: string
 }
 
-export const ErrorState = ({ message, onRetry, icon = 'alert-circle-outline' }: Props) => {
+export const ErrorState = ({ message, onRetry, icon = 'info' }: Props) => {
   const theme = useTheme()
   const { t } = useTranslation()
   return (
     <View style={styles.container}>
-      <Icon name={icon} size={64} color={theme.colors.error} />
+      <CozyIcon name={icon} size={64} color={theme.colors.error} />
       <Text variant="bodyLarge" style={styles.message}>
         {message}
       </Text>

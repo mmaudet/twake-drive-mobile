@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { CozyIcon } from '@/ui/icons/CozyIcon'
 
 import { FileSharingStatus } from '@/sharing/SharingProvider'
 
@@ -24,7 +24,7 @@ export const SharedBadge = ({ status, size = 14 }: Props) => {
   const pill = size + 8
   return (
     <View style={[styles.badge, { width: pill, height: pill, borderRadius: pill / 2 }]}>
-      <Icon name="share-variant" size={size} color="#fff" />
+      <CozyIcon name="shareExternal" size={size} color="#fff" />
     </View>
   )
 }

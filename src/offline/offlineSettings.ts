@@ -10,13 +10,21 @@ const statusListeners = new Set<() => void>()
 const readSettings = (): OfflineSettings => {
   const raw = offlineSettingsStorage.getString(SETTINGS_KEY)
   if (!raw) return DEFAULT
-  try { return { ...DEFAULT, ...(JSON.parse(raw) as OfflineSettings) } } catch { return DEFAULT }
+  try {
+    return { ...DEFAULT, ...(JSON.parse(raw) as OfflineSettings) }
+  } catch {
+    return DEFAULT
+  }
 }
 
 const readStatus = (): OfflineStatus => {
   const raw = offlineSettingsStorage.getString(STATUS_KEY)
   if (!raw) return DEFAULT_STATUS
-  try { return { ...DEFAULT_STATUS, ...(JSON.parse(raw) as OfflineStatus) } } catch { return DEFAULT_STATUS }
+  try {
+    return { ...DEFAULT_STATUS, ...(JSON.parse(raw) as OfflineStatus) }
+  } catch {
+    return DEFAULT_STATUS
+  }
 }
 
 export const OfflineSettingsAPI = {

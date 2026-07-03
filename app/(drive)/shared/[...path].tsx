@@ -198,6 +198,7 @@ export default function SharedScreen() {
         title={currentDirName}
         onBack={isRoot ? undefined : () => router.back()}
         onLogout={isRoot ? logout : undefined}
+        showSearch
       />
       {isLoading && hasNothingYet ? (
         <LoadingState />

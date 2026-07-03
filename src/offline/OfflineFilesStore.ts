@@ -48,11 +48,7 @@ export interface PinMeta {
   name: string
 }
 
-const buildEntry = (
-  fileId: string,
-  meta: PinMeta,
-  prev?: OfflineFileEntry
-): OfflineFileEntry => ({
+const buildEntry = (fileId: string, meta: PinMeta, prev?: OfflineFileEntry): OfflineFileEntry => ({
   fileId,
   state: prev?.state ?? 'pending',
   rev: meta.rev,

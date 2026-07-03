@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { Tabs } from 'expo-router'
 import { useTheme } from 'react-native-paper'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
 import { useClient } from 'cozy-client'
 
+import { CozyIcon } from '@/ui/icons/CozyIcon'
 import { OfflineBanner } from '@/ui/OfflineBanner'
 import { useForegroundSync } from '@/pouchdb/useForegroundSync'
 import { initOfflineSubsystem } from '@/offline/initOffline'
@@ -31,32 +31,32 @@ export default function DriveLayout() {
         <Tabs.Screen
           name="files"
           options={{
-            title: t('drive.myFiles'),
-            tabBarIcon: ({ color, size }) => <Icon name="folder" color={color} size={size} />
+            title: t('drive.myDrive'),
+            tabBarIcon: ({ color, size }) => <CozyIcon name="cloud2" color={color} size={size} />
           }}
         />
         <Tabs.Screen
-          name="shared"
+          name="favorites"
           options={{
-            title: t('drive.shared'),
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="account-multiple" color={color} size={size} />
-            )
+            title: t('drive.favorites'),
+            tabBarIcon: ({ color, size }) => <CozyIcon name="star" color={color} size={size} />
           }}
         />
         <Tabs.Screen
           name="recent"
           options={{
             title: t('drive.recent'),
-            tabBarIcon: ({ color, size }) => <Icon name="clock-outline" color={color} size={size} />
+            tabBarIcon: ({ color, size }) => (
+              <CozyIcon name="clockOutline" color={color} size={size} />
+            )
           }}
         />
         <Tabs.Screen
-          name="shareddrives"
+          name="shared"
           options={{
-            title: t('drive.sharedDrives'),
+            title: t('drive.shares'),
             tabBarIcon: ({ color, size }) => (
-              <Icon name="folder-multiple-outline" color={color} size={size} />
+              <CozyIcon name="shareExternal" color={color} size={size} />
             )
           }}
         />
@@ -64,18 +64,12 @@ export default function DriveLayout() {
           name="trash"
           options={{
             title: t('drive.trash'),
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="trash-can-outline" color={color} size={size} />
-            )
+            tabBarIcon: ({ color, size }) => <CozyIcon name="trash" color={color} size={size} />
           }}
         />
-        <Tabs.Screen
-          name="settings"
-          options={{
-            title: t('settings.title'),
-            tabBarIcon: ({ color, size }) => <Icon name="cog-outline" color={color} size={size} />
-          }}
-        />
+        <Tabs.Screen name="shareddrives" options={{ href: null }} />
+        <Tabs.Screen name="settings" options={{ href: null }} />
+        <Tabs.Screen name="search" options={{ href: null }} />
       </Tabs>
     </>
   )

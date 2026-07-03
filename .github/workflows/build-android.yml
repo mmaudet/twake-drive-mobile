@@ -1,0 +1,103 @@
+name: Build Android (test APK)
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build-android:
+    runs-on: ubuntu-24.04
+    # Route the NDK C++ compiler through ccache (cached across runs) — the main
+    # lever for New-Arch native build time. Honored by every RN native module's
+    # CMake configure (CMake reads CMAKE_<LANG>_COMPILER_LAUNCHER from the env
+    # since 3.17; the NDK ships CMake 3.22+).
+    env:
+      CMAKE_C_COMPILER_LAUNCHER: ccache
+      CMAKE_CXX_COMPILER_LAUNCHER: ccache
+      # ccache tuning so cached objects survive across ephemeral runners.
+      # Without this, cross-run hit rate is 0%: the NDK clang is re-provisioned
+      # each run with a fresh mtime, and ccache's default compiler_check=mtime
+      # treats that as a different compiler and discards the whole cache.
+      CCACHE_COMPILERCHECK: content
+      CCACHE_BASEDIR: ${{ github.workspace }}
+      CCACHE_NOHASHDIR: 'true'
+      CCACHE_SLOPPINESS: time_macros,include_file_mtime,include_file_ctime,pch_defines
+    # New Arch compiles native code. Cold cache ~15-20 min; warm (ccache +
+    # gradle build cache) considerably less. Cap high so a cold first build
+    # doesn't trip a spurious timeout; the cap only guards genuine hangs.
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@d62db5f07c26379fc4b4e0916f098a92573c3b03 # v1.2.23
+        with:
+          key: android-ccache
+          max-size: 2G
+
+      - name: Install dependencies
+        run: npm ci
+
+      # assembleRelease signs with the committed debug keystore (no secret) and
+      # embeds the JS bundle -> standalone, installable APK. Restrict ABIs to
+      # arm64 (real devices) + x86_64 (emulators) to halve build time and size.
+      - name: Build release APK
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon --build-cache -PreactNativeArchitectures=arm64-v8a,x86_64
+
+      - name: ccache stats
+        if: always()
+        run: ccache -s
+
+      - name: Locate APK
+        id: apk
+        run: |
+          APK=$(find android/app/build/outputs/apk/release -name "*.apk" | head -1)
+          if [ -z "$APK" ]; then echo "::error::No APK produced"; exit 1; fi
+          echo "path=$APK" >> "$GITHUB_OUTPUT"
+          echo "Found: $APK"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: twake-drive-android-apk-${{ github.run_number }}
+          path: ${{ steps.apk.outputs.path }}
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Comment build link on PR
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RUN_NUMBER: ${{ github.run_number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh pr comment "$PR_NUMBER" --body \
+          "📱 **Android test APK** built in [run #${RUN_NUMBER}](${RUN_URL}). Download it from the run's **Artifacts** → \`twake-drive-android-apk-${RUN_NUMBER}\`. Install with \`adb install <file>.apk\` or enable 'install from unknown sources' on the device."

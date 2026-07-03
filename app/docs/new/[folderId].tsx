@@ -29,12 +29,7 @@ export default function DocsNewScreen() {
       try {
         const stackUri = client.getStackClient().uri as string
         const sessionCode = await getSessionCode(client)
-        const url = buildCozyAppUrl(
-          stackUri,
-          'docs',
-          sessionCode,
-          `/bridge/docs/new/${folderId}`
-        )
+        const url = buildCozyAppUrl(stackUri, 'docs', sessionCode, `/bridge/docs/new/${folderId}`)
         console.log('[DocsNewScreen] editorUrl', url)
         if (!cancelled) setEditorUrl(url)
       } catch (e) {

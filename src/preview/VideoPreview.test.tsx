@@ -71,14 +71,18 @@ describe('VideoPreview', () => {
     // restore vs close apart reliably — see VideoPreview.tsx for the
     // rationale. The push is deferred one tick to let iOS finish its
     // PiP teardown.
-    render(wrap(<VideoPreview fileId="f1" source={{ uri: 'https://x/v.mp4', headers: {} }} />, true))
+    render(
+      wrap(<VideoPreview fileId="f1" source={{ uri: 'https://x/v.mp4', headers: {} }} />, true)
+    )
     captured.onStop!()
     await new Promise(resolve => setTimeout(resolve, 10))
     expect(mockPush).toHaveBeenCalledWith('/preview/f1')
   })
 
   it('still re-pushes on PiP stop when the player is paused', async () => {
-    render(wrap(<VideoPreview fileId="f1" source={{ uri: 'https://x/v.mp4', headers: {} }} />, false))
+    render(
+      wrap(<VideoPreview fileId="f1" source={{ uri: 'https://x/v.mp4', headers: {} }} />, false)
+    )
     captured.onStop!()
     await new Promise(resolve => setTimeout(resolve, 10))
     expect(mockPush).toHaveBeenCalledWith('/preview/f1')

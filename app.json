@@ -38,7 +38,13 @@
       "expo-web-browser",
       "expo-localization",
       "expo-asset",
-      "expo-video",
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ],
       "expo-audio",
       [
         "expo-build-properties",

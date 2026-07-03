@@ -1,14 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react'
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native'
-import {
-  Button,
-  Dialog,
-  FAB,
-  Portal,
-  Snackbar,
-  Text,
-  useTheme
-} from 'react-native-paper'
+import { Button, Dialog, FAB, Portal, Snackbar, Text, useTheme } from 'react-native-paper'
 import { useFocusEffect, useRouter } from 'expo-router'
 import { useQuery } from 'cozy-client'
 import { useClient } from 'cozy-client'
@@ -126,7 +118,7 @@ export default function TrashScreen() {
 
   return (
     <ScreenContainer>
-      <AppBar title={t('drive.trash')} onLogout={logout} />
+      <AppBar title={t('drive.trash')} onLogout={logout} showSearch />
       {(foldersQuery.fetchStatus === 'loading' || filesQuery.fetchStatus === 'loading') &&
       data.length === 0 ? (
         <LoadingState />
@@ -149,8 +141,7 @@ export default function TrashScreen() {
           refreshControl={
             <RefreshControl
               refreshing={
-                foldersQuery.fetchStatus === 'loading' ||
-                filesQuery.fetchStatus === 'loading'
+                foldersQuery.fetchStatus === 'loading' || filesQuery.fetchStatus === 'loading'
               }
               onRefresh={onRefresh}
             />

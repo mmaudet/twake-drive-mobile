@@ -196,8 +196,7 @@ export const buildPublicLinkUrl = (
   // to share-by-link, the "code" key is what cozy-client uses by default.
   const shortcodes = linkShortcodesMap(permission)
   const codes = linkCodesMap(permission)
-  const code =
-    shortcodes.email ?? shortcodes.code ?? codes.email ?? codes.code ?? null
+  const code = shortcodes.email ?? shortcodes.code ?? codes.email ?? codes.code ?? null
   if (!code) return null
   let url: URL
   try {

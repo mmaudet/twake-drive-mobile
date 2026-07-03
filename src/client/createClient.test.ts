@@ -63,7 +63,7 @@ describe('createClient', () => {
     const links = opts.links as unknown[]
     expect(Array.isArray(links)).toBe(true)
     expect(links).toHaveLength(2)
-    expect((PouchLink as unknown as jest.Mock)).toHaveBeenCalledTimes(1)
+    expect(PouchLink as unknown as jest.Mock).toHaveBeenCalledTimes(1)
   })
 
   it('registers the cozy-flags plugin', async () => {
@@ -82,10 +82,8 @@ describe('createClient', () => {
 
   it('triggers an immediate pouch replication after login', async () => {
     await createClient(session)
-    expect(triggerPouchReplication).toHaveBeenCalledWith(
-      expect.anything(),
-      undefined,
-      { immediate: true }
-    )
+    expect(triggerPouchReplication).toHaveBeenCalledWith(expect.anything(), undefined, {
+      immediate: true
+    })
   })
 })

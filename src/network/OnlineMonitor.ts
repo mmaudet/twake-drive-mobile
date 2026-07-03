@@ -28,7 +28,8 @@ export const createOnlineMonitor = (opts: CreateOptions = {}): OnlineMonitor => 
   let netType: string | undefined
   const listeners = new Set<OnlineListener>()
 
-  const current = (): boolean => (probeOnline === null ? netInfoOnline : netInfoOnline || probeOnline)
+  const current = (): boolean =>
+    probeOnline === null ? netInfoOnline : netInfoOnline || probeOnline
   let lastEmitted = current()
   const emit = (): void => {
     const v = current()

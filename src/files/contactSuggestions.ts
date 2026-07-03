@@ -41,9 +41,7 @@ export const toSuggestion = (contact: ContactQueryResult): ContactSuggestion | n
   const email = contactPrimaryEmail(contact)
   if (!email) return null
   const display = contactDisplayName(contact) ?? email
-  const secondary = (contact.email ?? [])
-    .map(e => e.address)
-    .filter(a => !!a && a !== email)
+  const secondary = (contact.email ?? []).map(e => e.address).filter(a => !!a && a !== email)
   return { _id: contact._id, displayName: display, email, secondaryEmails: secondary }
 }
 
@@ -56,9 +54,7 @@ export const filterContactSuggestions = (
 ): ContactSuggestion[] => {
   const q = normalize(query)
   const exclude = new Set(excludeEmails.map(e => e.toLowerCase()))
-  const all = contacts
-    .map(toSuggestion)
-    .filter((s): s is ContactSuggestion => s !== null)
+  const all = contacts.map(toSuggestion).filter((s): s is ContactSuggestion => s !== null)
   if (q.length === 0) {
     return all.filter(s => !exclude.has(s.email.toLowerCase())).slice(0, MAX_SUGGESTIONS)
   }

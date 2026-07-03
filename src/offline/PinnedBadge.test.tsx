@@ -28,7 +28,9 @@ describe('PinnedBadge', () => {
     expect(root).toBeDefined() // PaperProvider still mounted, but the badge itself is absent
   })
   it('renders for downloaded state', () => {
-    const { queryByTestId } = wrap(<PinnedBadge entry={entry('downloaded')} testID="pinned-badge" />)
+    const { queryByTestId } = wrap(
+      <PinnedBadge entry={entry('downloaded')} testID="pinned-badge" />
+    )
     expect(queryByTestId('pinned-badge')).not.toBeNull()
   })
   it('renders for failed state', () => {

@@ -4,8 +4,7 @@ import { triggerPouchReplication } from './triggerReplication'
 
 jest.mock('cozy-pouch-link', () => jest.fn())
 
-const makeClient = (link: unknown): CozyClient =>
-  ({ links: [link] } as unknown as CozyClient)
+const makeClient = (link: unknown): CozyClient => ({ links: [link] }) as unknown as CozyClient
 
 describe('triggerPouchReplication', () => {
   it('calls startReplication on the PouchLink in the chain', () => {

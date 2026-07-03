@@ -100,7 +100,9 @@ const handleChange = (change: PouchLikeChange): void => {
 export const startPinReactor = (pouch: PouchLike): (() => void) => {
   const changes = pouch.changes({ since: 'now', live: true, include_docs: true })
   changes.on('change', handleChange)
-  changes.on('error', () => { /* swallow; pouch reconnects on its own */ })
+  changes.on('error', () => {
+    /* swallow; pouch reconnects on its own */
+  })
   activeChanges = changes
   return () => {
     changes.cancel()

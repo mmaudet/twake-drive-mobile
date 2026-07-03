@@ -8,7 +8,7 @@ import { Image } from 'expo-image'
 import Pdf from 'react-native-pdf'
 import { AudioModule, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio'
 import { ActivityIndicator, Button, IconButton, ProgressBar, useTheme } from 'react-native-paper'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { CozyIcon } from '@/ui/icons/CozyIcon'
 
 import { AppBar } from '@/ui/AppBar'
 import { ErrorState } from '@/ui/ErrorState'
@@ -160,7 +160,7 @@ const UnsupportedAudio = ({
   return (
     <View style={[styles.viewerContainer, styles.audioContainer]}>
       <View style={styles.unsupportedCard}>
-        <Icon name="music-note-off-outline" size={56} color="#fff" />
+        <CozyIcon name="info" size={56} color="#fff" />
         <Text style={styles.audioTitle} numberOfLines={2}>
           {name}
         </Text>

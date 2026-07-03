@@ -70,9 +70,11 @@ export const registerSession = async (callback: OidcCallback): Promise<Session> 
   const client = new CozyClient({
     uri,
     oauth: buildOauthOptions(),
+    // `scope` is absent from cozy-client's ClientOptions type but accepted at
+    // runtime to request specific OAuth doctype scopes (see @/auth/scopes).
     scope: [...APP_SCOPES],
     appMetadata: { slug: 'twake-drive-mobile', version: '0.1.0' }
-  })
+  } as ConstructorParameters<typeof CozyClient>[0] & { scope: string[] })
 
   const stackClient = client.getStackClient()
   try {

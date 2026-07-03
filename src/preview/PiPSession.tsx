@@ -1,11 +1,4 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useVideoPlayer, VideoPlayer } from 'expo-video'
 
 import type { StreamSource } from '@/files/streamUrl'

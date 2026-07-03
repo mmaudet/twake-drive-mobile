@@ -22,10 +22,7 @@ interface NotesCollection {
  * create a new `io.cozy.notes` document inside `dirId`. The stack is the
  * one that fills in defaults (title, schema...). Returns the new note id.
  */
-export const createCozyNote = async (
-  client: CozyClient,
-  dirId: string
-): Promise<CreatedNote> => {
+export const createCozyNote = async (client: CozyClient, dirId: string): Promise<CreatedNote> => {
   const collection = client.collection('io.cozy.notes') as unknown as NotesCollection
   const result = await collection.create({ dir_id: dirId })
   triggerPouchReplication(client, 'io.cozy.files')

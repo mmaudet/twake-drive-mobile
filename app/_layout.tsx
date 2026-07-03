@@ -9,9 +9,18 @@ import { Stack } from 'expo-router'
 import { CozyProvider } from 'cozy-client'
 import { I18nextProvider } from 'react-i18next'
 
+import {
+  useFonts,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold
+} from '@expo-google-fonts/inter'
+
 import i18n from '@/i18n'
 import { AuthProvider, useAuth } from '@/auth/useAuth'
 import { darkTheme, lightTheme } from '@/ui/theme'
+import { withInterFonts } from '@/ui/fonts'
 import { attachRevocationListener } from '@/auth/revocationListener'
 import { ErrorBoundary } from '@/ui/ErrorBoundary'
 import { PiPSessionProvider } from '@/preview/PiPSession'
@@ -21,6 +30,12 @@ const InnerLayout = () => {
   const colorScheme = useColorScheme()
   const theme = colorScheme === 'dark' ? darkTheme : lightTheme
   const { client, logout } = useAuth()
+  const [fontsLoaded] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold
+  })
 
   useEffect(() => {
     if (!client) return
@@ -29,10 +44,12 @@ const InnerLayout = () => {
     })
   }, [client, logout])
 
+  if (!fontsLoaded) return null
+
   const content = (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <PaperProvider theme={theme}>
+        <PaperProvider theme={withInterFonts(theme)}>
           <I18nextProvider i18n={i18n}>
             <PiPSessionProvider>
               <SharingProvider>

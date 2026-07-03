@@ -6,7 +6,8 @@
     "logout": "Log out",
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "back": "Back"
+    "back": "Back",
+    "help": "Help"
   },
   "settings": {
     "title": "Settings"
@@ -24,6 +25,10 @@
   },
   "drive": {
     "myFiles": "My files",
+    "myDrive": "My Drive",
+    "favorites": "Favorites",
+    "shares": "Shares",
+    "emptyFavorites": "No favorites",
     "shared": "Shared with me",
     "sharedDrives": "Drives",
     "recent": "Recent",
@@ -32,7 +37,12 @@
     "emptyShared": "No files shared with you",
     "emptySharedDrives": "No shared drives yet",
     "emptyRecent": "No recent files",
+    "search": "Search",
+    "searchHint": "Search files",
+    "searchEmpty": "No results",
     "emptyTrash": "Trash is empty",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
     "fileMeta": {
       "type": "Type",
       "size": "Size",
@@ -45,7 +55,10 @@
       "rename": "Rename",
       "delete": "Delete",
       "info": "Details",
-      "move": "Move…"
+      "move": "Move…",
+      "favorite": "Add to favorites",
+      "unfavorite": "Remove from favorites",
+      "download": "Download"
     },
     "delete": {
       "confirmFileTitle": "Delete file?",
@@ -128,7 +141,16 @@
       "docs": "New document",
       "text": "Word document",
       "sheet": "Spreadsheet",
-      "slide": "Presentation"
+      "slide": "Presentation",
+      "excalidraw": "Excalidraw",
+      "shortcut": "Shortcut"
+    },
+    "createShortcut": {
+      "title": "New shortcut",
+      "nameLabel": "Name",
+      "urlLabel": "URL",
+      "submit": "Create",
+      "errorGeneric": "Failed to create shortcut."
     },
     "createOffice": {
       "title": "Document name",

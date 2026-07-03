@@ -39,7 +39,11 @@ export default function OfflineStorageScreen() {
     const off3 = OfflineSettingsAPI.status.subscribe(() =>
       setDiskFull(OfflineSettingsAPI.status.get().diskFull)
     )
-    return () => { off1(); off2(); off3() }
+    return () => {
+      off1()
+      off2()
+      off3()
+    }
   }, [client])
 
   // Show every pinned file, regardless of how it was pinned (direct vs via folder).
@@ -50,125 +54,123 @@ export default function OfflineStorageScreen() {
   return (
     <ScreenContainer>
       <ScrollView>
-        <List.Item
-        title={t('drive.offline.totalUsed')}
-        description={formatFileSize(totalBytes)}
-      />
-      <View style={styles.actionRow}>
-        <Button
-          mode="outlined"
-          onPress={async () => {
-            // Unpin every folder first so the auto-purge of any file pinned
-            // only via that folder happens through unpinFolder's bookkeeping.
-            for (const folder of OfflineFilesStore.getAllFolders()) {
-              await OfflineFilesStore.unpinFolder(folder.dirId)
-            }
-            // Then purge any leftover directly-pinned files.
-            for (const f of OfflineFilesStore.getAll()) {
-              await OfflineFilesStore.purge(f.fileId)
-            }
-            await refresh()
-          }}
-        >
-          {t('drive.offline.deleteAll')}
-        </Button>
-      </View>
-      <Divider />
-      <List.Item
-        title={t('drive.offline.wifiOnly')}
-        right={() => (
-          <Switch
-            value={wifiOnly}
-            onValueChange={v => OfflineSettingsAPI.set({ wifiOnly: v })}
-          />
-        )}
-      />
-      {diskFull ? (
-        <View style={[styles.banner, { backgroundColor: theme.colors.errorContainer }]}>
-          <Text style={{ color: theme.colors.onErrorContainer }}>
-            {t('drive.offline.diskFull')}
-          </Text>
+        <List.Item title={t('drive.offline.totalUsed')} description={formatFileSize(totalBytes)} />
+        <View style={styles.actionRow}>
+          <Button
+            mode="outlined"
+            onPress={async () => {
+              // Unpin every folder first so the auto-purge of any file pinned
+              // only via that folder happens through unpinFolder's bookkeeping.
+              for (const folder of OfflineFilesStore.getAllFolders()) {
+                await OfflineFilesStore.unpinFolder(folder.dirId)
+              }
+              // Then purge any leftover directly-pinned files.
+              for (const f of OfflineFilesStore.getAll()) {
+                await OfflineFilesStore.purge(f.fileId)
+              }
+              await refresh()
+            }}
+          >
+            {t('drive.offline.deleteAll')}
+          </Button>
         </View>
-      ) : null}
-      {inProgress.length > 0 ? (
+        <Divider />
         <List.Item
-          title={t('drive.offline.downloading')}
-          description={`${files.length - inProgress.length}/${files.length}`}
+          title={t('drive.offline.wifiOnly')}
+          right={() => (
+            <Switch value={wifiOnly} onValueChange={v => OfflineSettingsAPI.set({ wifiOnly: v })} />
+          )}
         />
-      ) : null}
-      {failed.length > 0 ? (
-        <List.Section title={t('drive.offline.errorsSection')}>
-          {failed.map(f => (
-            <List.Item
-              key={f.fileId}
-              title={f.name || f.fileId}
-              description={f.lastError ?? t('drive.offline.failed')}
-              right={() => (
-                <Button
-                  mode="text"
-                  onPress={() => {
-                    OfflineFilesStore.update(f.fileId, e => ({ ...e, retryCount: 0, state: 'pending' }))
-                    Downloader.enqueue(f.fileId)
-                  }}
-                >
-                  {t('drive.offline.retry')}
-                </Button>
-              )}
-            />
-          ))}
-        </List.Section>
-      ) : null}
-      <List.Section title={t('drive.offline.foldersSection')}>
-        {folders
-          .slice()
-          .sort((a, b) => b.pinnedAt - a.pinnedAt)
-          .map(f => {
-            const childEntries = files.filter(file => file.parentFolderPins.includes(f.dirId))
-            const childBytes = childEntries.reduce((a, file) => a + file.size, 0)
-            return (
-              <List.Item
-                key={f.dirId}
-                title={f.name}
-                description={t('drive.offline.folderSummary', {
-                  count: childEntries.length,
-                  size: formatFileSize(childBytes)
-                })}
-                right={() => (
-                  <Button mode="text" onPress={() => void OfflineFilesStore.unpinFolder(f.dirId)}>
-                    {t('drive.offline.unpin')}
-                  </Button>
-                )}
-              />
-            )
-          })}
-      </List.Section>
-      <List.Section title={t('drive.offline.filesSection')}>
-        {files
-          .slice()
-          .sort((a, b) => b.pinnedAt - a.pinnedAt)
-          .map(f => {
-            const isSuspect =
-              f.state === 'downloaded' &&
-              f.localBytes !== undefined &&
-              f.size > 0 &&
-              f.localBytes < f.size * 0.5
-            const description = isSuspect
-              ? `${formatFileSize(f.size)} (local: ${formatFileSize(f.localBytes)}) ⚠️`
-              : formatFileSize(f.size)
-            return (
+        {diskFull ? (
+          <View style={[styles.banner, { backgroundColor: theme.colors.errorContainer }]}>
+            <Text style={{ color: theme.colors.onErrorContainer }}>
+              {t('drive.offline.diskFull')}
+            </Text>
+          </View>
+        ) : null}
+        {inProgress.length > 0 ? (
+          <List.Item
+            title={t('drive.offline.downloading')}
+            description={`${files.length - inProgress.length}/${files.length}`}
+          />
+        ) : null}
+        {failed.length > 0 ? (
+          <List.Section title={t('drive.offline.errorsSection')}>
+            {failed.map(f => (
               <List.Item
                 key={f.fileId}
                 title={f.name || f.fileId}
-                description={description}
+                description={f.lastError ?? t('drive.offline.failed')}
                 right={() => (
-                  <Button mode="text" onPress={() => void OfflineFilesStore.unpin(f.fileId)}>
-                    {t('drive.offline.unpin')}
+                  <Button
+                    mode="text"
+                    onPress={() => {
+                      OfflineFilesStore.update(f.fileId, e => ({
+                        ...e,
+                        retryCount: 0,
+                        state: 'pending'
+                      }))
+                      Downloader.enqueue(f.fileId)
+                    }}
+                  >
+                    {t('drive.offline.retry')}
                   </Button>
                 )}
               />
-            )
-          })}
-      </List.Section>
+            ))}
+          </List.Section>
+        ) : null}
+        <List.Section title={t('drive.offline.foldersSection')}>
+          {folders
+            .slice()
+            .sort((a, b) => b.pinnedAt - a.pinnedAt)
+            .map(f => {
+              const childEntries = files.filter(file => file.parentFolderPins.includes(f.dirId))
+              const childBytes = childEntries.reduce((a, file) => a + file.size, 0)
+              return (
+                <List.Item
+                  key={f.dirId}
+                  title={f.name}
+                  description={t('drive.offline.folderSummary', {
+                    count: childEntries.length,
+                    size: formatFileSize(childBytes)
+                  })}
+                  right={() => (
+                    <Button mode="text" onPress={() => void OfflineFilesStore.unpinFolder(f.dirId)}>
+                      {t('drive.offline.unpin')}
+                    </Button>
+                  )}
+                />
+              )
+            })}
+        </List.Section>
+        <List.Section title={t('drive.offline.filesSection')}>
+          {files
+            .slice()
+            .sort((a, b) => b.pinnedAt - a.pinnedAt)
+            .map(f => {
+              const isSuspect =
+                f.state === 'downloaded' &&
+                f.localBytes !== undefined &&
+                f.size > 0 &&
+                f.localBytes < f.size * 0.5
+              const description = isSuspect
+                ? `${formatFileSize(f.size)} (local: ${formatFileSize(f.localBytes)}) ⚠️`
+                : formatFileSize(f.size)
+              return (
+                <List.Item
+                  key={f.fileId}
+                  title={f.name || f.fileId}
+                  description={description}
+                  right={() => (
+                    <Button mode="text" onPress={() => void OfflineFilesStore.unpin(f.fileId)}>
+                      {t('drive.offline.unpin')}
+                    </Button>
+                  )}
+                />
+              )
+            })}
+        </List.Section>
       </ScrollView>
     </ScreenContainer>
   )

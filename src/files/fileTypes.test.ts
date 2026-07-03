@@ -64,9 +64,9 @@ describe('isOfficeFile', () => {
     expect(
       isOfficeFile('application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     ).toBe(true)
-    expect(
-      isOfficeFile('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    ).toBe(true)
+    expect(isOfficeFile('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')).toBe(
+      true
+    )
     expect(
       isOfficeFile('application/vnd.openxmlformats-officedocument.presentationml.presentation')
     ).toBe(true)

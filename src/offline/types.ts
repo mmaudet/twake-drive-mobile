@@ -1,9 +1,4 @@
-export type OfflineFileState =
-  | 'pending'
-  | 'downloading'
-  | 'downloaded'
-  | 'failed'
-  | 'paused-auth'
+export type OfflineFileState = 'pending' | 'downloading' | 'downloaded' | 'failed' | 'paused-auth'
 
 export interface OfflineFileEntry {
   fileId: string

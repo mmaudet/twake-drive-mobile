@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { List, useTheme } from 'react-native-paper'
 
+import { CozyIcon } from '@/ui/icons/CozyIcon'
 import { FileTypeIcon } from '@/ui/icons/FileTypeIcon'
 
 export interface FolderPickerRowItem {
@@ -29,7 +30,12 @@ export const FolderPickerRow = ({ item, disabled, onPress }: Props) => {
         </View>
       )}
       right={props =>
-        isFolder && !disabled ? <List.Icon {...props} icon="chevron-right" /> : null
+        isFolder && !disabled ? (
+          <List.Icon
+            {...props}
+            icon={p => <CozyIcon name="chevronRight" size={p?.size ?? 24} color={p?.color} />}
+          />
+        ) : null
       }
       onPress={disabled ? undefined : () => onPress(item)}
       style={styles.row}

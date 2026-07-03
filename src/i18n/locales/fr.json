@@ -6,7 +6,8 @@
     "logout": "Se déconnecter",
     "cancel": "Annuler",
     "confirm": "Confirmer",
-    "back": "Retour"
+    "back": "Retour",
+    "help": "Aide"
   },
   "settings": {
     "title": "Paramètres"
@@ -24,6 +25,10 @@
   },
   "drive": {
     "myFiles": "Mes fichiers",
+    "myDrive": "Mon Drive",
+    "favorites": "Favoris",
+    "shares": "Partages",
+    "emptyFavorites": "Aucun favori",
     "shared": "Partagés avec moi",
     "sharedDrives": "Drives",
     "recent": "Récents",
@@ -32,7 +37,12 @@
     "emptyShared": "Aucun fichier partagé avec vous",
     "emptySharedDrives": "Aucun drive partagé",
     "emptyRecent": "Aucun fichier récent",
+    "search": "Rechercher",
+    "searchHint": "Rechercher un fichier",
+    "searchEmpty": "Aucun résultat",
     "emptyTrash": "Corbeille vide",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
     "fileMeta": {
       "type": "Type",
       "size": "Taille",
@@ -45,7 +55,10 @@
       "rename": "Renommer",
       "delete": "Supprimer",
       "info": "Détails",
-      "move": "Déplacer…"
+      "move": "Déplacer…",
+      "favorite": "Ajouter aux favoris",
+      "unfavorite": "Retirer des favoris",
+      "download": "Télécharger"
     },
     "delete": {
       "confirmFileTitle": "Supprimer le fichier ?",
@@ -128,7 +141,16 @@
       "docs": "Nouveau document Docs",
       "text": "Document Word",
       "sheet": "Tableur",
-      "slide": "Présentation"
+      "slide": "Présentation",
+      "excalidraw": "Excalidraw",
+      "shortcut": "Raccourci"
+    },
+    "createShortcut": {
+      "title": "Nouveau raccourci",
+      "nameLabel": "Nom",
+      "urlLabel": "Adresse web",
+      "submit": "Créer",
+      "errorGeneric": "Impossible de créer le raccourci."
     },
     "createOffice": {
       "title": "Nom du document",

@@ -17,11 +17,7 @@ const sharing = (overrides: Partial<SharingDoc['attributes']>, id = 's1'): Shari
   }
 })
 
-const link = (
-  values: string[],
-  id = 'p1',
-  key = 'rule0'
-): PublicLinkPermission => ({
+const link = (values: string[], id = 'p1', key = 'rule0'): PublicLinkPermission => ({
   _id: id,
   attributes: {
     permissions: { [key]: { type: 'io.cozy.files', values } }
@@ -65,10 +61,7 @@ describe('buildByIdMap', () => {
     const s: SharingDoc = {
       _id: 's-flat',
       rules: [{ doctype: 'io.cozy.files', values: ['file-flat'] }],
-      members: [
-        { status: 'owner' },
-        { status: 'ready', email: 'flat@x' }
-      ],
+      members: [{ status: 'owner' }, { status: 'ready', email: 'flat@x' }],
       owner: false
     }
     const entry = buildByIdMap([s], []).get('file-flat')!
@@ -88,10 +81,7 @@ describe('buildByIdMap', () => {
     const s = sharing({
       rules: [{ doctype: 'io.cozy.files', values: ['file-d'] }],
       owner: true,
-      members: [
-        { status: 'owner' },
-        { status: 'ready', email: 'r@x' }
-      ]
+      members: [{ status: 'owner' }, { status: 'ready', email: 'r@x' }]
     })
     const p = link(['file-d'])
     const entry = buildByIdMap([s], [p]).get('file-d')!
@@ -132,9 +122,7 @@ describe('entryToStatus', () => {
   })
 
   it('returns null for an entry that has neither a sharing nor a link', () => {
-    expect(
-      entryToStatus({ isOwner: false, hasLink: false, recipients: [] })
-    ).toBeNull()
+    expect(entryToStatus({ isOwner: false, hasLink: false, recipients: [] })).toBeNull()
   })
 
   it('projects a sharing-only entry into a status object', () => {

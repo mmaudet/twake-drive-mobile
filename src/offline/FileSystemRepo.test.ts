@@ -19,7 +19,9 @@ describe('FileSystemRepo', () => {
   it('init creates the offline directory if missing', async () => {
     ;(FS.getInfoAsync as jest.Mock).mockResolvedValueOnce({ exists: false })
     await FileSystemRepo.init()
-    expect(FS.makeDirectoryAsync).toHaveBeenCalledWith('file:///doc/offline/', { intermediates: true })
+    expect(FS.makeDirectoryAsync).toHaveBeenCalledWith('file:///doc/offline/', {
+      intermediates: true
+    })
   })
 
   it('init is idempotent', async () => {

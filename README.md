@@ -7,8 +7,22 @@ React Native (Expo) mobile app for Twake Drive — read-only v1.
 ```bash
 npm install --legacy-peer-deps
 npm run ios     # iOS simulator (requires Xcode)
-npm run android # Android emulator
+npm run android # Android emulator or connected device
 ```
+
+### Android on a physical device
+
+Android builds require **JDK 17** — Gradle 8.14 / the Android Gradle Plugin fail on
+newer JDKs (e.g. JDK 24). Point `JAVA_HOME` at a JDK 17 before building (macOS +
+Homebrew `openjdk@17` shown):
+
+```bash
+export JAVA_HOME="$(brew --prefix openjdk@17)/libexec/openjdk.jdk/Contents/Home"
+npm run android   # builds, installs and launches on the connected device
+```
+
+Tip: to cut the first native build time, restrict the ABIs to your device's
+architecture, e.g. `ORG_GRADLE_PROJECT_reactNativeArchitectures=arm64-v8a npm run android`.
 
 ## Tests
 

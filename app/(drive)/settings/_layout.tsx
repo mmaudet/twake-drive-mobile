@@ -7,10 +7,7 @@ export default function SettingsLayout() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ title: t('settings.title') }} />
-      <Stack.Screen
-        name="offline-storage"
-        options={{ title: t('drive.offline.storageTitle') }}
-      />
+      <Stack.Screen name="offline-storage" options={{ title: t('drive.offline.storageTitle') }} />
     </Stack>
   )
 }

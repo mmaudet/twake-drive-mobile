@@ -31,7 +31,9 @@ describe('fetchSharedDrives', () => {
           type: 'file',
           class: 'shortcut',
           metadata: { target: { _id: 'root-folder-A' } },
-          relationships: { referenced_by: { data: [{ id: 'sharing-A', type: 'io.cozy.sharings' }] } }
+          relationships: {
+            referenced_by: { data: [{ id: 'sharing-A', type: 'io.cozy.sharings' }] }
+          }
         }
       ]
     })
@@ -79,7 +81,11 @@ describe('fetchSharedDrives', () => {
     expect(drives.map(d => d.shortcutId)).toEqual(['b', 'c', 'd'])
     expect(drives[0]).toMatchObject({ driveId: null, rootFolderId: 'root-b' })
     expect(drives[1]).toMatchObject({ driveId: 'sh-c', rootFolderId: null })
-    expect(drives[2]).toMatchObject({ driveId: 'sh-d', rootFolderId: 'root-d', name: 'Engineering' })
+    expect(drives[2]).toMatchObject({
+      driveId: 'sh-d',
+      rootFolderId: 'root-d',
+      name: 'Engineering'
+    })
   })
 
   it('reads metadata.target / relationships from JSON-API attributes when not normalized', async () => {

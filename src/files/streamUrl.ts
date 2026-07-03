@@ -10,10 +10,7 @@ export interface StreamSource {
   headers: Record<string, string>
 }
 
-export const buildFileStreamSource = (
-  client: CozyClient,
-  fileId: string
-): StreamSource => {
+export const buildFileStreamSource = (client: CozyClient, fileId: string): StreamSource => {
   const stackClient = client.getStackClient() as unknown as MinimalStackClient
   const stackUri = stackClient.uri
   const token = stackClient.getAccessToken()
@@ -29,15 +26,11 @@ export type ThumbnailSize = 'tiny' | 'small' | 'medium' | 'large'
 
 export const buildThumbnailUrl = (
   client: CozyClient,
-  links:
-    | { tiny?: string; small?: string; medium?: string; large?: string }
-    | null
-    | undefined,
+  links: { tiny?: string; small?: string; medium?: string; large?: string } | null | undefined,
   preferred: ThumbnailSize = 'medium'
 ): string | null => {
   if (!links) return null
-  const link =
-    links[preferred] ?? links.large ?? links.medium ?? links.small ?? links.tiny ?? null
+  const link = links[preferred] ?? links.large ?? links.medium ?? links.small ?? links.tiny ?? null
   if (!link) return null
   const stackClient = client.getStackClient() as unknown as { uri?: string }
   const stackUri = stackClient.uri
@@ -57,7 +50,9 @@ const TEXT_MIME_ALLOWLIST = new Set([
   'application/typescript'
 ])
 
-export const getPreviewKind = (file: { class?: string; mime?: string } | null | undefined): PreviewKind => {
+export const getPreviewKind = (
+  file: { class?: string; mime?: string } | null | undefined
+): PreviewKind => {
   if (!file) return 'unsupported'
   if (file.class === 'pdf' || file.mime === 'application/pdf') return 'pdf'
   if (file.class === 'image' || file.mime?.startsWith('image/')) return 'image'

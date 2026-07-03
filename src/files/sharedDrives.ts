@@ -131,7 +131,10 @@ export const resolveSharedDriveTarget = async (
   const target = readMetadataTarget(data)
   const driveId = readRelationships(data)?.referenced_by?.data?.[0]?.id ?? null
   const rootFolderId = target?._id ?? target?.id ?? null
-  const url = (data.url ?? data.attributes?.['url' as keyof typeof data.attributes]) as string | null | undefined
+  const url = (data.url ?? data.attributes?.['url' as keyof typeof data.attributes]) as
+    | string
+    | null
+    | undefined
   return { driveId, rootFolderId, url: url ?? null }
 }
 

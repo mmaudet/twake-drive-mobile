@@ -2,11 +2,15 @@ const mockStore = new Map<string, string>()
 
 jest.mock('react-native-mmkv', () => ({
   createMMKV: () => ({
-    set: (k: string, v: string): void => { mockStore.set(k, v) },
+    set: (k: string, v: string): void => {
+      mockStore.set(k, v)
+    },
     getString: (k: string): string | undefined => mockStore.get(k),
     remove: (k: string): boolean => mockStore.delete(k),
     getAllKeys: (): string[] => Array.from(mockStore.keys()),
-    clearAll: (): void => { mockStore.clear() }
+    clearAll: (): void => {
+      mockStore.clear()
+    }
   })
 }))
 
@@ -85,7 +89,7 @@ describe('OfflineFilesStore', () => {
     OfflineFilesStore.pin('f2', baseMeta) // f2 also direct
     await OfflineFilesStore.unpinFolder('d1')
     expect(OfflineFilesStore.getFolder('d1')).toBeUndefined()
-    expect(OfflineFilesStore.get('f1')).toBeUndefined()  // fully purged
+    expect(OfflineFilesStore.get('f1')).toBeUndefined() // fully purged
     expect(OfflineFilesStore.get('f2')?.parentFolderPins).toEqual([])
     expect(OfflineFilesStore.get('f2')?.isDirectPin).toBe(true)
   })

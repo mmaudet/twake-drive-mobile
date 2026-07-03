@@ -72,41 +72,46 @@ export const useOfflineActions = (): UseOfflineActionsResult => {
     Downloader.enqueue(file._id)
   }, [])
 
-  const doPinFolder = useCallback(async (
-    folder: FileShape,
-    files: FileShape[],
-    subfolders: FileShape[]
-  ): Promise<void> => {
-    if (!client) return
-    OfflineFilesStore.pinFolder(folder._id, {
-      dirId: folder._id,
-      name: folder.name,
-      pinnedAt: Date.now()
-    })
-    for (const f of files) {
-      OfflineFilesStore.pinViaFolder(f._id, folder._id, fileMeta(f))
-      Downloader.enqueue(f._id)
-    }
-    for (const sub of subfolders) {
-      const { files: subFiles, subfolders: subSubs } = await enumerateFolderChildren(client, sub._id)
-      await doPinFolder(sub, subFiles, subSubs)
-    }
-  }, [client])
+  const doPinFolder = useCallback(
+    async (folder: FileShape, files: FileShape[], subfolders: FileShape[]): Promise<void> => {
+      if (!client) return
+      OfflineFilesStore.pinFolder(folder._id, {
+        dirId: folder._id,
+        name: folder.name,
+        pinnedAt: Date.now()
+      })
+      for (const f of files) {
+        OfflineFilesStore.pinViaFolder(f._id, folder._id, fileMeta(f))
+        Downloader.enqueue(f._id)
+      }
+      for (const sub of subfolders) {
+        const { files: subFiles, subfolders: subSubs } = await enumerateFolderChildren(
+          client,
+          sub._id
+        )
+        await doPinFolder(sub, subFiles, subSubs)
+      }
+    },
+    [client]
+  )
 
-  const pinFolder = useCallback(async (folder: FileShape) => {
-    if (!client) return
-    const { files, subfolders } = await enumerateFolderChildren(client, folder._id)
-    const directCount = files.length + subfolders.length
-    const directBytes = files.reduce(
-      (acc, f) => acc + (typeof f.size === 'number' ? f.size : 0),
-      0
-    )
-    if (directCount > LARGE_FOLDER_THRESHOLD) {
-      setPendingConfirmation({ folder, count: directCount, bytes: directBytes })
-      return
-    }
-    await doPinFolder(folder, files, subfolders)
-  }, [client, doPinFolder])
+  const pinFolder = useCallback(
+    async (folder: FileShape) => {
+      if (!client) return
+      const { files, subfolders } = await enumerateFolderChildren(client, folder._id)
+      const directCount = files.length + subfolders.length
+      const directBytes = files.reduce(
+        (acc, f) => acc + (typeof f.size === 'number' ? f.size : 0),
+        0
+      )
+      if (directCount > LARGE_FOLDER_THRESHOLD) {
+        setPendingConfirmation({ folder, count: directCount, bytes: directBytes })
+        return
+      }
+      await doPinFolder(folder, files, subfolders)
+    },
+    [client, doPinFolder]
+  )
 
   const confirmPending = useCallback(async () => {
     if (!pendingConfirmation || !client) return

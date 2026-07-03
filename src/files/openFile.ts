@@ -24,10 +24,7 @@ interface MinimalStackClient {
 const cacheAliasPath = (cacheDir: string, file: OpenableFile): string =>
   `${cacheDir}twake-drive/${file._id}-${sanitizeName(file.name)}`
 
-export const openFileNatively = async (
-  client: CozyClient,
-  file: OpenableFile
-): Promise<void> => {
+export const openFileNatively = async (client: CozyClient, file: OpenableFile): Promise<void> => {
   const cacheDir = FileSystem.cacheDirectory
   if (!cacheDir) throw new Error('Cache directory unavailable')
   const aliasPath = cacheAliasPath(cacheDir, file)

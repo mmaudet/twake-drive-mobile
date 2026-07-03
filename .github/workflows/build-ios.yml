@@ -1,0 +1,79 @@
+name: Build iOS (Simulator)
+
+# Not on every PR — macOS runner minutes cost ~10x. Runs on main pushes,
+# manual dispatch, and release tags. Enable pull_request later if desired.
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-ios:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Restore Pods keyed on Podfile.lock so `pod install` skips re-download
+      # when unchanged. Deeper iOS compile caching (Xcode ccache / DerivedData
+      # reuse) is a fragile follow-up, not done here.
+      - name: Cache CocoaPods
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            ios/Pods
+            ~/Library/Caches/CocoaPods
+          key: pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            pods-
+
+      - name: Install CocoaPods
+        working-directory: ios
+        run: pod install
+
+      # Release config embeds the JS bundle -> standalone .app. Simulator SDK
+      # needs no code signing; the three flags neutralize any pod signing phase.
+      - name: Build for iOS Simulator (unsigned)
+        run: |
+          xcodebuild \
+            -workspace ios/TwakeDrive.xcworkspace \
+            -scheme TwakeDrive \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -derivedDataPath ios/build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Zip the .app
+        run: |
+          APP="ios/build/Build/Products/Release-iphonesimulator/TwakeDrive.app"
+          if [ ! -d "$APP" ]; then echo "::error::$APP not found"; exit 1; fi
+          ditto -c -k --keepParent "$APP" "TwakeDrive-Simulator.app.zip"
+
+      - name: Upload Simulator app artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: twake-drive-ios-simulator-${{ github.run_number }}
+          path: TwakeDrive-Simulator.app.zip
+          if-no-files-found: error
+          retention-days: 14

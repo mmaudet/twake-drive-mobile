@@ -29,8 +29,14 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(docx|xlsx|pptx)$': '<rootDir>/jest/binaryStub.js',
     '^react-native-vector-icons/.*$': '<rootDir>/jest/vectorIconsStub.js',
+    '^react-native-inappbrowser-reborn$': '<rootDir>/jest/inappBrowserStub.js',
+    '^react-native-ios11-devicecheck$': '<rootDir>/jest/emptyNativeStub.js',
+    '^react-native-google-play-integrity$': '<rootDir>/jest/emptyNativeStub.js',
   },
   testPathIgnorePatterns: ['/node_modules/', '/.expo/'],
+  // Cold CI runners pay the heavy cozy-client import chain on a suite's first
+  // test; jest's 5s default times out there (passes locally). 20s absorbs it.
+  testTimeout: 20000,
   // Keep setImmediate real so that flush() helpers in tests work correctly with
   // jest.useFakeTimers().  Node 16 does not fake setImmediate via modern timers
   // by default in some configurations; making it explicit avoids hangs.

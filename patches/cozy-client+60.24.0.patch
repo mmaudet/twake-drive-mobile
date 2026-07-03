@@ -1,0 +1,41 @@
+diff --git a/node_modules/cozy-client/dist/Provider.js b/node_modules/cozy-client/dist/Provider.js
+index a4514bd..0edc1f0 100644
+--- a/node_modules/cozy-client/dist/Provider.js
++++ b/node_modules/cozy-client/dist/Provider.js
+@@ -60,8 +60,8 @@ var CozyProvider = /*#__PURE__*/function (_Component) {
+   }
+ 
+   (0, _createClass2.default)(CozyProvider, [{
+-    key: "getChildContext",
+-    value: function getChildContext() {
++    key: "buildCozyContextValue",
++    value: function buildCozyContextValue() {
+       return {
+         store: this.props.store || this.context.store || this.props.client.store,
+         client: this.props.client
+@@ -71,7 +71,7 @@ var CozyProvider = /*#__PURE__*/function (_Component) {
+     key: "render",
+     value: function render() {
+       return /*#__PURE__*/_react.default.createElement(_context.default.Provider, {
+-        value: this.getChildContext()
++        value: this.buildCozyContextValue()
+       }, this.props.children);
+     }
+   }]);
+@@ -84,10 +84,7 @@ exports.default = CozyProvider;
+   client: _propTypes.default.object.isRequired,
+   children: _propTypes.default.oneOfType([_propTypes.default.element, _propTypes.default.arrayOf(_propTypes.default.element)]).isRequired
+ });
+-(0, _defineProperty2.default)(CozyProvider, "childContextTypes", {
+-  store: _propTypes.default.object,
+-  client: _propTypes.default.object.isRequired
+-});
+-(0, _defineProperty2.default)(CozyProvider, "contextTypes", {
+-  store: _propTypes.default.object
+-});
+\ No newline at end of file
++// [patched: react-19-legacy-context] Removed CozyProvider.childContextTypes and
++// .contextTypes. React 19 removed the legacy context API and errors on their presence.
++// render() already provides { store, client } through the modern Context.Provider, so
++// dropping these static declarations is behavior-neutral and silences the errors.
+\ No newline at end of file

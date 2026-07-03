@@ -2,11 +2,15 @@ const mockStore = new Map<string, string>()
 
 jest.mock('react-native-mmkv', () => ({
   createMMKV: () => ({
-    set: (k: string, v: string): void => { mockStore.set(k, v) },
+    set: (k: string, v: string): void => {
+      mockStore.set(k, v)
+    },
     getString: (k: string): string | undefined => mockStore.get(k),
     remove: (k: string): boolean => mockStore.delete(k),
     getAllKeys: (): string[] => Array.from(mockStore.keys()),
-    clearAll: (): void => { mockStore.clear() }
+    clearAll: (): void => {
+      mockStore.clear()
+    }
   })
 }))
 
@@ -49,7 +53,10 @@ import { Downloader, _resetDownloaderForTests } from './Downloader'
 import { OfflineSettingsAPI } from './offlineSettings'
 
 const meta = { rev: '1', md5sum: 'm', size: 100, name: 'a' }
-const flush = async (): Promise<void> => { await Promise.resolve(); await Promise.resolve() }
+const flush = async (): Promise<void> => {
+  await Promise.resolve()
+  await Promise.resolve()
+}
 
 describe('Downloader', () => {
   beforeEach(() => {
@@ -80,10 +87,17 @@ describe('Downloader', () => {
     mockDownloadAsync.mockRejectedValue(new Error('network'))
     OfflineFilesStore.pin('f1', meta)
     Downloader.enqueue('f1')
-    await flush(); await flush()
-    jest.advanceTimersByTime(2000); await flush(); await flush()
-    jest.advanceTimersByTime(8000); await flush(); await flush()
-    jest.advanceTimersByTime(30000); await flush(); await flush()
+    await flush()
+    await flush()
+    jest.advanceTimersByTime(2000)
+    await flush()
+    await flush()
+    jest.advanceTimersByTime(8000)
+    await flush()
+    await flush()
+    jest.advanceTimersByTime(30000)
+    await flush()
+    await flush()
     expect(mockDownloadAsync).toHaveBeenCalledTimes(4) // 1 initial + 3 retries
     expect(OfflineFilesStore.get('f1')?.state).toBe('failed')
     jest.useRealTimers()
@@ -92,7 +106,10 @@ describe('Downloader', () => {
   it('respects max-4 concurrency', async () => {
     let resolveOne: (() => void) | undefined
     mockDownloadAsync.mockImplementation(
-      () => new Promise(resolve => { resolveOne = () => resolve({ status: 200, uri: '' }) })
+      () =>
+        new Promise(resolve => {
+          resolveOne = () => resolve({ status: 200, uri: '' })
+        })
     )
     for (const id of ['a', 'b', 'c', 'd', 'e']) {
       OfflineFilesStore.pin(id, meta)
@@ -101,12 +118,18 @@ describe('Downloader', () => {
     await flush()
     expect(mockDownloadAsync).toHaveBeenCalledTimes(4)
     resolveOne?.()
-    await flush(); await flush()
+    await flush()
+    await flush()
     expect(mockDownloadAsync).toHaveBeenCalledTimes(5)
   })
 
   it('cancel aborts in-flight and removes from queue', async () => {
-    mockDownloadAsync.mockImplementation(() => new Promise(() => { /* never resolves */ }))
+    mockDownloadAsync.mockImplementation(
+      () =>
+        new Promise(() => {
+          /* never resolves */
+        })
+    )
     OfflineFilesStore.pin('f1', meta)
     Downloader.enqueue('f1')
     await flush()
@@ -116,7 +139,12 @@ describe('Downloader', () => {
   })
 
   it('pauses queue when going offline; resumes when going online', async () => {
-    mockDownloadAsync.mockImplementationOnce(() => new Promise(() => { /* never resolves */ }))
+    mockDownloadAsync.mockImplementationOnce(
+      () =>
+        new Promise(() => {
+          /* never resolves */
+        })
+    )
     OfflineFilesStore.pin('f1', meta)
     Downloader.enqueue('f1')
     await flush()
@@ -128,7 +156,8 @@ describe('Downloader', () => {
     mockOnlineState.online = true
     mockDownloadAsync.mockResolvedValueOnce({ status: 200, uri: 'file:///doc/offline/f1' })
     for (const l of mockOnlineListeners) l(true)
-    await flush(); await flush()
+    await flush()
+    await flush()
     expect(OfflineFilesStore.get('f1')?.state).toBe('downloaded')
   })
 
@@ -146,7 +175,8 @@ describe('Downloader', () => {
     mockDownloadAsync.mockRejectedValueOnce(new Error('ENOSPC: no space left on device'))
     OfflineFilesStore.pin('f1', meta)
     Downloader.enqueue('f1')
-    await flush(); await flush()
+    await flush()
+    await flush()
     expect(OfflineSettingsAPI.status.get().diskFull).toBe(true)
   })
 })
