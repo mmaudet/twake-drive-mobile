@@ -47,3 +47,7 @@ export const APP_SCOPES: readonly string[] = [
  * single string rather than an array.
  */
 export const APP_SCOPE_STRING: string = APP_SCOPES.join(' ')
+
+/** Scope requested during flagship certification: full access so the stack
+ *  grants the `flagship` flag and session_code requests succeed. */
+export const FLAGSHIP_SCOPES: readonly string[] = ['*'] as const

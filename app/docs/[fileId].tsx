@@ -8,7 +8,8 @@ import { ScreenContainer } from '@/ui/ScreenContainer'
 import { ErrorState } from '@/ui/ErrorState'
 import { LoadingState } from '@/ui/LoadingState'
 import { fileByIdQuery, fileByIdQueryAs } from '@/client/queries'
-import { buildCozyAppUrl, getSessionCode } from '@/files/cozyAppLink'
+import { buildCozyAppUrl } from '@/files/cozyAppLink'
+import { useSessionCode } from '@/auth/useSessionCode'
 
 // Mirrors twake-drive web's "docs" file-type routing: open the cozy `docs`
 // web app inside a WebView with a session_code so the docs editor renders
@@ -22,6 +23,7 @@ import { buildCozyAppUrl, getSessionCode } from '@/files/cozyAppLink'
 export default function DocsScreen() {
   const { fileId } = useLocalSearchParams<{ fileId: string }>()
   const client = useClient()
+  const fetchSessionCode = useSessionCode()
   const [editorUrl, setEditorUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [reloadTick, setReloadTick] = useState(0)
@@ -42,7 +44,7 @@ export default function DocsScreen() {
       if (!externalId) return
       try {
         const stackUri = client.getStackClient().uri as string
-        const sessionCode = await getSessionCode(client)
+        const sessionCode = await fetchSessionCode()
         const url = buildCozyAppUrl(stackUri, 'docs', sessionCode, `/bridge/docs/${externalId}`)
         console.log('[DocsScreen] editorUrl', url)
         if (!cancelled) setEditorUrl(url)
@@ -55,7 +57,7 @@ export default function DocsScreen() {
     return () => {
       cancelled = true
     }
-  }, [client, fileId, externalId, reloadTick])
+  }, [client, fileId, externalId, reloadTick, fetchSessionCode])
 
   const missingExternalId = fileLookup.fetchStatus === 'loaded' && !!lookupDoc && !externalId
 

@@ -7,6 +7,7 @@ import { useClient } from 'cozy-client'
 import { ScreenContainer } from '@/ui/ScreenContainer'
 import { ErrorState } from '@/ui/ErrorState'
 import { LoadingState } from '@/ui/LoadingState'
+import { useSessionCode } from '@/auth/useSessionCode'
 
 // TODO(backend): cozy-stack returns 403 Forbidden on `GET /office/{id}/open`
 // for OAuth clients of kind=mobile. The endpoint is currently restricted to the
@@ -30,13 +31,10 @@ const buildDriveOnlyOfficeUrl = (stackUri: string, fileId: string, sessionCode: 
   return `${url.protocol}//${driveHost}/?${params.toString()}#/onlyoffice/${encodeURIComponent(fileId)}`
 }
 
-interface SessionCodeResponse {
-  session_code?: string
-}
-
 export default function OnlyOfficeScreen() {
   const { fileId } = useLocalSearchParams<{ fileId: string }>()
   const client = useClient()
+  const fetchSessionCode = useSessionCode()
   const [editorUrl, setEditorUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [reloadTick, setReloadTick] = useState(0)
@@ -46,18 +44,8 @@ export default function OnlyOfficeScreen() {
     const run = async () => {
       if (!client || !fileId) return
       try {
-        const stackClient = client.getStackClient()
-        const stackUri = stackClient.uri as string
-        let sessionCode: string | undefined
-        const fetchSessionCode = (
-          stackClient as unknown as { fetchSessionCode?: () => Promise<SessionCodeResponse> }
-        ).fetchSessionCode
-        if (typeof fetchSessionCode === 'function') {
-          const resp = await fetchSessionCode.call(stackClient)
-          sessionCode = resp?.session_code
-        }
-        if (!sessionCode) throw new Error('Could not obtain session code from cozy stack')
-
+        const stackUri = client.getStackClient().uri as string
+        const sessionCode = await fetchSessionCode()
         const url = buildDriveOnlyOfficeUrl(stackUri, fileId, sessionCode)
         console.log('[OnlyOfficeScreen] editorUrl', url)
         if (!cancelled) setEditorUrl(url)
@@ -70,7 +58,7 @@ export default function OnlyOfficeScreen() {
     return () => {
       cancelled = true
     }
-  }, [client, fileId, reloadTick])
+  }, [client, fileId, reloadTick, fetchSessionCode])
 
   return (
     <ScreenContainer>

@@ -30,7 +30,8 @@ import { createFolder } from '@/files/createFolder'
 import { createCozyNote } from '@/files/createCozyNote'
 import { createOfficeFile, OfficeFileClass } from '@/files/createOfficeFile'
 import { createShortcut } from '@/files/createShortcut'
-import { buildCozyAppUrl, getSessionCode } from '@/files/cozyAppLink'
+import { buildCozyAppUrl } from '@/files/cozyAppLink'
+import { useSessionCode } from '@/auth/useSessionCode'
 import { softDeleteEntry } from '@/files/deleteFile'
 import { renameEntry } from '@/files/renameEntry'
 import { openFileFromList } from '@/files/openFromList'
@@ -55,6 +56,7 @@ export default function FilesScreen() {
   const router = useRouter()
   const { t } = useTranslation()
   const { logout } = useAuth()
+  const fetchSessionCode = useSessionCode()
   const params = useLocalSearchParams<{ path?: string | string[] }>()
   const rawPath = params.path
   const path: string[] | undefined =
@@ -178,7 +180,7 @@ export default function FilesScreen() {
     if (!requireOnline(isOnline, setSnackbar, t)) return
     if (!client) return
     try {
-      const sessionCode = await getSessionCode(client)
+      const sessionCode = await fetchSessionCode()
       const stackUri = (client.getStackClient() as unknown as { uri: string }).uri
       // Open the Cozy excalidraw web app; it handles file creation and
       // saves into dirId via its own UI. Pragmatic approach: no server-side

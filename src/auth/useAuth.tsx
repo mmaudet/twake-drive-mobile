@@ -6,6 +6,7 @@ import { clearSession, getSession, saveSession } from './tokenStorage'
 import { startOidcFlow } from './oidcFlow'
 import { registerSession } from './registerSession'
 import { getLoginUri } from './autodiscovery'
+import { certifyFlagship as certifyFlagshipModule } from './certifyFlagship'
 
 interface AuthState {
   status: 'loading' | 'authenticated' | 'unauthenticated'
@@ -15,6 +16,7 @@ interface AuthState {
 interface AuthContextValue extends AuthState {
   login: (email: string) => Promise<void>
   logout: () => Promise<void>
+  certifyFlagship: () => Promise<CozyClient>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -48,7 +50,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const callback = await startOidcFlow(loginUri)
     console.log('[useAuth] oidc callback', JSON.stringify(callback))
-    const session = await registerSession(callback)
+    // Pass existing oauthOptions so registerSession reuses the stored client_id
+    // instead of calling register() (which would create a new client_id and
+    // lose any flagship certification on the previous one).
+    const existing = (await getSession())?.oauthOptions
+    const session = await registerSession(callback, existing)
     console.log('[useAuth] session built for', session.uri)
     await saveSession(session)
     console.log('[useAuth] session saved, transitioning to authenticated')
@@ -70,9 +76,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setState({ status: 'unauthenticated', client: null })
   }, [])
 
+  const certifyFlagship = useCallback(async (): Promise<CozyClient> => {
+    const session = await getSession()
+    if (!session) throw new Error('certifyFlagship: no session stored')
+    const newSession = await certifyFlagshipModule(session)
+    await saveSession(newSession)
+    const client = await createClient(newSession)
+    setState({ status: 'authenticated', client })
+    return client
+  }, [])
+
   const value = useMemo<AuthContextValue>(
-    () => ({ ...state, login, logout }),
-    [state, login, logout]
+    () => ({ ...state, login, logout, certifyFlagship }),
+    [state, login, logout, certifyFlagship]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

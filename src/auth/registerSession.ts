@@ -1,27 +1,8 @@
-import * as WebBrowser from 'expo-web-browser'
-import * as Crypto from 'expo-crypto'
 import CozyClient from 'cozy-client'
 
 import { APP_SCOPES, APP_SCOPE_STRING } from './scopes'
-import { OidcCallback, Session, OAuthOptions, OAuthToken, UserCancelledError } from './types'
-
-const base64UrlEncode = (bytes: Uint8Array): string => {
-  let binary = ''
-  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i])
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
-}
-
-const generatePkce = async (): Promise<{ codeVerifier: string; codeChallenge: string }> => {
-  const verifierBytes = Crypto.getRandomBytes(32)
-  const codeVerifier = base64UrlEncode(verifierBytes)
-  const challengeB64 = await Crypto.digestStringAsync(
-    Crypto.CryptoDigestAlgorithm.SHA256,
-    codeVerifier,
-    { encoding: Crypto.CryptoEncoding.BASE64 }
-  )
-  const codeChallenge = challengeB64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
-  return { codeVerifier, codeChallenge }
-}
+import { OidcCallback, Session, OAuthOptions, OAuthToken } from './types'
+import { generatePkce, openAuthorizeUrl } from './pkce'
 
 interface OidcResponse {
   session_code?: string
@@ -42,34 +23,20 @@ const buildOauthOptions = (): Omit<OAuthOptions, 'clientID' | 'clientSecret'> =>
   scopes: [...APP_SCOPES]
 })
 
-const normalizeRedirectUrl = (raw: string): string => {
-  let url = raw
-  if (url.startsWith('cozy:?')) url = url.replace('cozy:?', 'cozy://?')
-  url = url.replace(/%23$/i, '').replace(/#$/, '')
-  return url
-}
-
-const openAuthorizeUrl = async (url: string): Promise<string> => {
-  console.log('[registerSession] opening authorize URL', url)
-  const result = await WebBrowser.openAuthSessionAsync(url, REDIRECT_URL, {
-    showInRecents: false
-  })
-  console.log('[registerSession] authorize result', JSON.stringify(result))
-  if (result.type === 'success' && result.url) {
-    const cleaned = normalizeRedirectUrl(result.url)
-    if (cleaned !== result.url) console.log('[registerSession] cleaned URL', cleaned)
-    return cleaned
-  }
-  throw new UserCancelledError()
-}
-
-export const registerSession = async (callback: OidcCallback): Promise<Session> => {
+export const registerSession = async (
+  callback: OidcCallback,
+  existing?: OAuthOptions
+): Promise<Session> => {
   const uri = `https://${callback.fqdn}`
-  console.log('[registerSession] init client', uri)
+  console.log(
+    '[registerSession] init client',
+    uri,
+    existing?.clientID ? '(reuse client)' : '(new client)'
+  )
 
   const client = new CozyClient({
     uri,
-    oauth: buildOauthOptions(),
+    oauth: existing ?? buildOauthOptions(),
     // `scope` is absent from cozy-client's ClientOptions type but accepted at
     // runtime to request specific OAuth doctype scopes (see @/auth/scopes).
     scope: [...APP_SCOPES],
@@ -77,16 +44,24 @@ export const registerSession = async (callback: OidcCallback): Promise<Session> 
   } as ConstructorParameters<typeof CozyClient>[0] & { scope: string[] })
 
   const stackClient = client.getStackClient()
-  try {
-    stackClient.setUri(uri)
-    await stackClient.register(uri)
-  } catch (e) {
-    console.error('[registerSession] register failed', (e as Error).message, e)
-    throw e
+  stackClient.setUri(uri)
+
+  if (existing?.clientID) {
+    // Reuse stored registration — skip register() which throws if already registered
+    // and would create a new client_id (dropping any flagship flag on the old one).
+    stackClient.setOAuthOptions(existing)
+    console.log('[registerSession] reusing existing client', existing.clientID)
+  } else {
+    try {
+      await stackClient.register(uri)
+    } catch (e) {
+      console.error('[registerSession] register failed', (e as Error).message, e)
+      throw e
+    }
   }
 
   const oauthOptions = stackClient.oauthOptions as OAuthOptions
-  console.log('[registerSession] oauth client registered', oauthOptions.clientID)
+  console.log('[registerSession] oauth client ready', oauthOptions.clientID)
 
   let oidcResponse: OidcResponse
   try {
