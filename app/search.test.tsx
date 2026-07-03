@@ -7,15 +7,20 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, back: mockBack })
 }))
 
-const mockUseQuery = jest.fn()
 jest.mock('cozy-client', () => ({
-  useClient: () => ({}),
-  useQuery: (...args: unknown[]) => mockUseQuery(...args)
+  useClient: () => ({})
 }))
 
-// Isolate the screen from the debounce timing (tested in Task 2).
+// Isolate the screen from the debounce timing (tested separately).
 jest.mock('@/search/useDebouncedValue', () => ({
   useDebouncedValue: (v: string) => v
+}))
+
+// The server-side search hook is stubbed so this test targets the screen's
+// state → UI mapping, not the network.
+const mockUseFileSearch = jest.fn()
+jest.mock('@/search/useFileSearch', () => ({
+  useFileSearch: (...args: unknown[]) => mockUseFileSearch(...args)
 }))
 
 const mockOpen = jest.fn().mockResolvedValue(undefined)
@@ -27,12 +32,13 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (k: string) => k })
 }))
 
-// Query internals are covered in Task 3 — stub them so this test never touches
-// the real cozy-client Q() builder (which would be undefined under the mock above).
-jest.mock('@/client/queries', () => ({
-  searchFilesQuery: (term: string) => ({ term }),
-  searchFilesQueryAs: (term: string) => `as:${term}`
+jest.mock('react-native-safe-area-context', () => ({
+  useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 })
 }))
+
+// Screen only pulls the FileQueryResult TYPE from here — stub to avoid loading
+// the real query module (which reaches for the cozy-client Q() builder).
+jest.mock('@/client/queries', () => ({}))
 
 // Render rows as minimal pressable text so assertions target the screen's logic.
 jest.mock('@/ui/FileRow', () => {
@@ -57,12 +63,12 @@ jest.mock('@/ui/FolderRow', () => {
 
 import SearchScreen from './search'
 
-const setQuery = (over: Record<string, unknown> = {}): void => {
-  mockUseQuery.mockReturnValue({
+const setSearch = (over: Record<string, unknown> = {}): void => {
+  mockUseFileSearch.mockReturnValue({
+    status: 'idle',
     data: [],
-    fetchStatus: 'idle',
-    lastError: null,
-    fetch: jest.fn(),
+    error: null,
+    reload: jest.fn(),
     ...over
   })
 }
@@ -70,25 +76,32 @@ const setQuery = (over: Record<string, unknown> = {}): void => {
 describe('SearchScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    setQuery()
+    setSearch()
   })
 
   it("affiche l'invite tant que < 2 caractères", () => {
     render(<SearchScreen />)
     expect(screen.getByText('drive.search.hint')).toBeTruthy()
-    // requête désactivée
-    expect(mockUseQuery.mock.calls[0][1]).toMatchObject({ enabled: false })
+    // recherche désactivée : 2e argument (enabled) = false
+    expect(mockUseFileSearch.mock.calls[0][1]).toBe(false)
   })
 
-  it('active la requête et affiche les résultats à partir de 2 caractères', () => {
-    setQuery({ data: [{ _id: 'f1', name: 'report.pdf', type: 'file', size: 10 }] })
+  it('active la recherche et affiche les résultats à partir de 2 caractères', () => {
+    setSearch({
+      status: 'success',
+      data: [{ _id: 'f1', name: 'report.pdf', type: 'file', size: 10 }]
+    })
     render(<SearchScreen />)
     fireEvent.changeText(screen.getByPlaceholderText('drive.search.placeholder'), 're')
     expect(screen.getByText('report.pdf')).toBeTruthy()
+    expect(mockUseFileSearch.mock.calls.at(-1)?.[1]).toBe(true)
   })
 
   it('ouvre un fichier au tap', () => {
-    setQuery({ data: [{ _id: 'f1', name: 'report.pdf', type: 'file', size: 10 }] })
+    setSearch({
+      status: 'success',
+      data: [{ _id: 'f1', name: 'report.pdf', type: 'file', size: 10 }]
+    })
     render(<SearchScreen />)
     fireEvent.changeText(screen.getByPlaceholderText('drive.search.placeholder'), 're')
     fireEvent.press(screen.getByText('report.pdf'))
@@ -96,32 +109,29 @@ describe('SearchScreen', () => {
   })
 
   it('navigue dans un dossier au tap', () => {
-    setQuery({ data: [{ _id: 'd1', name: 'Docs', type: 'directory' }] })
+    setSearch({ status: 'success', data: [{ _id: 'd1', name: 'Docs', type: 'directory' }] })
     render(<SearchScreen />)
     fireEvent.changeText(screen.getByPlaceholderText('drive.search.placeholder'), 'do')
     fireEvent.press(screen.getByText('Docs'))
     expect(mockPush).toHaveBeenCalledWith('/(drive)/files/d1')
   })
 
-  // cozy-client returns fetchStatus 'pending' (NOT 'loading') on the first render
-  // of a brand-new query key — the fetch fires in a useEffect, after paint. The
-  // empty state must NOT flash before results/spinner.
-  it("n'affiche PAS l'état vide tant que la requête est 'pending'", () => {
-    setQuery({ data: [], fetchStatus: 'pending' })
-    render(<SearchScreen />)
-    fireEvent.changeText(screen.getByPlaceholderText('drive.search.placeholder'), 're')
-    expect(screen.queryByText('drive.search.empty')).toBeNull()
-  })
-
   it("n'affiche PAS l'état vide pendant 'loading'", () => {
-    setQuery({ data: [], fetchStatus: 'loading' })
+    setSearch({ status: 'loading', data: [] })
     render(<SearchScreen />)
     fireEvent.changeText(screen.getByPlaceholderText('drive.search.placeholder'), 're')
     expect(screen.queryByText('drive.search.empty')).toBeNull()
   })
 
-  it("affiche l'état vide seulement quand la requête a abouti sans résultat", () => {
-    setQuery({ data: [], fetchStatus: 'success' })
+  it("n'affiche pas l'état vide en cas d'erreur", () => {
+    setSearch({ status: 'error', error: new Error('boom') })
+    render(<SearchScreen />)
+    fireEvent.changeText(screen.getByPlaceholderText('drive.search.placeholder'), 're')
+    expect(screen.queryByText('drive.search.empty')).toBeNull()
+  })
+
+  it("affiche l'état vide seulement quand la recherche a abouti sans résultat", () => {
+    setSearch({ status: 'success', data: [] })
     render(<SearchScreen />)
     fireEvent.changeText(screen.getByPlaceholderText('drive.search.placeholder'), 're')
     expect(screen.getByText('drive.search.empty')).toBeTruthy()

@@ -1,5 +1,4 @@
 import { Q, QueryDefinition } from 'cozy-client'
-import { buildSearchPattern } from '@/search/buildSearchPattern'
 
 export const ROOT_DIR_ID = 'io.cozy.files.root-dir'
 export const TRASH_DIR_ID = 'io.cozy.files.trash-dir'
@@ -145,23 +144,7 @@ export interface ContactQueryResult {
   cozy?: { url: string; primary?: boolean }[]
 }
 
-// Global filename search. Mirrors buildDriveQuery but scans by name across the
-// whole (locally-replicated) io.cozy.files doctype. Served from PouchDB by
-// PouchLink → global + offline. $regex is an in-memory scan (see spec §7), so
-// keep it debounced + limited on the caller side.
-export const searchFilesQuery = (term: string): QueryDefinition =>
-  Q('io.cozy.files')
-    // No sortBy / indexFields on purpose. A `$regex` match cannot use an index, and
-    // pouchdb-find ERRORS ("Cannot sort on field(s) 'name' when using the default
-    // index") when asked to sort by a field the selector doesn't constrain in an
-    // index-usable way. On device that error is swallowed and the query hangs forever
-    // (perpetual spinner). So: filter in-memory (bounded by limitBy) and sort by name
-    // in JS in the screen. Hidden root dirs are excluded via the selector.
-    .where({
-      name: { $regex: buildSearchPattern(term) },
-      trashed: { $ne: true },
-      _id: { $nin: HIDDEN_ROOT_DIR_IDS }
-    })
-    .limitBy(50)
-
-export const searchFilesQueryAs = (term: string): string => `io.cozy.files/search/${term}`
+// Filename search is server-side now (src/search/useFileSearch.ts →
+// cozy-stack `_find`), not a local PouchDB query: scanning the multi-hundred-MB
+// offline replica with a $regex OOM-kills the app. HIDDEN_ROOT_DIR_IDS is still
+// used there to drop the virtual root dirs from results.

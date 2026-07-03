@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { FlatList } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Searchbar } from 'react-native-paper'
 import { useRouter } from 'expo-router'
-import { useClient, useQuery } from 'cozy-client'
+import { useClient } from 'cozy-client'
 import { useTranslation } from 'react-i18next'
 
 import { ScreenContainer } from '@/ui/ScreenContainer'
@@ -14,7 +15,8 @@ import { FolderRow } from '@/ui/FolderRow'
 import { getErrorMessageKey } from '@/utils/errorMessages'
 import { openFileFromList } from '@/files/openFromList'
 import { useDebouncedValue } from '@/search/useDebouncedValue'
-import { searchFilesQuery, searchFilesQueryAs, FileQueryResult } from '@/client/queries'
+import { useFileSearch } from '@/search/useFileSearch'
+import { FileQueryResult } from '@/client/queries'
 
 const MIN_CHARS = 2
 const DEBOUNCE_MS = 300
@@ -23,19 +25,18 @@ export default function SearchScreen() {
   const router = useRouter()
   const client = useClient()
   const { t } = useTranslation()
+  // Top-level route with no navigation header — pad the top safe-area so the
+  // Searchbar doesn't render under the status bar.
+  const insets = useSafeAreaInsets()
   const [term, setTerm] = useState('')
   const debounced = useDebouncedValue(term.trim(), DEBOUNCE_MS)
   const enabled = debounced.length >= MIN_CHARS
 
-  const query = useQuery(searchFilesQuery(debounced), {
-    as: searchFilesQueryAs(debounced),
-    enabled
-  })
-  // searchFilesQuery does not sort at the DB level (a $regex query can't use an
-  // index for sorting — pouchdb-find errors and the query hangs). Sort by name here.
-  const data = ((query.data as FileQueryResult[] | null | undefined) ?? [])
-    .slice()
-    .sort((a, b) => a.name.localeCompare(b.name))
+  // Search runs server-side (cozy-stack _find), not against the local PouchDB: the
+  // offline io.cozy.files replica can be hundreds of MB and a $regex "contains" scan
+  // OOM-kills the app on device. See src/search/useFileSearch.ts.
+  const search = useFileSearch(debounced, enabled)
+  const data = search.data
 
   const renderItem = ({ item }: { item: FileQueryResult }) => {
     if (item.type === 'directory') {
@@ -55,7 +56,7 @@ export default function SearchScreen() {
   }
 
   return (
-    <ScreenContainer>
+    <ScreenContainer style={{ paddingTop: insets.top }}>
       <Searchbar
         placeholder={t('drive.search.placeholder')}
         value={term}
@@ -66,14 +67,10 @@ export default function SearchScreen() {
       />
       {!enabled ? (
         <EmptyState message={t('drive.search.hint')} />
-      ) : (query.fetchStatus === 'loading' || query.fetchStatus === 'pending') &&
-        data.length === 0 ? (
+      ) : search.status === 'loading' && data.length === 0 ? (
         <LoadingState />
-      ) : query.fetchStatus === 'failed' ? (
-        <ErrorState
-          message={t(getErrorMessageKey(query.lastError))}
-          onRetry={() => void query.fetch()}
-        />
+      ) : search.status === 'error' ? (
+        <ErrorState message={t(getErrorMessageKey(search.error))} onRetry={search.reload} />
       ) : data.length === 0 ? (
         <EmptyState message={t('drive.search.empty')} />
       ) : (

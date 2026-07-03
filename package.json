@@ -11,8 +11,7 @@
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
-    "postinstall": "patch-package",
-    "test:integration": "node scripts/search-integration.cjs"
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@craftzdog/pouchdb-collate-react-native": "^7.3.0",
