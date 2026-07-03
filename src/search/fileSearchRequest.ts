@@ -1,32 +1,28 @@
-import { buildSearchPattern } from '@/search/buildSearchPattern'
+/**
+ * Paginated page-fetch request builder for the cozy-stack Mango `_find` on `io.cozy.files`.
+ *
+ * Strategy: instead of a `$regex` contains query (which forces a full collection scan and
+ * times out on large drives), we fetch pages sorted by `name` using the indexed sentinel
+ * `name: { $gt: null }`.  Each page is fast (index-backed), bounded in memory, and the
+ * client filters "contains" per page with `.includes()`.  See `useFileSearch.ts`.
+ *
+ * The `name: { $gt: null }` selector is the same sentinel used by `buildDriveQuery` in
+ * queries.ts — it tells cozy-stack to apply the `name` index, avoiding a full scan.
+ */
+export const FILE_SEARCH_PAGE_SIZE = 1000
 
-// Max results requested from the stack per search.
-export const FILE_SEARCH_LIMIT = 50
-
-export interface FileSearchFindRequest {
-  selector: {
-    name: { $regex: string }
-    trashed: boolean
-  }
+export interface FilePageFindRequest {
+  selector: { name: { $gt: null } }
+  fields: string[]
+  sort: Array<Record<string, 'asc'>>
   limit: number
+  bookmark?: string
 }
 
-/**
- * Build the body for the cozy-stack Mango `_find` on `io.cozy.files`.
- *
- * Search runs SERVER-SIDE, not against the local PouchDB: the offline replica of
- * `io.cozy.files` can be hundreds of MB, and a `$regex` "contains" match has no
- * index-usable condition — running it locally forces pouchdb-find to load the whole
- * collection into memory, and the OS OOM-kills the app. The stack evaluates the same
- * `$regex` against its own store and returns only the matches.
- *
- * `$regex` is a serialization-safe STRING with case-insensitivity encoded per ASCII
- * letter as `[aA]` (see `buildSearchPattern`) — sent as JSON to the stack.
- */
-export const buildFileSearchFindRequest = (term: string): FileSearchFindRequest => ({
-  selector: {
-    name: { $regex: buildSearchPattern(term) },
-    trashed: false
-  },
-  limit: FILE_SEARCH_LIMIT
+export const buildFilePageFindRequest = (bookmark?: string): FilePageFindRequest => ({
+  selector: { name: { $gt: null } },
+  fields: ['_id', 'name', 'type', 'dir_id', 'size', 'mime', 'updated_at', 'trashed'],
+  sort: [{ name: 'asc' }],
+  limit: FILE_SEARCH_PAGE_SIZE,
+  ...(bookmark ? { bookmark } : {})
 })
