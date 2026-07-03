@@ -10,10 +10,11 @@
  * Node none of that applies, so the real pouchdb-find engine runs unmodified.
  *
  * What is real here: the actual pouchdb-find `db.find()` pipeline (index scan +
- * in-memory `$regex` match via `new RegExp`, `$ne`/`$nin` filters, sort, limit) over
- * real documents. The selector matches exactly what `searchFilesQuery` builds
- * (asserted in src/client/searchFilesQuery.test.ts) and the regex matches what
- * `buildSearchRegex` builds (asserted in src/search/buildSearchRegex.test.ts).
+ * in-memory `$regex` match, `$ne`/`$nin` filters, sort, limit) over real documents —
+ * with the selector JSON-round-tripped first to mirror cozy-client's store
+ * serialization (the layer that broke the original RegExp-object version on device).
+ * The selector matches what `searchFilesQuery` builds (src/client/searchFilesQuery.test.ts)
+ * and the pattern matches what `buildSearchPattern` builds (src/search/buildSearchPattern.test.ts).
  *
  * Run: `node scripts/search-integration.cjs`  (also: `npm run test:integration`)
  */
@@ -26,16 +27,17 @@ const PouchDB = require('pouchdb-core')
   .plugin(require('pouchdb-mapreduce'))
   .plugin(require('pouchdb-find'))
 
-// Mirrors src/search/buildSearchRegex.ts (unit-tested there): escape every regex
-// metacharacter, case-insensitive. Returns a RegExp so pouchdb's `new RegExp(userValue)`
-// preserves the `i` flag.
-const buildSearchRegex = term =>
-  new RegExp(term.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
+// Mirrors src/search/buildSearchPattern.ts (unit-tested there): escape every regex
+// metacharacter, then encode case-insensitivity per ASCII letter as [aA]. Returns a
+// STRING (not a RegExp) so it survives cozy-client's store serialization (see below).
+const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const buildSearchPattern = term =>
+  escapeRegExp(term.trim()).replace(/[a-zA-Z]/g, c => `[${c.toLowerCase()}${c.toUpperCase()}]`)
 
 // Selector exactly as searchFilesQuery builds it (see src/client/queries.ts):
 const HIDDEN_ROOT_DIR_IDS = ['io.cozy.files.shared-drives-dir', 'io.cozy.files.trash-dir']
 const selectorFor = term => ({
-  name: { $regex: buildSearchRegex(term) },
+  name: { $regex: buildSearchPattern(term) },
   trashed: { $ne: true },
   _id: { $nin: HIDDEN_ROOT_DIR_IDS }
 })
@@ -49,7 +51,11 @@ async function search(docs, term) {
   try {
     await db.bulkDocs(docs)
     await db.createIndex({ index: { fields: ['name'] } })
-    const res = await db.find({ selector: selectorFor(term), sort: SORT, limit: LIMIT })
+    // Round-trip the selector through JSON to mirror cozy-client, which serializes the
+    // query definition into its persisted store. A RegExp object would become {} here
+    // (matching nothing — the on-device bug); the string pattern survives.
+    const selector = JSON.parse(JSON.stringify(selectorFor(term)))
+    const res = await db.find({ selector, sort: SORT, limit: LIMIT })
     return res.docs.map(d => d._id)
   } finally {
     await db.destroy()

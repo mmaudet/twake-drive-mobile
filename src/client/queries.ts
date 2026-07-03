@@ -1,5 +1,5 @@
 import { Q, QueryDefinition } from 'cozy-client'
-import { buildSearchRegex } from '@/search/buildSearchRegex'
+import { buildSearchPattern } from '@/search/buildSearchPattern'
 
 export const ROOT_DIR_ID = 'io.cozy.files.root-dir'
 export const TRASH_DIR_ID = 'io.cozy.files.trash-dir'
@@ -151,7 +151,7 @@ export interface ContactQueryResult {
 // keep it debounced + limited on the caller side.
 export const searchFilesQuery = (term: string): QueryDefinition =>
   Q('io.cozy.files')
-    .where({ name: { $regex: buildSearchRegex(term) }, trashed: { $ne: true } })
+    .where({ name: { $regex: buildSearchPattern(term) }, trashed: { $ne: true } })
     .partialIndex({ _id: { $nin: HIDDEN_ROOT_DIR_IDS } })
     .indexFields(['name'])
     .sortBy([{ name: 'asc' }])

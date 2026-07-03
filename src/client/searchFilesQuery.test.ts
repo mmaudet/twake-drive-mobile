@@ -46,11 +46,13 @@ describe('searchFilesQuery', () => {
 
   it('construit un $regex insensible à la casse sur name, hors corbeille', () => {
     searchFilesQuery('report')
-    const sel = mockCalls.where as { name: { $regex: RegExp }; trashed: unknown }
+    const sel = mockCalls.where as { name: { $regex: string }; trashed: unknown }
     expect(mockCalls.doctype).toBe('io.cozy.files')
-    expect(sel.name.$regex).toBeInstanceOf(RegExp)
-    expect(sel.name.$regex.flags).toContain('i')
-    expect(sel.name.$regex.test('Q3 REPORT.pdf')).toBe(true)
+    // $regex is a serialization-safe STRING (not a RegExp object — see the
+    // regression test below), case-insensitive via [xX] character classes.
+    expect(typeof sel.name.$regex).toBe('string')
+    expect(new RegExp(sel.name.$regex).test('Q3 REPORT.pdf')).toBe(true)
+    expect(new RegExp(sel.name.$regex).test('q3 report.pdf')).toBe(true)
     expect(sel.trashed).toEqual({ $ne: true })
     expect(mockCalls.partialIndex).toEqual({ _id: { $nin: HIDDEN_ROOT_DIR_IDS } })
     expect(mockCalls.indexFields).toEqual(['name'])
@@ -60,9 +62,21 @@ describe('searchFilesQuery', () => {
 
   it('échappe les métacaractères de la saisie', () => {
     searchFilesQuery('a.b')
-    const sel = mockCalls.where as { name: { $regex: RegExp } }
-    expect(sel.name.$regex.test('axb')).toBe(false)
-    expect(sel.name.$regex.test('a.b')).toBe(true)
+    const sel = mockCalls.where as { name: { $regex: string } }
+    expect(new RegExp(sel.name.$regex).test('axb')).toBe(false)
+    expect(new RegExp(sel.name.$regex).test('a.b')).toBe(true)
+  })
+
+  // Regression: passing a RegExp object made the search return 0 results on device —
+  // cozy-client serializes the query definition into its persisted store, and a
+  // RegExp becomes {} through JSON, reaching pouch as `$regex: {}` (matches nothing).
+  it('produit un $regex sérialisable JSON (survit au store cozy-client)', () => {
+    searchFilesQuery('report')
+    const original = (mockCalls.where as { name: { $regex: string } }).name.$regex
+    const roundTripped = JSON.parse(JSON.stringify(mockCalls.where)) as { name: { $regex: string } }
+    expect(typeof roundTripped.name.$regex).toBe('string')
+    expect(roundTripped.name.$regex).toBe(original)
+    expect(new RegExp(roundTripped.name.$regex).test('Q3 REPORT.pdf')).toBe(true)
   })
 
   it('namespace la clé de cache par terme', () => {
