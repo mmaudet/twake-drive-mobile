@@ -3,7 +3,8 @@
  *
  * Mocking strategy: jest.mock is hoisted by Babel before any variable
  * declarations, so the mock factories must be self-contained (no outer
- * variable closures). We retrieve the mock via `jest.mocked()` after import.
+ * variable closures). We retrieve the mock via a `jest.Mock` cast after import
+ * (the repo's @types/jest predates `jest.mocked()`).
  */
 
 // ── Module mock declarations (hoisted by jest before imports) ─────────────────
@@ -26,7 +27,7 @@ import { FILE_SEARCH_PAGE_SIZE } from './fileSearchRequest'
 
 // ── Test helpers ──────────────────────────────────────────────────────────────
 
-const mockUseClient = jest.mocked(useClient)
+const mockUseClient = useClient as jest.Mock
 
 /** Install a fresh fetchJSON mock and wire it into the hook's client. */
 function setupFetchJSON() {

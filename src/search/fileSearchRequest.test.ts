@@ -7,9 +7,11 @@ describe('buildFilePageFindRequest', () => {
     expect(req.selector).toEqual({ name: { $gt: null } })
   })
 
-  it('sorts ascending by name', () => {
+  it('does not send a sort (cozy-stack rejects sort:[{name:asc}] with no_usable_index)', () => {
     const req = buildFilePageFindRequest()
-    expect(req.sort).toEqual([{ name: 'asc' }])
+    // The instance's `name` index serves the selector but not an explicit sort;
+    // bookmark pagination needs none, and the caller sorts matches client-side.
+    expect(req).not.toHaveProperty('sort')
   })
 
   it('requests the right page size', () => {
