@@ -179,6 +179,12 @@
       "filesSection": "Files",
       "errorsSection": "Errors",
       "retry": "Retry"
+    },
+    "search": {
+      "placeholder": "Search in Drive",
+      "hint": "Type at least 2 characters",
+      "empty": "No file found",
+      "action": "Search"
     }
   },
   "errors": {

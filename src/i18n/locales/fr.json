@@ -179,6 +179,12 @@
       "filesSection": "Fichiers",
       "errorsSection": "Erreurs",
       "retry": "Réessayer"
+    },
+    "search": {
+      "placeholder": "Rechercher dans le Drive",
+      "hint": "Tapez au moins 2 caractères",
+      "empty": "Aucun fichier trouvé",
+      "action": "Rechercher"
     }
   },
   "errors": {

@@ -1,4 +1,5 @@
 import { Q, QueryDefinition } from 'cozy-client'
+import { buildSearchRegex } from '@/search/buildSearchRegex'
 
 export const ROOT_DIR_ID = 'io.cozy.files.root-dir'
 export const TRASH_DIR_ID = 'io.cozy.files.trash-dir'
@@ -143,3 +144,17 @@ export interface ContactQueryResult {
   email?: { address: string; primary?: boolean; type?: string }[]
   cozy?: { url: string; primary?: boolean }[]
 }
+
+// Global filename search. Mirrors buildDriveQuery but scans by name across the
+// whole (locally-replicated) io.cozy.files doctype. Served from PouchDB by
+// PouchLink → global + offline. $regex is an in-memory scan (see spec §7), so
+// keep it debounced + limited on the caller side.
+export const searchFilesQuery = (term: string): QueryDefinition =>
+  Q('io.cozy.files')
+    .where({ name: { $regex: buildSearchRegex(term) }, trashed: { $ne: true } })
+    .partialIndex({ _id: { $nin: HIDDEN_ROOT_DIR_IDS } })
+    .indexFields(['name'])
+    .sortBy([{ name: 'asc' }])
+    .limitBy(50)
+
+export const searchFilesQueryAs = (term: string): string => `io.cozy.files/search/${term}`

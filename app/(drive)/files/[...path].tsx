@@ -349,6 +349,7 @@ export default function FilesScreen() {
       <AppBar
         title={currentDirName}
         onBack={isRoot ? undefined : () => router.back()}
+        onSearch={() => router.push('/search')}
         onLogout={isRoot ? logout : undefined}
         selection={
           selection.isSelecting

@@ -80,6 +80,7 @@ const InnerLayout = () => {
                       name="docs/new/[folderId]"
                       options={{ presentation: 'pageSheet', animation: 'slide_from_bottom' }}
                     />
+                    <Stack.Screen name="search" options={{ animation: 'slide_from_bottom' }} />
                   </Stack>
                 </ErrorBoundary>
               </SharingProvider>

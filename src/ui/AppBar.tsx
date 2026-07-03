@@ -24,6 +24,8 @@ interface Props {
   title: string
   onBack?: () => void
   onLogout?: () => void
+  /** When set, a magnify action is shown (outside selection mode) → opens search. */
+  onSearch?: () => void
   /**
    * When set, the AppBar swaps to selection mode: the title shows the
    * count, the back/menu controls are replaced with a close action, and
@@ -32,7 +34,7 @@ interface Props {
   selection?: AppBarSelection
 }
 
-export const AppBar = ({ title, onBack, onLogout, selection }: Props) => {
+export const AppBar = ({ title, onBack, onLogout, onSearch, selection }: Props) => {
   const { t } = useTranslation()
   const [menuVisible, setMenuVisible] = useState(false)
 
@@ -64,6 +66,13 @@ export const AppBar = ({ title, onBack, onLogout, selection }: Props) => {
     <Appbar.Header>
       {onBack ? <Appbar.BackAction onPress={onBack} /> : null}
       <Appbar.Content title={title} />
+      {onSearch ? (
+        <Appbar.Action
+          icon="magnify"
+          onPress={onSearch}
+          accessibilityLabel={t('drive.search.action')}
+        />
+      ) : null}
       <SyncIndicator />
       {onLogout ? (
         <Menu
