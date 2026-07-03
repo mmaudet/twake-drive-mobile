@@ -31,7 +31,11 @@ export default function SearchScreen() {
     as: searchFilesQueryAs(debounced),
     enabled
   })
-  const data = (query.data as FileQueryResult[] | null | undefined) ?? []
+  // searchFilesQuery does not sort at the DB level (a $regex query can't use an
+  // index for sorting — pouchdb-find errors and the query hangs). Sort by name here.
+  const data = ((query.data as FileQueryResult[] | null | undefined) ?? [])
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   const renderItem = ({ item }: { item: FileQueryResult }) => {
     if (item.type === 'directory') {

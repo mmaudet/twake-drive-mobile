@@ -151,10 +151,17 @@ export interface ContactQueryResult {
 // keep it debounced + limited on the caller side.
 export const searchFilesQuery = (term: string): QueryDefinition =>
   Q('io.cozy.files')
-    .where({ name: { $regex: buildSearchPattern(term) }, trashed: { $ne: true } })
-    .partialIndex({ _id: { $nin: HIDDEN_ROOT_DIR_IDS } })
-    .indexFields(['name'])
-    .sortBy([{ name: 'asc' }])
+    // No sortBy / indexFields on purpose. A `$regex` match cannot use an index, and
+    // pouchdb-find ERRORS ("Cannot sort on field(s) 'name' when using the default
+    // index") when asked to sort by a field the selector doesn't constrain in an
+    // index-usable way. On device that error is swallowed and the query hangs forever
+    // (perpetual spinner). So: filter in-memory (bounded by limitBy) and sort by name
+    // in JS in the screen. Hidden root dirs are excluded via the selector.
+    .where({
+      name: { $regex: buildSearchPattern(term) },
+      trashed: { $ne: true },
+      _id: { $nin: HIDDEN_ROOT_DIR_IDS }
+    })
     .limitBy(50)
 
 export const searchFilesQueryAs = (term: string): string => `io.cozy.files/search/${term}`

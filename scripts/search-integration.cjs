@@ -42,7 +42,6 @@ const selectorFor = term => ({
   _id: { $nin: HIDDEN_ROOT_DIR_IDS }
 })
 
-const SORT = [{ name: 'asc' }]
 const LIMIT = 50
 
 let dbCounter = 0
@@ -50,13 +49,18 @@ async function search(docs, term) {
   const db = new PouchDB(`search-integration-${dbCounter++}`, { adapter: 'memory' })
   try {
     await db.bulkDocs(docs)
-    await db.createIndex({ index: { fields: ['name'] } })
     // Round-trip the selector through JSON to mirror cozy-client, which serializes the
     // query definition into its persisted store. A RegExp object would become {} here
     // (matching nothing — the on-device bug); the string pattern survives.
     const selector = JSON.parse(JSON.stringify(selectorFor(term)))
-    const res = await db.find({ selector, sort: SORT, limit: LIMIT })
-    return res.docs.map(d => d._id)
+    // No sort / no index at the DB level — mirrors searchFilesQuery. Sorting a $regex
+    // query at the DB level errors ("Cannot sort…") and hangs pouch on device; the
+    // screen sorts by name in JS, so do the same here.
+    const res = await db.find({ selector, limit: LIMIT })
+    return res.docs
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(d => d._id)
   } finally {
     await db.destroy()
   }
@@ -66,6 +70,7 @@ const CASES = [
   {
     name: 'case-insensitive filename match; excludes trashed + hidden root dirs',
     term: 'report',
+    unordered: true,
     docs: [
       { _id: 'f1', name: 'Q3 REPORT.pdf', type: 'file', trashed: false, dir_id: 'd0' },
       { _id: 'f2', name: 'annual report 2024.docx', type: 'file', trashed: false, dir_id: 'd0' },
@@ -101,7 +106,9 @@ async function main() {
   let passed = 0
   for (const c of CASES) {
     const ids = await search(c.docs, c.term)
-    assert.deepStrictEqual(ids, c.expect, `${c.name}\n  expected ${JSON.stringify(c.expect)}, got ${JSON.stringify(ids)}`)
+    const actual = c.unordered ? ids.slice().sort() : ids
+    const expected = c.unordered ? c.expect.slice().sort() : c.expect
+    assert.deepStrictEqual(actual, expected, `${c.name}\n  expected ${JSON.stringify(c.expect)}, got ${JSON.stringify(ids)}`)
     console.log(`  ✓ ${c.name}\n      -> [${ids.join(', ')}]`)
     passed++
   }

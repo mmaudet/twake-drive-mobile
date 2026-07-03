@@ -65,16 +65,6 @@ const filesIndexWarmupQueries: unknown[] = [
         .sortBy([{ dir_id: 'asc' }, { type: 'asc' }, { name: 'asc' }])
         .limitBy(1),
     options: { as: 'io.cozy.files/warmup/folder' }
-  },
-  // Search view (sort by name) — pre-builds the `name` index searchFilesQuery uses.
-  {
-    definition: () =>
-      Q('io.cozy.files')
-        .where({ name: { $gt: null } })
-        .indexFields(['name'])
-        .sortBy([{ name: 'asc' }])
-        .limitBy(1),
-    options: { as: 'io.cozy.files/warmup/search' }
   }
 ]
 

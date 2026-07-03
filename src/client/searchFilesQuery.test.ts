@@ -46,7 +46,7 @@ describe('searchFilesQuery', () => {
 
   it('construit un $regex insensible à la casse sur name, hors corbeille', () => {
     searchFilesQuery('report')
-    const sel = mockCalls.where as { name: { $regex: string }; trashed: unknown }
+    const sel = mockCalls.where as { name: { $regex: string }; trashed: unknown; _id: unknown }
     expect(mockCalls.doctype).toBe('io.cozy.files')
     // $regex is a serialization-safe STRING (not a RegExp object — see the
     // regression test below), case-insensitive via [xX] character classes.
@@ -54,10 +54,12 @@ describe('searchFilesQuery', () => {
     expect(new RegExp(sel.name.$regex).test('Q3 REPORT.pdf')).toBe(true)
     expect(new RegExp(sel.name.$regex).test('q3 report.pdf')).toBe(true)
     expect(sel.trashed).toEqual({ $ne: true })
-    expect(mockCalls.partialIndex).toEqual({ _id: { $nin: HIDDEN_ROOT_DIR_IDS } })
-    expect(mockCalls.indexFields).toEqual(['name'])
-    expect(mockCalls.sort).toEqual([{ name: 'asc' }])
+    expect(sel._id).toEqual({ $nin: HIDDEN_ROOT_DIR_IDS })
     expect(mockCalls.limit).toBe(50)
+    // No DB-level sort/index: sorting a $regex query errors ("Cannot sort on
+    // field(s) 'name'…") and hangs pouch on device — the screen sorts in JS.
+    expect(mockCalls.sort).toBeUndefined()
+    expect(mockCalls.indexFields).toBeUndefined()
   })
 
   it('échappe les métacaractères de la saisie', () => {
