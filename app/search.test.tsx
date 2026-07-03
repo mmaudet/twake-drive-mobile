@@ -3,8 +3,14 @@ import { render, screen, fireEvent } from '@testing-library/react-native'
 
 const mockPush = jest.fn()
 const mockBack = jest.fn()
+const mockReplace = jest.fn()
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: mockPush, back: mockBack })
+  useRouter: () => ({
+    push: mockPush,
+    back: mockBack,
+    replace: mockReplace,
+    canGoBack: () => true
+  })
 }))
 
 jest.mock('cozy-client', () => ({

@@ -66,7 +66,7 @@ export default function SearchScreen() {
         value={term}
         onChangeText={setTerm}
         icon="arrow-left"
-        onIconPress={() => router.back()}
+        onIconPress={() => (router.canGoBack() ? router.back() : router.replace('/(drive)/files'))}
         autoFocus
       />
       {!enabled ? (
