@@ -1,5 +1,6 @@
 import * as WebBrowser from 'expo-web-browser'
 import * as Crypto from 'expo-crypto'
+import * as Linking from 'expo-linking'
 
 import { UserCancelledError } from './types'
 
@@ -23,7 +24,7 @@ export const generatePkce = async (): Promise<{ codeVerifier: string; codeChalle
   return { codeVerifier, codeChallenge }
 }
 
-const normalizeRedirectUrl = (raw: string): string => {
+export const normalizeRedirectUrl = (raw: string): string => {
   let url = raw
   if (url.startsWith('cozy:?')) url = url.replace('cozy:?', 'cozy://?')
   url = url.replace(/%23$/i, '').replace(/#$/, '')
@@ -32,14 +33,36 @@ const normalizeRedirectUrl = (raw: string): string => {
 
 export const openAuthorizeUrl = async (url: string): Promise<string> => {
   console.log('[auth] opening authorize URL', url)
-  const result = await WebBrowser.openAuthSessionAsync(url, REDIRECT_URL, {
-    showInRecents: false
+  // `cozy://` is a registered app deep-link scheme, so on Android the OAuth
+  // redirect reopens MainActivity and openAuthSessionAsync resolves
+  // `{type:'dismiss'}` instead of capturing the URL — the auth code is lost.
+  // But the running app DOES receive that deep link, so we listen for it via
+  // Linking as a fallback and use whichever source yields the redirect first.
+  let received: string | null = null
+  const sub = Linking.addEventListener('url', ({ url: incoming }) => {
+    if (incoming && incoming.startsWith('cozy:')) received = incoming
   })
-  console.log('[auth] authorize result', JSON.stringify(result))
-  if (result.type === 'success' && result.url) {
-    const cleaned = normalizeRedirectUrl(result.url)
-    if (cleaned !== result.url) console.log('[auth] cleaned URL', cleaned)
-    return cleaned
+  try {
+    const result = await WebBrowser.openAuthSessionAsync(url, REDIRECT_URL, {
+      showInRecents: false
+    })
+    console.log('[auth] authorize result', JSON.stringify(result))
+    let redirectUrl: string | null = result.type === 'success' && result.url ? result.url : null
+    if (!redirectUrl) {
+      // Dismissed: the redirect most likely reached the app through Linking.
+      // Give the deep-link event up to ~2s to arrive before giving up.
+      for (let i = 0; i < 20 && !received; i++) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+      redirectUrl = received
+    }
+    if (redirectUrl) {
+      const cleaned = normalizeRedirectUrl(redirectUrl)
+      console.log('[auth] captured redirect', cleaned)
+      return cleaned
+    }
+    throw new UserCancelledError()
+  } finally {
+    sub.remove()
   }
-  throw new UserCancelledError()
 }

@@ -30,7 +30,8 @@ import CozyClient from 'cozy-client'
 
 import { FLAGSHIP_SCOPES } from './scopes'
 import { Session, OAuthToken } from './types'
-import { generatePkce, openAuthorizeUrl } from './pkce'
+import { generatePkce } from './pkce'
+import { openAuthorizeInWebView } from './FlagshipAuthModal'
 
 export const certifyFlagship = async (session: Session): Promise<Session> => {
   const client = new CozyClient({
@@ -57,7 +58,7 @@ export const certifyFlagship = async (session: Session): Promise<Session> => {
 
   const pkceCodes = await generatePkce()
   const authorizeResult = (await client.authorize({
-    openURLCallback: openAuthorizeUrl,
+    openURLCallback: openAuthorizeInWebView,
     pkceCodes
   })) as { token: OAuthToken & { tokenType?: string } }
 
