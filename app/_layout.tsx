@@ -6,6 +6,7 @@ import { Provider as PaperProvider } from 'react-native-paper'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Stack } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
 import { CozyProvider } from 'cozy-client'
 import { I18nextProvider } from 'react-i18next'
 
@@ -48,6 +49,11 @@ const InnerLayout = () => {
 
   const content = (
     <SafeAreaProvider>
+      {/* Render the system status bar with theme-adaptive icons (dark on the
+          light UI, light in dark mode) so the time/wifi/battery stay visible —
+          without this the default light icons were invisible on the white app
+          background under edge-to-edge. Applies to Android and iOS. */}
+      <StatusBar style="auto" />
       <GestureHandlerRootView style={{ flex: 1 }}>
         <PaperProvider theme={withInterFonts(theme)}>
           <I18nextProvider i18n={i18n}>
