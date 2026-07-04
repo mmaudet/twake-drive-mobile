@@ -22,19 +22,22 @@ fix i18n `drive.search`. Il a en revanche des rid Paper par défaut exploitables
 - Menu dossier (labels FR confirmés) : `Déplacer…`, `Garder hors-ligne`, `Partager`, `Supprimer`.
 - Offline : `Garder hors-ligne` / `Retirer du hors-ligne`.
 
-## Statut par flow
+## Statut par flow (Pixel, build frais avec testIDs — 2e passage)
 | Flow | Statut | Note |
 |------|--------|------|
-| 01 launch-browse | ✅ VERT | commité, device-validé |
-| 02 tabs | ✅ VERT | commité, device-validé |
-| 03 search | ✅ VERT (reachability) | commité ; résultats serveur non déterministes → build frais + fixtures |
-| 04 folder-crud | 🟡 CREATE ok / DELETE à fiabiliser | create validé ; confirm suppression à cracker (cf. cleanup.yaml) |
-| 07 offline-pin | 🟡 device-ready (non exécuté) | text-based, labels validés ; ⚠️ épingler télécharge → petit dossier |
-| 05 preview | 🔴 build frais | testID `preview-image` (écran chromeless) + fixture image |
-| 06 editor | 🔴 build frais | testID `onlyoffice-webview` (EditorHeader titre vide) + fixture Office |
-| 10 fileprovider | 🔵 discovery | SAF/DocumentsUI ; racine « Twake Drive » (visible si connecté) |
-| 11 share-to-drive | 🔵 discovery | galerie → partage → « Twake Drive » → import « Importer ici » |
+| 01 launch-browse | ✅ VERT | device-validé |
+| 02 tabs | ✅ VERT | device-validé |
+| 03 search | ✅ VERT (reachability) | résultats serveur non déterministes (paginé + `.includes()` sur gros drive) — **pas un bug**, c'est le design |
+| 04 folder-crud | 🟡 CREATE ✅ / DELETE = souci d'auto | **create validé** ; la SUPPRESSION marche À LA MAIN (pas un bug app) — c'est le tap du bouton dialog Paper via Maestro/adb qui ne déclenche pas le `onPress` de façon fiable |
+| 07 offline-pin | ✅ VERT | device-validé (pin → « Retirer du hors-ligne » → unpin), ciblé sur dossier vide |
+| 10 fileprovider | ✅ **VERT** | **cross-app device-validé** : Files by Google → « Autre espace de stockage » → « Twake Drive » → contenu réel du drive |
+| 11 share-to-drive | 🟢 receiver validé | Twake a bien les intent filters `SEND`/`SEND_MULTIPLE` (apparaît dans le share sheet) + device-validé antérieurement ; auto complète (galerie→share→import→upload) = fiddly + **upload réel** → à finaliser à part |
+| 05 preview | 🔵 à jouer | testIDs `preview-*` présents dans le build ; besoin d'un fichier image/pdf connu |
+| 06 editor | 🔵 à jouer | testIDs `*-webview` présents ; besoin d'un fichier Office/note |
 | 00 login | 🔵 semi-manuel | code email manuel ; exclu des runs |
+
+**testIDs confirmés présents dans le build frais** (uiautomator) : `appbar-search-button`, `drive-fab`, `folder-actions`, etc. → sélecteurs robustes OK.
+**Gotcha foldable** : le Pixel 10 Pro Fold a 2 displays → `maestro hierarchy` peut revenir vide (driver stale) ; `maestro test` réinitialise le driver et marche ; `screencap -p` en stdout est corrompu (warning multi-display) → passer par un fichier device + pull.
 
 ## Quirks connus
 - **Suppression dossier** : le dialog « Supprimer le dossier ? » s'ouvre, mais le
