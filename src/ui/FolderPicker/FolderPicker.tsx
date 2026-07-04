@@ -158,6 +158,7 @@ export const FolderPicker = ({
           </Button>
           <Button
             mode="contained"
+            testID="folder-picker-confirm"
             disabled={confirmDisabled}
             loading={isBusy}
             onPress={() => onConfirm({ _id: currentFolderId, name: title })}

@@ -117,6 +117,12 @@ describe('FolderPicker', () => {
     expect(onConfirm).toHaveBeenCalledWith(expect.objectContaining({ _id: 'src', name: 'Work' }))
   })
 
+  it('expose le testID du bouton de confirmation pour Maestro', () => {
+    setupQueries('Work', [])
+    render(wrap(<FolderPicker {...defaultProps} currentFolderId="src" />))
+    expect(screen.getByTestId('folder-picker-confirm')).toBeOnTheScreen()
+  })
+
   it('calls onCancel when the Cancel button is tapped', () => {
     setupQueries('Work', [])
     const onCancel = jest.fn()

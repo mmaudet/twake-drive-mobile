@@ -15,13 +15,16 @@ interface Props {
   item: FolderPickerRowItem
   disabled: boolean
   onPress: (item: FolderPickerRowItem) => void
+  /** Stable id for E2E (Maestro) selection. */
+  testID?: string
 }
 
-export const FolderPickerRow = ({ item, disabled, onPress }: Props) => {
+export const FolderPickerRow = ({ item, disabled, onPress, testID }: Props) => {
   const theme = useTheme()
   const isFolder = item.type === 'directory'
   return (
     <List.Item
+      testID={testID ?? 'folder-picker-row'}
       title={item.name}
       titleStyle={disabled ? { color: theme.colors.outline } : undefined}
       left={props => (
