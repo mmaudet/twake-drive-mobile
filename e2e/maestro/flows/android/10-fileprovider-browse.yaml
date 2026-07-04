@@ -1,0 +1,22 @@
+appId: com.android.documentsui
+tags:
+  - android
+env:
+  PROVIDER_LABEL: 'Twake Drive'
+---
+# ⚠️ DISCOVERY device requise (piloter DocumentsUI, qui varie selon l'OEM).
+# Pré-requis : app Twake CONNECTÉE — la racine du provider n'apparaît que si
+# session active (vérifié dans le code natif : queryRoots renvoie 0 ligne sans
+# creds). Le libellé racine "Twake Drive" est confirmé (DocumentMapper.addRootRow).
+#
+# Sur device, ouvrir un sélecteur puis inspecter avec `maestro hierarchy` :
+#   adb shell am start -a android.intent.action.OPEN_DOCUMENT -t '*/*'
+# Ajuster : le package DocumentsUI (com.android.documentsui vs
+# com.google.android.documentsui), et l'ouverture du tiroir des sources.
+- launchApp
+- tapOn:
+    text: 'Afficher les racines|Show roots'
+    optional: true
+- tapOn: '${PROVIDER_LABEL}'
+- takeScreenshot: fileprovider-browse
+- assertVisible: '${PROVIDER_LABEL}'

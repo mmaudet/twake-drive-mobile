@@ -1,0 +1,21 @@
+appId: com.linagora.twakedrive
+tags:
+  - inapp
+env:
+  FOLDER_NAME: 'E2E-smoke'
+---
+# CREATE validé sur device : FAB (rid `fab` sur le build actuel ; `drive-fab`
+# sur un build frais) → "Nouveau dossier" → saisie → Enter (le champ a
+# returnKeyType=done + onSubmitEditing) → apparition ASYNC dans la liste.
+# DELETE via cleanup.yaml : voie tracée mais confirmation à fiabiliser (cf. cleanup.yaml).
+- runFlow: ../../subflows/openDrive.yaml
+- runFlow: ../../subflows/cleanup.yaml          # supprime un résidu éventuel
+- tapOn:
+    id: 'fab'
+- tapOn: 'Nouveau dossier'
+- inputText: '${FOLDER_NAME}'
+- pressKey: Enter
+- extendedWaitUntil:
+    visible: '${FOLDER_NAME}'
+    timeout: 10000
+- runFlow: ../../subflows/cleanup.yaml          # laisse l'état propre

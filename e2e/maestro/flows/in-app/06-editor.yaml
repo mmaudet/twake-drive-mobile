@@ -1,0 +1,19 @@
+appId: com.linagora.twakedrive
+tags:
+  - inapp
+env:
+  EDITOR_FILE: 'sample.docx'
+---
+# Les éditeurs FONCTIONNENT sur le build actuel (constaté : l'app était sur un
+# éditeur Docs au démarrage). ⚠️ Mais l'ancrage "éditeur chargé" nécessite un
+# BUILD FRAIS avec le testID `onlyoffice-webview` : l'EditorHeader a un titre
+# VIDE et le contenu est une WebView distante (DOM hors de portée de Maestro).
+# Nécessite aussi une fixture ${EDITOR_FILE} (fichier Office) accessible.
+# Smoke shallow : on vérifie que la WebView éditeur se monte (URL session_code
+# résolue) — dépend du backend + certification flagship.
+- runFlow: ../../subflows/openDrive.yaml
+- tapOn: '${EDITOR_FILE}'
+- extendedWaitUntil:
+    visible:
+      id: 'onlyoffice-webview'
+    timeout: 20000

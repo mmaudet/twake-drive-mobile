@@ -1,0 +1,23 @@
+appId: com.google.android.apps.nbu.files
+tags:
+  - android
+---
+# ⚠️ DISCOVERY device requise. run-android.sh pousse déjà
+# /sdcard/Pictures/E2E/sample.jpg. Ouvrir une galerie déterministe (recommandé :
+# "Files" com.google.android.apps.nbu.files), partager l'image vers "Twake Drive",
+# puis confirmer l'import in-app.
+#
+# La QUEUE in-app est déterministe : le flow import se termine par le bouton
+# "Importer ici" (FolderPicker, testID folder-picker-confirm sur build frais) →
+# snackbar "Fichier importé" (auto-dismiss ~600 ms → on asserte la fermeture de
+# l'écran d'import plutôt que le snackbar).
+- launchApp
+- tapOn:
+    text: 'sample.jpg'
+    optional: true
+- tapOn:
+    text: 'Partager|Share'
+- tapOn: 'Twake Drive'
+# --- dans l'app Twake (flow import) ---
+- tapOn: 'Importer ici'
+- assertNotVisible: 'Importer ici'
