@@ -1,6 +1,6 @@
 import CozyClient from 'cozy-client'
 
-import { APP_SCOPES, APP_SCOPE_STRING } from './scopes'
+import { APP_SCOPES, APP_SCOPE_STRING, FLAGSHIP_SCOPES } from './scopes'
 import { OidcCallback, Session, OAuthOptions, OAuthToken } from './types'
 import { generatePkce, openAuthorizeUrl } from './pkce'
 
@@ -37,9 +37,11 @@ export const registerSession = async (
   const client = new CozyClient({
     uri,
     oauth: existing ?? buildOauthOptions(),
-    // `scope` is absent from cozy-client's ClientOptions type but accepted at
-    // runtime to request specific OAuth doctype scopes (see @/auth/scopes).
-    scope: [...APP_SCOPES],
+    // Request the flagship `*` scope. It sets stackClient.scope, which
+    // getAuthCodeURL uses for the /auth/authorize dance below, so the token we
+    // mint is full-access and therefore session_code-capable — the editors' web
+    // apps need session_code, which the stack only grants to a flagship token.
+    scope: [...FLAGSHIP_SCOPES],
     appMetadata: { slug: 'twake-drive-mobile', version: '0.1.0' }
   } as ConstructorParameters<typeof CozyClient>[0] & { scope: string[] })
 
@@ -65,11 +67,19 @@ export const registerSession = async (
 
   let oidcResponse: OidcResponse
   try {
+    // Ask for the flagship `*` scope. On an OIDC instance the stack replies with a
+    // session_code (not a direct access_token); we exchange it through the
+    // /auth/authorize dance below — the flow that, the first time on a device,
+    // shows the "application not certified" email-code screen and certifies this
+    // client as flagship. Certification happens once here, in the system browser
+    // whose redirect back to the app works — unlike the in-app WebView cert, which
+    // LemonLDAP could not redirect back from. The minted token is `*`-scoped, so
+    // getSessionCode() succeeds and editors open without any further re-auth.
     oidcResponse = (await stackClient.fetchJSON('POST', '/oidc/access_token', {
       code: callback.code,
       client_id: oauthOptions.clientID,
       client_secret: oauthOptions.clientSecret,
-      scope: APP_SCOPE_STRING
+      scope: '*'
     })) as OidcResponse
   } catch (e) {
     console.error('[registerSession] /oidc/access_token failed', (e as Error).message, e)
