@@ -1,0 +1,15 @@
+appId: com.linagora.twakedrive
+tags:
+  - inapp
+env:
+  SEARCH_QUERY: 'Rapport'
+---
+# Smoke : la recherche est joignable et accepte la saisie.
+# NB : l'assertion sur les résultats serveur est volontairement omise — la
+# recherche est paginée côté serveur + filtrée .includes() côté client (cf.
+# historique du feature), donc la présence d'un résultat donné n'est pas
+# déterministe sur un gros drive. À couvrir avec des fixtures sur un build frais.
+- runFlow: ../../subflows/openDrive.yaml
+- tapOn: 'Rechercher'
+- inputText: '${SEARCH_QUERY}'
+- assertVisible: '${SEARCH_QUERY}'
