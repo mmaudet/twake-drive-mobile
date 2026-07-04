@@ -47,6 +47,7 @@ export const CreateFolderDialog = ({ visible, onDismiss, onSubmit }: Props) => {
         <Dialog.Title>{t('drive.createFolder.title')}</Dialog.Title>
         <Dialog.Content>
           <TextInput
+            testID="create-folder-name-input"
             mode="outlined"
             label={t('drive.createFolder.nameLabel')}
             value={name}
@@ -67,6 +68,7 @@ export const CreateFolderDialog = ({ visible, onDismiss, onSubmit }: Props) => {
           </Button>
           <Button
             mode="contained"
+            testID="create-folder-submit"
             onPress={handleSubmit}
             loading={submitting}
             disabled={!name.trim() || submitting}

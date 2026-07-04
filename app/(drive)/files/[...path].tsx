@@ -508,6 +508,7 @@ export default function FilesScreen() {
         onCancel={offlineActions.cancelPending}
       />
       <FAB.Group
+        testID="drive-fab"
         open={fabOpen}
         visible={!selection.isSelecting && isOnline}
         icon={fabOpen ? 'close' : 'plus'}
