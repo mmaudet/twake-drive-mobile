@@ -11,7 +11,10 @@
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "e2e:android": "./e2e/scripts/run-android.sh",
+    "e2e:ios": "./e2e/scripts/run-ios.sh",
+    "e2e:login": "maestro test e2e/maestro/flows/00-login.yaml"
   },
   "dependencies": {
     "@craftzdog/pouchdb-collate-react-native": "^7.3.0",

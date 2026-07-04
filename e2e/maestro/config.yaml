@@ -1,0 +1,5 @@
+# Config workspace Maestro. Le login manuel est exclu par défaut de tout run.
+flows:
+  - "flows/**"
+excludeTags:
+  - login
