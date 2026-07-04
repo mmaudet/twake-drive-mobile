@@ -1,38 +1,26 @@
 import React from 'react'
-import { StatusBar, StyleSheet, View } from 'react-native'
+import { StatusBar } from 'react-native'
 import { Appbar } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { TwakeLogo } from '@/ui/icons/TwakeLogo'
 
 interface Props {
   onBack: () => void
 }
 
-/** Minimal header for full-screen editor routes: a back action to return to the
- *  native drive app, and the Twake logo. Each web editor keeps its own in-page
- *  bar (title + share + its own back); this native header only provides the way
- *  back to the app.
- *  We pass the top safe-area inset explicitly as statusBarHeight: these routes
- *  are pageSheets where Appbar.Header's automatic inset is unreliable (it worked
- *  for OnlyOffice but overlapped the status bar on Notes), so forcing it keeps
- *  the phone clock/icons visible above the header on EVERY editor. */
+/** Minimal, flat header for full-screen editor routes: just a back action to
+ *  return to the native drive app. Every web editor (Notes, OnlyOffice, La Suite
+ *  Docs) already renders its OWN bar with a logo, the document title and its
+ *  actions, so this native bar is kept as slim as possible — no redundant Twake
+ *  logo and no elevation shadow — to avoid a cluttered, cramped double header.
+ *  statusBarHeight is forced from the safe-area / native status-bar height
+ *  because inside the editor pageSheet Appbar's automatic inset comes back as 0,
+ *  which would let the header ride up under the phone clock/icons. */
 export const EditorHeader = ({ onBack }: Props): React.ReactElement => {
   const insets = useSafeAreaInsets()
-  // Inside the editor pageSheet the safe-area top inset comes back as 0, so
-  // fall back to Android's native status-bar height constant to guarantee the
-  // header sits below the clock/icons on every editor (Note/OnlyOffice/Docs).
   const topInset = insets.top || StatusBar.currentHeight || 0
   return (
-    <Appbar.Header statusBarHeight={topInset}>
+    <Appbar.Header statusBarHeight={topInset} elevated={false} mode="small">
       <Appbar.BackAction onPress={onBack} />
-      <View style={styles.logo}>
-        <TwakeLogo size={28} />
-      </View>
-      <Appbar.Content title="" />
     </Appbar.Header>
   )
 }
-
-const styles = StyleSheet.create({
-  logo: { marginLeft: 4, marginRight: 4, justifyContent: 'center' }
-})
