@@ -84,7 +84,7 @@ export const AppBar = ({ title, onBack, onLogout, showSearch, selection }: Props
       {showSearch ? (
         <Pressable
           onPress={() => router.push('/search')}
-          accessibilityLabel={t('drive.search')}
+          accessibilityLabel={t('drive.search.action')}
           style={styles.searchButton}
           testID="appbar-search-button"
         >
