@@ -34,6 +34,14 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
+      # App Store Connect rejects builds made with an older SDK — select Xcode 26
+      # (iOS 26 SDK), as visio-mobile does. macos-15 ships it alongside the default.
+      - name: Select Xcode 26 (App Store requires the iOS 26 SDK)
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$XCODE" ]; then echo "::error::No Xcode 26 on runner"; ls -d /Applications/Xcode_*.app; exit 1; fi
+          echo "Selecting $XCODE"; sudo xcode-select -s "$XCODE"; xcodebuild -version
+
       - name: Set up Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
