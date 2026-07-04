@@ -63,12 +63,13 @@ platform :ios do
       }
     )
 
+    # First validations: plain internal TestFlight upload — instant, no external
+    # "Beta Testers" group or Beta App Review needed. Restore distribute_external +
+    # groups once Test Info is filled and the first build cleared Beta review.
     pilot(
       api_key: api_key,
       ipa: "build/TwakeDrive.ipa",
-      distribute_external: true,
-      groups: ["Beta Testers"],
-      changelog: ENV["RELEASE_NOTES"].to_s.empty? ? "Build #{ENV['GITHUB_RUN_NUMBER'] || 'local'} — #{`git log -1 --pretty=%s`.strip}" : ENV["RELEASE_NOTES"]
+      skip_waiting_for_build_processing: true
     )
   end
 
