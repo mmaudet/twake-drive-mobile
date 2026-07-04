@@ -21,7 +21,9 @@ platform :ios do
 
     match(
       type: "appstore",
-      app_identifier: APP_IDENTIFIER,
+      # Fetch BOTH profiles (app + Share Extension) so the archive can sign each
+      # target with its own match profile.
+      app_identifier: [APP_IDENTIFIER, "#{APP_IDENTIFIER}.ShareExt"],
       git_url: ENV["MATCH_GIT_URL"],
       api_key: api_key,
       readonly: true
@@ -53,12 +55,16 @@ platform :ios do
       output_directory: "build",
       output_name: "TwakeDrive.ipa",
       clean: true,
-      xcargs: "DEVELOPMENT_TEAM='#{ENV["APPLE_TEAM_ID"]}' CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER='match AppStore #{APP_IDENTIFIER}' CODE_SIGN_IDENTITY='Apple Distribution'",
+      # No global PROVISIONING_PROFILE_SPECIFIER — each target (app + ShareExt)
+      # carries its own match profile in the pbxproj (scripts/ios-set-extension-signing.cjs),
+      # so gym signs each with the right profile instead of forcing the app's onto the ext.
+      xcargs: "DEVELOPMENT_TEAM='#{ENV["APPLE_TEAM_ID"]}' CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution'",
       export_options: {
         teamID: ENV["APPLE_TEAM_ID"],
         signingStyle: "manual",
         provisioningProfiles: {
-          APP_IDENTIFIER => "match AppStore #{APP_IDENTIFIER}"
+          APP_IDENTIFIER => "match AppStore #{APP_IDENTIFIER}",
+          "#{APP_IDENTIFIER}.ShareExt" => "match AppStore #{APP_IDENTIFIER}.ShareExt"
         }
       }
     )

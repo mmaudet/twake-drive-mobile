@@ -29,13 +29,13 @@ describe('AppBar showSearch', () => {
 
   it('rend la loupe showSearch qui navigue vers /search', () => {
     render(wrap(<AppBar title="Mes fichiers" showSearch />))
-    fireEvent.press(screen.getByLabelText('drive.search'))
+    fireEvent.press(screen.getByLabelText('drive.search.action'))
     expect(mockPush).toHaveBeenCalledWith('/search')
   })
 
   it('ne rend pas la loupe showSearch sans la prop', () => {
     render(wrap(<AppBar title="Mes fichiers" />))
-    expect(screen.queryByLabelText('drive.search')).toBeNull()
+    expect(screen.queryByLabelText('drive.search.action')).toBeNull()
   })
 
   it('expose les testIDs de navigation Maestro', () => {

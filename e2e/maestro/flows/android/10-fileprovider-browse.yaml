@@ -1,0 +1,18 @@
+appId: com.google.android.apps.nbu.files
+tags:
+  - android
+env:
+  PROVIDER_LABEL: 'Twake Drive'
+  EXPECT_FOLDER: 'LINAGORA'
+---
+# Cross-app File Provider (SAF / DocumentsProvider). DEVICE-VALIDÉ sur Pixel via
+# « Files by Google » : Accueil → « Autre espace de stockage » → « Twake Drive »
+# → le contenu RÉEL du drive s'affiche (dossiers listés cross-app).
+#
+# Pré-requis : app Twake CONNECTÉE — la racine du provider n'apparaît QUE si une
+# session est active (queryRoots renvoie 0 ligne sans creds, cf. natif).
+# ${EXPECT_FOLDER} doit être un dossier réel de la racine du drive.
+- launchApp
+- tapOn: 'Autre espace de stockage'
+- tapOn: '${PROVIDER_LABEL}'
+- assertVisible: '${EXPECT_FOLDER}'

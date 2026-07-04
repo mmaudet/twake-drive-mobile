@@ -1,0 +1,18 @@
+appId: com.linagora.twakedrive
+tags:
+  - preauth
+---
+# Smoke PRÉ-AUTH (install fraîche / déconnecté) : l'app démarre correctement
+# et l'écran de login est joignable. Ne nécessite AUCUNE session.
+# Device-validé sur iOS Simulator (iPhone 17 Pro) avec le build simulateur-18.
+# À lancer AVANT le login :  maestro test e2e/maestro/flows --include-tags preauth
+#
+# Sert aussi de garde de non-régression pour le fix du hang de bootstrap
+# (useAuth : fallback 'unauthenticated' au lieu de rester sur le spinner).
+- launchApp
+- assertVisible: 'Bienvenue sur Twake Drive'
+- tapOn: 'Se connecter'
+- assertVisible: 'Adresse email'
+- tapOn: 'Adresse email'
+- inputText: 'test@example.com'
+- assertVisible: 'Continuer'

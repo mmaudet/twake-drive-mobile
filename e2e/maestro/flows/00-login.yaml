@@ -1,0 +1,23 @@
+appId: com.linagora.twakedrive
+tags:
+  - login
+env:
+  COZY_EMAIL: 'moi@example.com'
+---
+# Semi-manuel. Tag `login` → EXCLU des runs auto. Sert à créer la session
+# pré-auth. Sélecteurs welcome/login confirmés depuis la source (FR).
+#
+# Le flow pilote : welcome → « Se connecter » → saisie email → « Continuer »,
+# puis marque une PAUSE pendant la connexion OIDC (mot de passe + code email)
+# que tu réalises à la main dans le navigateur/webview, et attend l'arrivée
+# sur le drive.
+- launchApp
+- assertVisible: 'Bienvenue sur Twake Drive'   # écran welcome (déconnecté)
+- tapOn: 'Se connecter'
+- tapOn: 'Adresse email'                         # focus le champ email
+- inputText: '${COZY_EMAIL}'
+- tapOn: 'Continuer'
+# --- PAUSE : connexion OIDC manuelle (mot de passe + code email) ---
+- extendedWaitUntil:
+    visible: 'Mon Drive'
+    timeout: 300000

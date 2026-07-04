@@ -1,0 +1,17 @@
+appId: com.linagora.twakedrive
+tags:
+  - inapp
+env:
+  PREVIEW_FILE: 'sample.jpg'
+---
+# ⚠️ NON validé sur le build actuel. Nécessite :
+#   (a) une fixture image ${PREVIEW_FILE} accessible (la racine du compte de test
+#       n'avait que des dossiers → déposer une image ou pointer un fichier connu) ;
+#   (b) un BUILD FRAIS avec le testID `preview-image` : l'écran preview est
+#       "chromeless" (image/vidéo/pdf) → aucun ancrage texte sur le build actuel.
+- runFlow: ../../subflows/openDrive.yaml
+- tapOn: '${PREVIEW_FILE}'
+- extendedWaitUntil:
+    visible:
+      id: 'preview-image'
+    timeout: 10000

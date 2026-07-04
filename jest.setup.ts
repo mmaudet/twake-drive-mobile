@@ -22,7 +22,8 @@ const nodeFetch = require('node-fetch')
 jest.mock('expo-secure-store', () => ({
   getItemAsync: jest.fn(),
   setItemAsync: jest.fn(),
-  deleteItemAsync: jest.fn()
+  deleteItemAsync: jest.fn(),
+  AFTER_FIRST_UNLOCK: 'AFTER_FIRST_UNLOCK'
 }))
 
 jest.mock('expo-web-browser', () => ({

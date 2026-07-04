@@ -36,7 +36,7 @@ PODS:
     - ExpoModulesCore
   - ExpoFileSystem (19.0.22):
     - ExpoModulesCore
-  - ExpoFont (14.0.11):
+  - ExpoFont (14.0.12):
     - ExpoModulesCore
   - ExpoHead (6.0.23):
     - ExpoModulesCore
@@ -78,6 +78,8 @@ PODS:
     - ReactNativeDependencies
     - Yoga
   - ExpoSecureStore (15.0.8):
+    - ExpoModulesCore
+  - ExpoShareIntentModule (5.1.1):
     - ExpoModulesCore
   - ExpoSystemUI (6.0.9):
     - ExpoModulesCore
@@ -2316,7 +2318,7 @@ DEPENDENCIES:
   - ExpoClipboard (from `../node_modules/expo-clipboard/ios`)
   - ExpoCrypto (from `../node_modules/expo-crypto/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
-  - ExpoFont (from `../node_modules/expo/node_modules/expo-font/ios`)
+  - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoHead (from `../node_modules/expo-router/ios`)
   - ExpoImage (from `../node_modules/expo-image/ios`)
   - ExpoKeepAwake (from `../node_modules/expo/node_modules/expo-keep-awake/ios`)
@@ -2324,6 +2326,7 @@ DEPENDENCIES:
   - ExpoLocalization (from `../node_modules/expo-localization/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
+  - ExpoShareIntentModule (from `../node_modules/expo-share-intent/ios`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
   - ExpoVideo (from `../node_modules/expo-video/ios`)
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
@@ -2442,7 +2445,7 @@ EXTERNAL SOURCES:
   ExpoFileSystem:
     :path: "../node_modules/expo-file-system/ios"
   ExpoFont:
-    :path: "../node_modules/expo/node_modules/expo-font/ios"
+    :path: "../node_modules/expo-font/ios"
   ExpoHead:
     :path: "../node_modules/expo-router/ios"
   ExpoImage:
@@ -2457,6 +2460,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-modules-core"
   ExpoSecureStore:
     :path: "../node_modules/expo-secure-store/ios"
+  ExpoShareIntentModule:
+    :path: "../node_modules/expo-share-intent/ios"
   ExpoSystemUI:
     :path: "../node_modules/expo-system-ui/ios"
   ExpoVideo:
@@ -2643,7 +2648,7 @@ SPEC CHECKSUMS:
   ExpoClipboard: 5d1b0cd2686406f21e616f2d9b3431259dee2e6a
   ExpoCrypto: e97e864c8d7b9ce4a000bca45dddb93544a1b2b4
   ExpoFileSystem: ad991457efaa14253723f1dda997eac6024c700d
-  ExpoFont: f543ce20a228dd702813668b1a07b46f51878d47
+  ExpoFont: dfb7c572372b610da45b41e3b436321fd6a97215
   ExpoHead: 7e19b2272edf492262acf8afb391a295198a6b23
   ExpoImage: 686f972bff29525733aa13357f6691dc90aa03d8
   ExpoKeepAwake: 55f75eca6499bb9e4231ebad6f3e9cb8f99c0296
@@ -2651,6 +2656,7 @@ SPEC CHECKSUMS:
   ExpoLocalization: d9168d5300a5b03e5e78b986124d11fb6ec3ebbd
   ExpoModulesCore: 9e6a5514828e7dd5ded9e99d33557be2d284e660
   ExpoSecureStore: d32f751874a2ceb5aaeebeb3578e165c1ba2b24a
+  ExpoShareIntentModule: 928ff229dd5e577561944786f0de08be339f640b
   ExpoSystemUI: 2ad325f361a2fcd96a464e8574e19935c461c9cc
   ExpoVideo: 8d9e8a1acd0c4c210e538b4355e34ae8ff5e04f7
   ExpoWebBrowser: 970dd4c64c29c955c3af664c8058ba768a4c9187

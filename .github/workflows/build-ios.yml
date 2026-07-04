@@ -49,9 +49,15 @@ jobs:
         working-directory: ios
         run: pod install
 
-      # Release config embeds the JS bundle -> standalone .app. Simulator SDK
-      # needs no code signing; the three flags neutralize any pod signing phase.
-      - name: Build for iOS Simulator (unsigned)
+      # Release config embeds the JS bundle -> standalone .app. Ad-hoc sign
+      # (CODE_SIGN_IDENTITY="-") instead of fully disabling signing: a fully
+      # unsigned build has no application-identifier entitlement, so at runtime
+      # expo-secure-store's keychain access fails with "A required entitlement
+      # isn't present" (getValueWithKeyAsync) — which blocks login/session
+      # persistence on the Simulator (session bootstrap + saveSession both hit
+      # SecureStore). Ad-hoc signing grants the bundle-id keychain group and
+      # needs no certificate, so it works on the Simulator.
+      - name: Build for iOS Simulator (ad-hoc signed)
         run: |
           xcodebuild \
             -workspace ios/TwakeDrive.xcworkspace \
@@ -59,9 +65,10 @@ jobs:
             -configuration Release \
             -sdk iphonesimulator \
             -derivedDataPath ios/build \
-            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="-" \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_ALLOWED=YES \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
             build
 
       - name: Zip the .app
