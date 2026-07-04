@@ -16,6 +16,12 @@ interface RawFile {
   size?: number | null
 }
 
+// expo-share-intent's getScheme() defaults to app.json scheme[0] (= "cozy",
+// reserved for the OAuth deep-link). Force the dedicated "twakedrive" scheme so
+// the JS listener (twakedrive://dataUrl=) and the reset key ("twakedriveShareKey")
+// match exactly what the iOS Share Extension redirects to.
+const SHARE_INTENT_OPTIONS = { scheme: 'twakedrive' } as const
+
 const normalizeUri = (path: string): string =>
   path.startsWith('file://') || path.startsWith('content://') ? path : `file://${path}`
 
@@ -30,7 +36,7 @@ const toItems = (files: unknown): SharedItem[] => {
 }
 
 export const useIncomingShare = (): IncomingShare => {
-  const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent()
+  const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent(SHARE_INTENT_OPTIONS)
   const si = shareIntent as { files?: unknown; text?: string; webUrl?: string } | null
   const text = si?.text ?? si?.webUrl ?? undefined
   // Rebuilding `items` fresh every render (a new array/object identity even
