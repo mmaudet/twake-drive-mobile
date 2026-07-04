@@ -1,0 +1,11 @@
+appId: com.linagora.twakedrive
+tags:
+  - inapp
+---
+# Chaque tapOn d'onglet est une assertion implicite de présence.
+- runFlow: ../../subflows/openDrive.yaml
+- tapOn: 'Récents'
+- tapOn: 'Favoris'
+- tapOn: 'Corbeille'
+- tapOn: 'Mon Drive'
+- runFlow: ../../subflows/assertLoggedIn.yaml
