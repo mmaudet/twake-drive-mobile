@@ -21,7 +21,9 @@ platform :ios do
 
     match(
       type: "appstore",
-      app_identifier: APP_IDENTIFIER,
+      # Fetch BOTH profiles (app + Share Extension) so the archive can sign each
+      # target with its own match profile.
+      app_identifier: [APP_IDENTIFIER, "#{APP_IDENTIFIER}.ShareExt"],
       git_url: ENV["MATCH_GIT_URL"],
       api_key: api_key,
       readonly: true
