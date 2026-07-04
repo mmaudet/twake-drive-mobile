@@ -60,6 +60,14 @@ describe('FileRow', () => {
     expect(screen.getByLabelText('file actions')).toBeOnTheScreen()
   })
 
+  it('exposes testIDs for Maestro selection', () => {
+    render(
+      wrap(<FileRow file={file} onPress={() => {}} onTogglePin={jest.fn()} testID="file-row" />)
+    )
+    expect(screen.getByTestId('file-row')).toBeOnTheScreen()
+    expect(screen.getByTestId('file-actions')).toBeOnTheScreen()
+  })
+
   it('renders a Move… menu item when onMove is provided', () => {
     render(wrap(<FileRow file={file} onPress={() => {}} onMove={jest.fn()} />))
     expect(screen.getByLabelText('file actions')).toBeOnTheScreen()

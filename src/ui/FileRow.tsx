@@ -49,6 +49,8 @@ interface Props {
   onMove?: (file: FileItem) => void
   /** Opens the metadata/details sheet for this row. */
   onInfo?: (file: FileItem) => void
+  /** Stable id for E2E (Maestro) selection. */
+  testID?: string
 }
 
 export const FileRow = ({
@@ -62,7 +64,8 @@ export const FileRow = ({
   onDelete,
   onTogglePin,
   onMove,
-  onInfo
+  onInfo,
+  testID
 }: Props) => {
   const { t, i18n } = useTranslation()
   const theme = useTheme()
@@ -94,6 +97,7 @@ export const FileRow = ({
 
   return (
     <List.Item
+      testID={testID}
       title={file.name}
       description={description}
       // Honour the `style` Paper passes to `left` (margins, etc.) so the
@@ -108,7 +112,7 @@ export const FileRow = ({
             <View style={styles.thumbWrap}>
               <FileThumbnail file={file} size={40} />
               <SharedBadge status={sharingStatus} />
-              <PinnedBadge entry={offlineEntry} />
+              <PinnedBadge entry={offlineEntry} testID="pinned-badge" />
             </View>
           )}
         </View>
@@ -124,6 +128,7 @@ export const FileRow = ({
                 icon={p => <CozyIcon name="dotsVertical" size={p?.size ?? 24} color={p?.color} />}
                 onPress={() => setMenuVisible(true)}
                 accessibilityLabel="file actions"
+                testID="file-actions"
               />
             }
           >

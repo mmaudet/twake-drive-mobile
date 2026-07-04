@@ -55,6 +55,8 @@ interface Props {
   onDelete?: (folder: FolderItem) => void
   onTogglePin?: (folder: FolderItem) => void
   onMove?: (folder: FolderItem) => void
+  /** Stable id for E2E (Maestro) selection. */
+  testID?: string
 }
 
 export const FolderRow = ({
@@ -67,7 +69,8 @@ export const FolderRow = ({
   onRestore,
   onDelete,
   onTogglePin,
-  onMove
+  onMove,
+  testID
 }: Props) => {
   const { t } = useTranslation()
   const theme = useTheme()
@@ -90,6 +93,7 @@ export const FolderRow = ({
 
   return (
     <List.Item
+      testID={testID}
       title={folder.name}
       description={description}
       // Honour the `style` Paper passes to `left` so the folder icon aligns
@@ -110,6 +114,7 @@ export const FolderRow = ({
                     ? folderBadgeEntry(folderOfflineState.aggregate)
                     : undefined
                 }
+                testID="pinned-badge"
               />
             </View>
           )}
@@ -126,6 +131,7 @@ export const FolderRow = ({
                 icon={p => <CozyIcon name="dotsVertical" size={p?.size ?? 24} color={p?.color} />}
                 onPress={() => setMenuVisible(true)}
                 accessibilityLabel="folder actions"
+                testID="folder-actions"
               />
             }
           >

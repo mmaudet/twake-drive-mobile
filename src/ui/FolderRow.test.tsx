@@ -58,6 +58,16 @@ describe('FolderRow', () => {
     expect(screen.getByLabelText('folder actions')).toBeOnTheScreen()
   })
 
+  it('exposes testIDs for Maestro selection', () => {
+    render(
+      wrap(
+        <FolderRow folder={folder} onPress={() => {}} onTogglePin={jest.fn()} testID="folder-row" />
+      )
+    )
+    expect(screen.getByTestId('folder-row')).toBeOnTheScreen()
+    expect(screen.getByTestId('folder-actions')).toBeOnTheScreen()
+  })
+
   it('renders a Move… menu item when onMove is provided', () => {
     render(wrap(<FolderRow folder={folder} onPress={() => {}} onMove={jest.fn()} />))
     expect(screen.getByLabelText('folder actions')).toBeOnTheScreen()
