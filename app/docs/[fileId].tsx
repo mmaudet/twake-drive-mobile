@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { WebView } from 'react-native-webview'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useClient, useQuery } from 'cozy-client'
@@ -8,6 +8,8 @@ import { ScreenContainer } from '@/ui/ScreenContainer'
 import { EditorHeader } from '@/ui/EditorHeader'
 import { ErrorState } from '@/ui/ErrorState'
 import { LoadingState } from '@/ui/LoadingState'
+import { LoadingOverlay } from '@/ui/LoadingOverlay'
+import { useWebViewSettleReveal } from '@/ui/useWebViewSettleReveal'
 import { fileByIdQuery, fileByIdQueryAs } from '@/client/queries'
 import { buildCozyAppUrl } from '@/files/cozyAppLink'
 import { useSessionCode } from '@/auth/useSessionCode'
@@ -29,6 +31,15 @@ export default function DocsScreen() {
   const [editorUrl, setEditorUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [reloadTick, setReloadTick] = useState(0)
+  // Keep an opaque overlay over the WebView until it settles on the editor, so
+  // the La Suite Docs OIDC redirect (docs → LemonLDAP → back) does not flash.
+  const {
+    ready,
+    onLoadStart,
+    onLoadEnd,
+    onNavigationStateChange,
+    onError: revealOnError
+  } = useWebViewSettleReveal()
 
   const fileLookup = useQuery(fileByIdQuery(fileId ?? ''), {
     as: fileByIdQueryAs(fileId ?? ''),
@@ -86,21 +97,28 @@ export default function DocsScreen() {
       ) : !editorUrl ? (
         <LoadingState />
       ) : (
-        <WebView
-          originWhitelist={['*']}
-          javaScriptEnabled
-          domStorageEnabled
-          allowsInlineMediaPlayback
-          sharedCookiesEnabled
-          source={{ uri: editorUrl }}
-          style={styles.webview}
-          onMessage={event => {
-            console.log('[DocsScreen] webview message', event.nativeEvent.data)
-          }}
-          onError={syntheticEvent => {
-            console.error('[DocsScreen] webview error', syntheticEvent.nativeEvent)
-          }}
-        />
+        <View style={styles.webview}>
+          <WebView
+            originWhitelist={['*']}
+            javaScriptEnabled
+            domStorageEnabled
+            allowsInlineMediaPlayback
+            sharedCookiesEnabled
+            source={{ uri: editorUrl }}
+            style={styles.webview}
+            onLoadStart={onLoadStart}
+            onLoadEnd={onLoadEnd}
+            onNavigationStateChange={onNavigationStateChange}
+            onMessage={event => {
+              console.log('[DocsScreen] webview message', event.nativeEvent.data)
+            }}
+            onError={syntheticEvent => {
+              console.error('[DocsScreen] webview error', syntheticEvent.nativeEvent)
+              revealOnError()
+            }}
+          />
+          {!ready && <LoadingOverlay />}
+        </View>
       )}
     </ScreenContainer>
   )
