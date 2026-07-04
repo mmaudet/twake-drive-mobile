@@ -1,0 +1,12 @@
+appId: com.linagora.twakedrive
+tags:
+  - inapp
+env:
+  TEST_FOLDER: 'LINAGORA'
+---
+# Pré-requis : dossier ${TEST_FOLDER} présent à la racine du drive.
+# Parcours : accueil → entrer dans un dossier → retour → toujours connecté.
+- runFlow: ../../subflows/openDrive.yaml
+- tapOn: '${TEST_FOLDER}'
+- pressKey: Back
+- runFlow: ../../subflows/assertLoggedIn.yaml

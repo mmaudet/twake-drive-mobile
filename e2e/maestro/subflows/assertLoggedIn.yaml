@@ -1,0 +1,6 @@
+appId: com.linagora.twakedrive
+---
+# Échoue vite et clairement si la session pré-auth est absente
+# (écran de login au lieu du shell drive). L'onglet "Mon Drive" n'est
+# présent que dans le shell authentifié.
+- assertVisible: 'Mon Drive'
