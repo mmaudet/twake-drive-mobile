@@ -34,6 +34,17 @@ jest.mock('expo-web-browser', () => ({
   }
 }))
 
+// react-native-webview's WebView.<platform>.js calls TurboModuleRegistry
+// .getEnforcing('RNCWebView') at require() time, which throws in the node test
+// env. Any file that imports it — the editor screens, FlagshipAuthModal, and now
+// oidcFlow transitively — would crash on load. Stub it with a host component so
+// those imports resolve; tests asserting on WebView behaviour override locally.
+jest.mock('react-native-webview', () => {
+  const React = require('react')
+  const Stub = (props: Record<string, unknown>) => React.createElement('WebView', props)
+  return { __esModule: true, WebView: Stub, default: Stub }
+})
+
 jest.mock('expo-localization', () => ({
   getLocales: () => [{ languageCode: 'fr', languageTag: 'fr-FR' }]
 }))

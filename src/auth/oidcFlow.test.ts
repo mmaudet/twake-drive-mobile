@@ -1,7 +1,10 @@
-import * as WebBrowser from 'expo-web-browser'
-
+import { openAuthorizeInWebView } from './FlagshipAuthModal'
 import { parseCallbackUrl, startOidcFlow } from './oidcFlow'
 import { UserCancelledError } from './types'
+
+jest.mock('./FlagshipAuthModal', () => ({
+  openAuthorizeInWebView: jest.fn()
+}))
 
 describe('parseCallbackUrl', () => {
   it('extracts fqdn, code, and defaultRedirection from a callback URL', () => {
@@ -37,24 +40,19 @@ describe('parseCallbackUrl', () => {
 describe('startOidcFlow', () => {
   beforeEach(() => jest.clearAllMocks())
 
-  it('returns parsed callback when openAuthSessionAsync resolves with success', async () => {
-    ;(WebBrowser.openAuthSessionAsync as jest.Mock).mockResolvedValueOnce({
-      type: 'success',
-      url: 'cozy://?fqdn=alice.example.com&code=tok'
-    })
+  it('returns the parsed callback when the WebView captures a cozy:// redirect', async () => {
+    ;(openAuthorizeInWebView as jest.Mock).mockResolvedValueOnce(
+      'cozy://?fqdn=alice.example.com&code=tok'
+    )
     const result = await startOidcFlow(new URL('https://login.example.com/oauth'))
     expect(result).toEqual({ fqdn: 'alice.example.com', code: 'tok', defaultRedirection: null })
+    expect(openAuthorizeInWebView).toHaveBeenCalledWith('https://login.example.com/oauth')
   })
 
-  it('throws UserCancelledError on cancel', async () => {
-    ;(WebBrowser.openAuthSessionAsync as jest.Mock).mockResolvedValueOnce({ type: 'cancel' })
-    await expect(startOidcFlow(new URL('https://login.example.com/oauth'))).rejects.toBeInstanceOf(
-      UserCancelledError
+  it('throws UserCancelledError when the user closes the WebView', async () => {
+    ;(openAuthorizeInWebView as jest.Mock).mockRejectedValueOnce(
+      new Error('User cancelled OIDC flow')
     )
-  })
-
-  it('throws UserCancelledError on dismiss', async () => {
-    ;(WebBrowser.openAuthSessionAsync as jest.Mock).mockResolvedValueOnce({ type: 'dismiss' })
     await expect(startOidcFlow(new URL('https://login.example.com/oauth'))).rejects.toBeInstanceOf(
       UserCancelledError
     )

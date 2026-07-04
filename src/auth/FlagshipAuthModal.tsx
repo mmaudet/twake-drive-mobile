@@ -6,9 +6,13 @@ import { normalizeRedirectUrl } from './pkce'
 type Resolver = { resolve: (url: string) => void; reject: (e: Error) => void }
 let controller: ((url: string) => Promise<string>) | null = null
 
-/** Opens `url` in an in-app WebView and resolves with the `cozy://...` redirect
- *  the WebView is navigated to (captured via onShouldStartLoadWithRequest, so no
- *  Android intent / "Open app?" dialog fires). Rejects if the user closes it. */
+/** Loads `url` in the in-app WebView and resolves with the `cozy://…` redirect it
+ *  is navigated to (captured via onShouldStartLoadWithRequest, so no Android intent
+ *  / "Open app?" dialog fires). Used for both the OIDC login and flagship
+ *  certification: running them here rather than the system browser keeps the
+ *  LemonLDAP session cookie in the shared WebView jar, so the editor WebViews
+ *  (Docs, OnlyOffice, Notes) reuse it instead of prompting a second SSO login.
+ *  Rejects if the user closes the modal before a redirect is captured. */
 export const openAuthorizeInWebView = (url: string): Promise<string> => {
   if (!controller) throw new Error('FlagshipAuthModal is not mounted')
   return controller(url)
@@ -39,7 +43,8 @@ export const FlagshipAuthModal = (): React.ReactElement => {
   const onShouldStart = (req: WebViewNavigation): boolean => {
     if (req.url.startsWith('cozy:')) {
       const captured = normalizeRedirectUrl(req.url)
-      console.log('[auth] webview captured redirect', captured)
+      // Do not log `captured` — it carries the single-use OIDC auth code.
+      console.log('[auth] webview captured cozy:// redirect')
       settle(r => r.resolve(captured))
       return false
     }
@@ -59,6 +64,8 @@ export const FlagshipAuthModal = (): React.ReactElement => {
             onShouldStartLoadWithRequest={onShouldStart}
             sharedCookiesEnabled
             thirdPartyCookiesEnabled
+            javaScriptEnabled
+            domStorageEnabled
             incognito={false}
             originWhitelist={['https://*', 'cozy://*', 'cozy:*']}
           />
