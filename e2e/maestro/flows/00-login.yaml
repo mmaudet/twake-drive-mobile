@@ -2,24 +2,22 @@ appId: com.linagora.twakedrive
 tags:
   - login
 env:
-  COZY_URL: 'https://mon-instance.twake.app'
   COZY_EMAIL: 'moi@example.com'
 ---
-# ⚠️ SEMI-MANUEL + discovery. Tag `login` → EXCLU des runs auto
-# (--exclude-tags login). Sert à (re)créer la session pré-auth quand elle expire.
+# Semi-manuel. Tag `login` → EXCLU des runs auto. Sert à créer la session
+# pré-auth. Sélecteurs welcome/login confirmés depuis la source (FR).
 #
-# Sur device, inspecter welcome → login avec `maestro hierarchy` pour confirmer :
-#   le CTA de l'écran welcome, le champ URL/email, et l'entrée du code email
-#   (WebView FlagshipAuthModal, cf. flagship session_code).
-#
-# Le flow remplit ce qu'il peut puis ATTEND l'arrivée sur le drive pendant que
-# tu saisis MANUELLEMENT le code email reçu.
+# Le flow pilote : welcome → « Se connecter » → saisie email → « Continuer »,
+# puis marque une PAUSE pendant la connexion OIDC (mot de passe + code email)
+# que tu réalises à la main dans le navigateur/webview, et attend l'arrivée
+# sur le drive.
 - launchApp
-- tapOn:
-    text: 'Se connecter|Commencer|Connexion'
-    optional: true
-- inputText: '${COZY_URL}'
-# --- PAUSE : saisie MANUELLE du code email + étapes WebView flagship ---
+- assertVisible: 'Bienvenue sur Twake Drive'   # écran welcome (déconnecté)
+- tapOn: 'Se connecter'
+- tapOn: 'Adresse email'                         # focus le champ email
+- inputText: '${COZY_EMAIL}'
+- tapOn: 'Continuer'
+# --- PAUSE : connexion OIDC manuelle (mot de passe + code email) ---
 - extendedWaitUntil:
     visible: 'Mon Drive'
-    timeout: 180000
+    timeout: 300000
