@@ -103,6 +103,18 @@ describe('useAuth', () => {
     await waitFor(() => expect(screen.getByTestId('status')).toHaveTextContent('unauthenticated'))
   })
 
+  it('falls back to unauthenticated when the initial session read fails (no permanent loading)', async () => {
+    // Regression: on iOS Simulator (unsigned build) SecureStore/keychain can
+    // reject; the bootstrap must not leave the app stuck on the loading spinner.
+    jest.spyOn(tokenStorage, 'getSession').mockRejectedValue(new Error('keychain unavailable'))
+    render(
+      <AuthProvider>
+        <Probe />
+      </AuthProvider>
+    )
+    await waitFor(() => expect(screen.getByTestId('status')).toHaveTextContent('unauthenticated'))
+  })
+
   it('transitions to authenticated when a session exists', async () => {
     jest.spyOn(tokenStorage, 'getSession').mockResolvedValue(mockSession)
     render(

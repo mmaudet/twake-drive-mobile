@@ -27,12 +27,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const bootstrap = async () => {
-      const session = await getSession()
-      if (!session) {
-        setState({ status: 'unauthenticated', client: null })
-        return
-      }
       try {
+        const session = await getSession()
+        if (!session) {
+          setState({ status: 'unauthenticated', client: null })
+          return
+        }
         const client = await createClient(session)
         // A user already logged in when they update to a build with the Android
         // DocumentsProvider never runs the interactive login path again, so mirror
@@ -40,7 +40,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await mirrorSessionToNative(session)
         setState({ status: 'authenticated', client })
       } catch (err) {
-        console.warn('[useAuth] createClient failed on bootstrap', err)
+        // Any bootstrap failure — including a rejecting SecureStore/keychain read
+        // on the iOS Simulator (unsigned build) — must fall back to the login
+        // screen, never leave the app hung on the loading spinner. Observed:
+        // index.tsx renders LoadingState while status==='loading'; a swallowed
+        // getSession() rejection kept it there forever.
+        console.warn('[useAuth] bootstrap failed', err)
         setState({ status: 'unauthenticated', client: null })
       }
     }
