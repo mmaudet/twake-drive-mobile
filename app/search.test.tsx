@@ -88,6 +88,11 @@ describe('SearchScreen', () => {
     expect(mockUseFileSearch.mock.calls[0][1]).toBe(false)
   })
 
+  it('expose le testID du champ de recherche pour Maestro', () => {
+    render(<SearchScreen />)
+    expect(screen.getByTestId('search-input')).toBeTruthy()
+  })
+
   it('active la recherche et affiche les résultats à partir de 2 caractères', () => {
     setSearch({
       status: 'success',

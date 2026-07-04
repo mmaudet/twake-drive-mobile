@@ -62,6 +62,7 @@ export default function SearchScreen() {
           style — force icons that contrast the (theme-colored) safe-area strip. */}
       <StatusBar style="auto" />
       <Searchbar
+        testID="search-input"
         placeholder={t('drive.search.placeholder')}
         value={term}
         onChangeText={setTerm}

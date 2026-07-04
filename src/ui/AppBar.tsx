@@ -75,7 +75,7 @@ export const AppBar = ({ title, onBack, onLogout, showSearch, selection }: Props
 
   return (
     <Appbar.Header>
-      {onBack ? <Appbar.BackAction onPress={onBack} /> : null}
+      {onBack ? <Appbar.BackAction onPress={onBack} testID="appbar-back-button" /> : null}
       <View style={styles.logo}>
         <TwakeLogo size={28} />
       </View>
@@ -86,6 +86,7 @@ export const AppBar = ({ title, onBack, onLogout, showSearch, selection }: Props
           onPress={() => router.push('/search')}
           accessibilityLabel={t('drive.search')}
           style={styles.searchButton}
+          testID="appbar-search-button"
         >
           <CozyIcon name="magnifier" size={24} color={theme.colors.onSurface} />
         </Pressable>

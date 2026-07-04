@@ -37,6 +37,12 @@ describe('AppBar showSearch', () => {
     render(wrap(<AppBar title="Mes fichiers" />))
     expect(screen.queryByLabelText('drive.search')).toBeNull()
   })
+
+  it('expose les testIDs de navigation Maestro', () => {
+    render(wrap(<AppBar title="Mes fichiers" showSearch onBack={() => {}} />))
+    expect(screen.getByTestId('appbar-search-button')).toBeOnTheScreen()
+    expect(screen.getByTestId('appbar-back-button')).toBeOnTheScreen()
+  })
 })
 
 test('AppBar affiche le TwakeLogo à côté du titre', () => {
