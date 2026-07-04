@@ -24,14 +24,21 @@ const session = {
 
 // Native extensions read the SAME keychain item, so every call must target the
 // shared access group with AFTER_FIRST_UNLOCK accessibility.
-const SHARED = { accessGroup: 'com.linagora.twakedrive.shared', keychainAccessible: 'AFTER_FIRST_UNLOCK' }
+const SHARED = {
+  accessGroup: 'com.linagora.twakedrive.shared',
+  keychainAccessible: 'AFTER_FIRST_UNLOCK'
+}
 
 describe('tokenStorage', () => {
   beforeEach(() => jest.clearAllMocks())
 
   it('saveSession serializes the session under SESSION_KEY', async () => {
     await saveSession(session)
-    expect(SecureStore.setItemAsync).toHaveBeenCalledWith(SESSION_KEY, JSON.stringify(session), SHARED)
+    expect(SecureStore.setItemAsync).toHaveBeenCalledWith(
+      SESSION_KEY,
+      JSON.stringify(session),
+      SHARED
+    )
   })
 
   it('getSession returns parsed session when present, read from the shared group', async () => {
