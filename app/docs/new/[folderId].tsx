@@ -11,6 +11,7 @@ import { LoadingState } from '@/ui/LoadingState'
 import { LoadingOverlay } from '@/ui/LoadingOverlay'
 import { useWebViewSettleReveal } from '@/ui/useWebViewSettleReveal'
 import { buildCozyAppUrl } from '@/files/cozyAppLink'
+import { DOCS_HEADER_FIX } from '@/files/docsWebViewFix'
 import { useSessionCode } from '@/auth/useSessionCode'
 
 // Mirrors twake-drive web's CreateDocsItem flow: redirect the user to the
@@ -85,6 +86,7 @@ export default function DocsNewScreen() {
             onLoadStart={onLoadStart}
             onLoadEnd={onLoadEnd}
             onNavigationStateChange={onNavigationStateChange}
+            injectedJavaScript={DOCS_HEADER_FIX}
             onMessage={event => {
               console.log('[DocsNewScreen] webview message', event.nativeEvent.data)
             }}

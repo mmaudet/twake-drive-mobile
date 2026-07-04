@@ -12,6 +12,7 @@ import { LoadingOverlay } from '@/ui/LoadingOverlay'
 import { useWebViewSettleReveal } from '@/ui/useWebViewSettleReveal'
 import { fileByIdQuery, fileByIdQueryAs } from '@/client/queries'
 import { buildCozyAppUrl } from '@/files/cozyAppLink'
+import { DOCS_HEADER_FIX } from '@/files/docsWebViewFix'
 import { useSessionCode } from '@/auth/useSessionCode'
 
 // Mirrors twake-drive web's "docs" file-type routing: open the cozy `docs`
@@ -109,6 +110,7 @@ export default function DocsScreen() {
             onLoadStart={onLoadStart}
             onLoadEnd={onLoadEnd}
             onNavigationStateChange={onNavigationStateChange}
+            injectedJavaScript={DOCS_HEADER_FIX}
             onMessage={event => {
               console.log('[DocsScreen] webview message', event.nativeEvent.data)
             }}
