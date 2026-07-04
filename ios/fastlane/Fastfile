@@ -53,12 +53,16 @@ platform :ios do
       output_directory: "build",
       output_name: "TwakeDrive.ipa",
       clean: true,
-      xcargs: "DEVELOPMENT_TEAM='#{ENV["APPLE_TEAM_ID"]}' CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER='match AppStore #{APP_IDENTIFIER}' CODE_SIGN_IDENTITY='Apple Distribution'",
+      # No global PROVISIONING_PROFILE_SPECIFIER — each target (app + ShareExt)
+      # carries its own match profile in the pbxproj (scripts/ios-set-extension-signing.cjs),
+      # so gym signs each with the right profile instead of forcing the app's onto the ext.
+      xcargs: "DEVELOPMENT_TEAM='#{ENV["APPLE_TEAM_ID"]}' CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution'",
       export_options: {
         teamID: ENV["APPLE_TEAM_ID"],
         signingStyle: "manual",
         provisioningProfiles: {
-          APP_IDENTIFIER => "match AppStore #{APP_IDENTIFIER}"
+          APP_IDENTIFIER => "match AppStore #{APP_IDENTIFIER}",
+          "#{APP_IDENTIFIER}.ShareExt" => "match AppStore #{APP_IDENTIFIER}.ShareExt"
         }
       }
     )
