@@ -11,7 +11,9 @@
 		2A7F90B4FBE3FD04808B87DC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1CBCD6ABF2834EBF23963C26 /* PrivacyInfo.xcprivacy */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		501A6B5C026D442E9E7BC4BC /* TwakeDriveShareExt.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 98B7465658BA4AAFB60CE43E /* TwakeDriveShareExt.appex */; };
+		5B2A78C6EE0C4C14BF599D0D /* FileProviderExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842CA699CB31465EBB77C5E5 /* FileProviderExtension.swift */; };
 		709E49B0B9D174F0F10578B0 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6394AC0062737DC88CAB25 /* ExpoModulesProvider.swift */; };
+		8327C204B5644633AE99AC4F /* TwakeDriveFileProviderExt.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = FCA38D6E763341A0BE4A1F91 /* TwakeDriveFileProviderExt.appex */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		D239315EC78F41EE476DF3E2 /* libPods-TwakeDrive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FECC114309FD433CB51D581B /* libPods-TwakeDrive.a */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
@@ -25,6 +27,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 958E7F20412C4BDC866D864A;
 			remoteInfo = TwakeDriveShareExt;
+		};
+		A580847C15704B7F880A9942 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A4F644A948504D35B35FC86B;
+			remoteInfo = TwakeDriveFileProviderExt;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -40,15 +49,29 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FB5FED8B51684D60B5BB5A8F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8327C204B5644633AE99AC4F /* TwakeDriveFileProviderExt.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		047FACE0D3584A0A83EFA654 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* TwakeDrive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwakeDrive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TwakeDrive/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TwakeDrive/Info.plist; sourceTree = "<group>"; };
 		1CBCD6ABF2834EBF23963C26 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = TwakeDrive/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		21CEE0633495A490998A1B2A /* Pods-TwakeDrive.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TwakeDrive.release.xcconfig"; path = "Target Support Files/Pods-TwakeDrive/Pods-TwakeDrive.release.xcconfig"; sourceTree = "<group>"; };
 		7BE0007FF2C4921CE9FE4199 /* Pods-TwakeDrive.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TwakeDrive.debug.xcconfig"; path = "Target Support Files/Pods-TwakeDrive/Pods-TwakeDrive.debug.xcconfig"; sourceTree = "<group>"; };
+		842CA699CB31465EBB77C5E5 /* FileProviderExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = FileProviderExtension.swift; path = FileProviderExtension.swift; sourceTree = "<group>"; };
+		845E0D73487342379615CDAF /* TwakeDriveFileProviderExt.entitlements */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = unknown; name = TwakeDriveFileProviderExt.entitlements; path = TwakeDriveFileProviderExt.entitlements; sourceTree = "<group>"; };
 		92732EBD72374A14A08CB32F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
 		98B7465658BA4AAFB60CE43E /* TwakeDriveShareExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; name = TwakeDriveShareExt.appex; path = TwakeDriveShareExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = TwakeDrive/SplashScreen.storyboard; sourceTree = "<group>"; };
@@ -58,6 +81,7 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = TwakeDrive/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* TwakeDrive-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "TwakeDrive-Bridging-Header.h"; path = "TwakeDrive/TwakeDrive-Bridging-Header.h"; sourceTree = "<group>"; };
+		FCA38D6E763341A0BE4A1F91 /* TwakeDriveFileProviderExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; name = TwakeDriveFileProviderExt.appex; path = TwakeDriveFileProviderExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDE3437028BA4902966362A6 /* ShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShareViewController.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		FECC114309FD433CB51D581B /* libPods-TwakeDrive.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TwakeDrive.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -68,6 +92,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				D239315EC78F41EE476DF3E2 /* libPods-TwakeDrive.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BDBCEA679AF648AAAC1828AA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +144,17 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		28F2E8FB775047CA8A0C3119 /* TwakeDriveFileProviderExt */ = {
+			isa = PBXGroup;
+			children = (
+				842CA699CB31465EBB77C5E5 /* FileProviderExtension.swift */,
+				047FACE0D3584A0A83EFA654 /* Info.plist */,
+				845E0D73487342379615CDAF /* TwakeDriveFileProviderExt.entitlements */,
+			);
+			name = TwakeDriveFileProviderExt;
+			path = TwakeDriveFileProviderExt;
+			sourceTree = "<group>";
+		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -139,6 +181,7 @@
 				25312BDD0DAAEB8A34A05CA8 /* Pods */,
 				EE6D32524E629697A1C62E7F /* ExpoModulesProviders */,
 				BFB4CB40AB09437782FCF0EE /* TwakeDriveShareExt */,
+				28F2E8FB775047CA8A0C3119 /* TwakeDriveFileProviderExt */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -150,6 +193,7 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* TwakeDrive.app */,
 				98B7465658BA4AAFB60CE43E /* TwakeDriveShareExt.appex */,
+				FCA38D6E763341A0BE4A1F91 /* TwakeDriveFileProviderExt.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -198,11 +242,13 @@
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
 				ABB11ECBFEA99C97A15D13BD /* [CP] Embed Pods Frameworks */,
 				087C49475BF1449E8B0467E5 /* Embed Foundation Extensions */,
+				FB5FED8B51684D60B5BB5A8F /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				E4D979C4A6F547CBBC518AAD /* PBXTargetDependency */,
+				BD5EA330F1F746E184281306 /* PBXTargetDependency */,
 			);
 			name = TwakeDrive;
 			productName = TwakeDrive;
@@ -223,6 +269,22 @@
 			name = TwakeDriveShareExt;
 			productName = TwakeDriveShareExt;
 			productReference = 98B7465658BA4AAFB60CE43E /* TwakeDriveShareExt.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		A4F644A948504D35B35FC86B /* TwakeDriveFileProviderExt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2B5AF07AB0F48F4B9FB588D /* Build configuration list for PBXNativeTarget "TwakeDriveFileProviderExt" */;
+			buildPhases = (
+				1A9A3FDCE14F42A8BD798C96 /* Sources */,
+				BDBCEA679AF648AAAC1828AA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TwakeDriveFileProviderExt;
+			productName = TwakeDriveFileProviderExt;
+			productReference = FCA38D6E763341A0BE4A1F91 /* TwakeDriveFileProviderExt.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -255,6 +317,7 @@
 			targets = (
 				13B07F861A680F5B00A75B9A /* TwakeDrive */,
 				958E7F20412C4BDC866D864A /* TwakeDriveShareExt */,
+				A4F644A948504D35B35FC86B /* TwakeDriveFileProviderExt */,
 			);
 		};
 /* End PBXProject section */
@@ -447,6 +510,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1A9A3FDCE14F42A8BD798C96 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B2A78C6EE0C4C14BF599D0D /* FileProviderExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2F5A51D41BBA4210A45ECAAD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -458,6 +529,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		BD5EA330F1F746E184281306 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A4F644A948504D35B35FC86B /* TwakeDriveFileProviderExt */;
+			targetProxy = A580847C15704B7F880A9942 /* PBXContainerItemProxy */;
+		};
 		E4D979C4A6F547CBBC518AAD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 958E7F20412C4BDC866D864A /* TwakeDriveShareExt */;
@@ -466,6 +542,64 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		068EA54FDA2847FA8C25F021 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = TwakeDriveFileProviderExt/TwakeDriveFileProviderExt.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KUT463DS29;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TwakeDriveFileProviderExt/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = com.linagora.twakedrive.FileProvider;
+				PRODUCT_NAME = TwakeDriveFileProviderExt;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0CF44CB040D6450F9F3DCC24 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = TwakeDriveFileProviderExt/TwakeDriveFileProviderExt.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KUT463DS29;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TwakeDriveFileProviderExt/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = com.linagora.twakedrive.FileProvider;
+				PRODUCT_NAME = TwakeDriveFileProviderExt;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7BE0007FF2C4921CE9FE4199 /* Pods-TwakeDrive.debug.xcconfig */;
@@ -497,12 +631,12 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.linagora.twakedrive;
 				PRODUCT_NAME = TwakeDrive;
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive";
 				SWIFT_OBJC_BRIDGING_HEADER = "TwakeDrive/TwakeDrive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive";
 			};
 			name = Debug;
 		};
@@ -532,11 +666,11 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.linagora.twakedrive;
 				PRODUCT_NAME = TwakeDrive;
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive";
 				SWIFT_OBJC_BRIDGING_HEADER = "TwakeDrive/TwakeDrive-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive";
 			};
 			name = Release;
 		};
@@ -663,6 +797,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TwakeDriveShareExt/TwakeDriveShareExt.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KUT463DS29;
@@ -682,12 +817,11 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.linagora.twakedrive.ShareExt;
 				PRODUCT_NAME = TwakeDriveShareExt;
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive.ShareExt";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive.ShareExt";
 			};
 			name = Debug;
 		};
@@ -696,6 +830,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TwakeDriveShareExt/TwakeDriveShareExt.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KUT463DS29;
@@ -711,12 +846,11 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.linagora.twakedrive.ShareExt;
 				PRODUCT_NAME = TwakeDriveShareExt;
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive.ShareExt";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive.ShareExt";
 			};
 			name = Release;
 		};
@@ -737,6 +871,15 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C2B5AF07AB0F48F4B9FB588D /* Build configuration list for PBXNativeTarget "TwakeDriveFileProviderExt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				068EA54FDA2847FA8C25F021 /* Debug */,
+				0CF44CB040D6450F9F3DCC24 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
