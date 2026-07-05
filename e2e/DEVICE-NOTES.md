@@ -89,3 +89,25 @@ VERTS**. Nuances : sélecteur iOS = `folder-actions:<nom>-container-outer-layer`
 (le nu est ambigu) vs Android `folder-actions:<nom>` ; `inputText` mange le tiret
 sur iOS (noms sans tiret) ; la session iOS persiste à travers `simctl install`.
 Suivi : même restructure sur `FileRow`.
+
+## Favoris + hors-ligne : retrait/purge (fixes + validation, 2026-07-05)
+**Fixes (PR #34)** : favori — refetch après toggle (retrait optimiste `removedIds`
+comme trash.tsx) + dossier passé avec `_type`/`_rev` (sinon `client.save` levait
+« must have a `_type` property », avalé → le favori dossier n'était **jamais**
+retiré) ; hors-ligne — `FileRow` pilote « Retirer » sur `isDirectPin` (sinon re-pin)
++ `unpinFolder` récursif via `ancestorPins` (purge les blobs des sous-dossiers).
+
+**Validé device** : retrait favori **Android = persiste** (E2Efav parti après
+relaunch — LE vrai bug) ; **iOS 26.4 = disparaît live** (menu Favoris → « Retirer
+des favoris » → `notVisible` EXIT=0, le retrait optimiste marche). Purge nested =
+test unitaire `OfflineFilesStore` vert.
+
+**Flows E2E 09 (favori) / 12 (hors-ligne)** : le menu s'ouvre de façon fiable sur
+iOS (`folder-actions:<nom>-container-outer-layer` + **`waitForAnimationToEnd`**),
+MAIS le tap des **items de menu Paper par TEXTE est flaky sur iOS** (XCUITest
+n'expose pas leur texte de façon fiable — « Supprimer »/« Ajouter aux favoris » OK,
+« Garder hors-ligne » rate par moments). Fiables sur Android. Aussi : la
+propagation **favori→écran Favoris** dépend de la réplication pouch (l'E2E « favori
+puis vérifier Favoris » court l'indexation → timeouts généreux + pull-to-refresh).
+**Suivi E2E iOS** : ajouter des **testIDs sur les `Menu.Item`** (comme
+`folder-actions`) pour des taps déterministes cross-platform.
