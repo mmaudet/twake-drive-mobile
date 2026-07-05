@@ -150,8 +150,19 @@ describe('FavoritesScreen', () => {
   it('shows only real favourites, dropping non-favourites the query wrongly returns', () => {
     mockUseQuery.mockReturnValue(
       makeQueryResult([
-        { _id: 'fav-1', name: 'Real favourite.pdf', type: 'file', size: 1024, cozyMetadata: { favorite: true } },
-        { _id: 'not-1', name: 'Not a favourite', type: 'directory', cozyMetadata: { favorite: false } },
+        {
+          _id: 'fav-1',
+          name: 'Real favourite.pdf',
+          type: 'file',
+          size: 1024,
+          cozyMetadata: { favorite: true }
+        },
+        {
+          _id: 'not-1',
+          name: 'Not a favourite',
+          type: 'directory',
+          cozyMetadata: { favorite: false }
+        },
         { _id: 'not-2', name: 'No favourite flag', type: 'directory' }
       ])
     )
