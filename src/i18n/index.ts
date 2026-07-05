@@ -1,3 +1,4 @@
+// On-device/Hermes insurance: guarantees Intl.PluralRules (esp. ru). Not covered by index.test (Node ships full ICU).
 import 'intl-pluralrules'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'

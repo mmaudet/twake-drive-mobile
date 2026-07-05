@@ -1,5 +1,17 @@
 import { isSupportedLanguage, pickLanguage, SUPPORTED_LANGUAGES } from './languages'
 
+it('pins the supported languages, order, and autonyms', () => {
+  expect(SUPPORTED_LANGUAGES.map(l => [l.code, l.label])).toEqual([
+    ['en', 'English'],
+    ['fr', 'Français'],
+    ['es', 'Español'],
+    ['it', 'Italiano'],
+    ['de', 'Deutsch'],
+    ['vi', 'Tiếng Việt'],
+    ['ru', 'Русский']
+  ])
+})
+
 describe('isSupportedLanguage', () => {
   it('accepts every declared language code', () => {
     for (const { code } of SUPPORTED_LANGUAGES) expect(isSupportedLanguage(code)).toBe(true)
