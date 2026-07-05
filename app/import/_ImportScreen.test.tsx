@@ -34,14 +34,6 @@ jest.mock('cozy-client', () => ({
   useClient: () => ({})
 }))
 
-// Precautionary stub for the account identity hook (Task 4/8): useCurrentUser
-// calls cozy-client's useQuery, which the local cozy-client mock above does not
-// provide (no useQuery export), so any render path that reaches it here would
-// throw with only a CozyClient-less useClient() stub in place.
-jest.mock('@/account/useCurrentUser', () => ({
-  useCurrentUser: () => ({ initials: 'MM', loading: false })
-}))
-
 // See mockBack/mockPush note above re: the `mock`-prefix hoisting requirement.
 const mockUploadBatch = jest.fn()
 jest.mock('@/share/uploadBatch', () => ({

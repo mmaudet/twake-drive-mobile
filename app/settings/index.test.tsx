@@ -17,8 +17,17 @@ jest.mock('react-native-safe-area-context', () => ({
 // SettingsIndex now renders the account header via useCurrentUser (Task 4),
 // which calls cozy-client's useQuery under the hood — this suite has no
 // CozyClient in the render tree, so mock it locally (see task-8-brief.md).
+// The identity returned is configurable per test via `mockUser` (reset in
+// beforeEach below) so each test can exercise a different name/email/initials
+// combination without re-mocking the module. `mockUser` must keep its "mock"
+// prefix — babel-plugin-jest-hoist only allows jest.mock() factories to close
+// over out-of-scope identifiers named that way.
+let mockUser: { name?: string; email?: string; initials: string; loading: boolean } = {
+  initials: 'MM',
+  loading: false
+}
 jest.mock('@/account/useCurrentUser', () => ({
-  useCurrentUser: () => ({ initials: 'MM', loading: false })
+  useCurrentUser: () => mockUser
 }))
 
 // useThemePreference is exercised elsewhere against the real MMKV-backed store
@@ -34,11 +43,39 @@ jest.mock('@/preferences/themePreference', () => ({
 }))
 
 describe('SettingsIndex', () => {
+  beforeEach(() => {
+    mockUser = { initials: 'MM', loading: false }
+  })
+
   it('offers three theme options and applies the choice', () => {
     const { getByText } = render(<SettingsIndex />)
     getByText('Système')
     getByText('Clair')
     fireEvent.press(getByText('Sombre'))
     expect(mockSetPref).toHaveBeenCalledWith('dark')
+  })
+
+  describe('account header', () => {
+    it('shows the name as title and the email as description, with the avatar initials', () => {
+      mockUser = { name: 'Alice B', email: 'a@b.c', initials: 'AB', loading: false }
+      const { getByText } = render(<SettingsIndex />)
+      expect(getByText('Alice B')).toBeTruthy()
+      expect(getByText('a@b.c')).toBeTruthy()
+      expect(getByText('AB')).toBeTruthy()
+    })
+
+    it('falls back to the email as title with no description when there is no name', () => {
+      mockUser = { name: undefined, email: 'solo@example.com', initials: 'S', loading: false }
+      const { getByText } = render(<SettingsIndex />)
+      expect(getByText('solo@example.com')).toBeTruthy()
+      expect(getByText('S')).toBeTruthy()
+    })
+
+    it('falls back to the translated account label when there is neither name nor email', () => {
+      mockUser = { name: undefined, email: undefined, initials: 'U', loading: false }
+      const { getByText } = render(<SettingsIndex />)
+      expect(getByText('Compte')).toBeTruthy()
+      expect(getByText('U')).toBeTruthy()
+    })
   })
 })
