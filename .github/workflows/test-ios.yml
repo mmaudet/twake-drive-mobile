@@ -1,0 +1,67 @@
+name: Test iOS (unit)
+
+# Runs the File Provider extension's pure-logic XCTest bundle
+# (TwakeDriveFileProviderExtTests, 37 tests) on an iOS Simulator, gating the
+# Lot C foundation against regressions before the device glue (Tasks 10-13) is
+# built on top of it.
+#
+# macOS runner minutes cost ~10x, so — like build-ios.yml — this stays off
+# JS/Android-only PRs. It is path-gated: it runs only when iOS sources or this
+# workflow change. The test target is logic-only (no host app, no CocoaPods
+# dependency), so it builds straight from the .xcodeproj — no npm ci / pod
+# install needed, which keeps the job lean (compile ~9 Swift files + run tests).
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ios/**'
+      - '.github/workflows/test-ios.yml'
+  pull_request:
+    paths:
+      - 'ios/**'
+      - '.github/workflows/test-ios.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-ios:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      # Pick whatever numbered iPhone simulator the runner's default Xcode
+      # ships, instead of pinning a device/OS that a runner image bump could
+      # drop. "iPhone SE" is skipped (no digit) so the destination is always a
+      # mainline iPhone.
+      - name: Select an available iOS Simulator
+        id: sim
+        run: |
+          DEVICE=$(xcrun simctl list devices available | grep -m1 -oE 'iPhone [0-9]+[^(]*' | sed 's/ *$//')
+          if [ -z "$DEVICE" ]; then
+            echo "::error::no available iPhone simulator on this runner"
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
+          echo "Selected simulator: $DEVICE"
+
+      # -project (not -workspace): the test scheme is self-contained and the
+      # target links no Pods, so building via the project skips the CocoaPods
+      # workspace entirely. The same Swift sources already compile in CI via
+      # build-ios (the extension target), so this only adds test execution.
+      - name: Run File Provider unit tests
+        working-directory: ios
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project TwakeDrive.xcodeproj \
+            -scheme TwakeDriveFileProviderExtTests \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.device }}" \
+            CODE_SIGNING_ALLOWED=NO
