@@ -36,13 +36,6 @@
 			remoteGlobalIDString = A4F644A948504D35B35FC86B;
 			remoteInfo = TwakeDriveFileProviderExt;
 		};
-		ADCABEF4E6FF4B8EA38C0FFB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9A30F11EAB1B4A0EB8E489D3;
-			remoteInfo = TwakeDriveFileProviderExtTests;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -277,7 +270,6 @@
 			dependencies = (
 				E4D979C4A6F547CBBC518AAD /* PBXTargetDependency */,
 				BD5EA330F1F746E184281306 /* PBXTargetDependency */,
-				5FB1EE04C9A3491090A913F9 /* PBXTargetDependency */,
 			);
 			name = TwakeDrive;
 			productName = TwakeDrive;
@@ -586,11 +578,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		5FB1EE04C9A3491090A913F9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9A30F11EAB1B4A0EB8E489D3 /* TwakeDriveFileProviderExtTests */;
-			targetProxy = ADCABEF4E6FF4B8EA38C0FFB /* PBXContainerItemProxy */;
-		};
 		BD5EA330F1F746E184281306 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A4F644A948504D35B35FC86B /* TwakeDriveFileProviderExt */;

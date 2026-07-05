@@ -212,9 +212,9 @@ if (!project.pbxTargetByName(TEST_TARGET)) {
     bs.DEVELOPMENT_TEAM = DEVELOPMENT_TEAM;
     bs.TARGETED_DEVICE_FAMILY = '"1,2"';
     bs.GENERATE_INFOPLIST_FILE = 'YES';       // logic bundle: no hand-written Info.plist needed
-    delete bs.INFOPLIST_FILE;                 // addTarget('unit_test_bundle') defaults this to a
-                                               // file that doesn't exist on disk; drop it so the
-                                               // auto-generated Info.plist above is actually used
+                                               // (addTarget('unit_test_bundle') defaults INFOPLIST_FILE to a
+                                               // file that doesn't exist on disk; block 1b below deletes it
+                                               // unconditionally, so doing it here too would be redundant)
     bs.CODE_SIGNING_ALLOWED = 'NO';           // pure logic bundle runs unsigned on the Simulator
     bs.SWIFT_EMIT_LOC_STRINGS = 'NO';
     delete bs.TEST_HOST;                       // NO host app
@@ -248,6 +248,51 @@ if (!project.pbxTargetByName(TEST_TARGET)) {
   for (const entry of (configList.buildConfigurations || [])) {
     const cfg = objects.XCBuildConfiguration[entry.value];
     if (cfg && cfg.buildSettings) delete cfg.buildSettings.INFOPLIST_FILE;
+  }
+}
+
+// ---- 1c. heal: the app must not depend on the test bundle ------------------
+// xcode-lib quirk #3: addTarget() (block 1 above) internally calls addTargetDependency(),
+// which unconditionally wires the *new* target as a build dependency of getFirstTarget()
+// — whichever target is listed first in the project's own `targets` array. That's the
+// shipping app target (TwakeDrive, product-type.application), not
+// TwakeDriveFileProviderExt (the extension this test target actually exercises). A
+// logic-only XCTest bundle is never embedded in the app, so TwakeDrive depending on it is
+// wrong: it couples the signed archive / fastlane-match pipeline (built from the
+// TwakeDrive scheme) to a CODE_SIGNING_ALLOWED=NO target for no reason. Block 1 only fires
+// once (guarded by "target doesn't exist yet"), so a project.pbxproj already committed
+// with this bad edge (from a run predating this fix) would never get cleaned up just by
+// re-running the script — same rationale as block 1b above. Do the removal
+// unconditionally, every run: a no-op once the edge is gone (idempotent).
+{
+  const nativeTargets = objects.PBXNativeTarget || {};
+  const testTargetObj = project.pbxTargetByName(TEST_TARGET);
+  const testTargetKey = Object.keys(nativeTargets)
+    .find((k) => !/_comment$/.test(k) && nativeTargets[k] === testTargetObj);
+  const appTargetKey = Object.keys(nativeTargets).find((k) => {
+    if (/_comment$/.test(k)) return false;
+    const t = nativeTargets[k];
+    return t && typeof t.productType === 'string'
+      && t.productType.includes('com.apple.product-type.application');
+  });
+  if (!testTargetKey) fail(`could not resolve uuid of test target ${TEST_TARGET}`);
+  if (!appTargetKey) fail('could not find the main app target (product-type.application)');
+  const appTarget = nativeTargets[appTargetKey];
+  const tds = objects.PBXTargetDependency || {};
+  const cips = objects.PBXContainerItemProxy || {};
+  if (Array.isArray(appTarget.dependencies)) {
+    appTarget.dependencies = appTarget.dependencies.filter((dep) => {
+      const td = dep && tds[dep.value];
+      if (!td || td.target !== testTargetKey) return true; // unrelated dependency: keep
+      const proxyKey = td.targetProxy;
+      delete tds[dep.value];
+      delete tds[`${dep.value}_comment`];
+      if (proxyKey) {
+        delete cips[proxyKey];
+        delete cips[`${proxyKey}_comment`];
+      }
+      return false; // drop the spurious app -> test-bundle edge
+    });
   }
 }
 
