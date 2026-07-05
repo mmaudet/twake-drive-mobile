@@ -1,53 +1,58 @@
-# Notes de bring-up E2E (device réel)
+# Notes de bring-up E2E (devices réels)
 
-Observations du premier passage sur **Pixel 10 Pro Fold** (Android, adb) — 2026-07-04.
+Validé sur **Pixel 10 Pro Fold** (Android, adb) + **iPhone 17 Pro / iOS 26** (simulateur).
 
-## Build installé = ANCIEN (précède ce chantier)
-Le build sur le device **ne contient pas** les `testID` ajoutés (Tasks 2-5) ni le
-fix i18n `drive.search`. Il a en revanche des rid Paper par défaut exploitables.
-→ Les flows ci-dessous sont écrits contre les **ancres validées sur ce build**
-(texte FR + rid Paper) ; un **build frais** permettra de basculer sur les testIDs
-(plus robustes, agnostiques au compte) et de valider preview/éditeur/recherche.
+## ⚠️ Sélection du device (piège majeur)
+Avec **deux devices connectés**, `maestro test` en auto-sélectionne un (souvent l'Android) !
+Toujours cibler explicitement : `maestro --platform ios test …` / `--platform android` /
+`--udid <UDID>`. Les run-scripts le font désormais.
 
-## Sélecteurs VALIDÉS sur device
-- Onglets : texte FR — `Mon Drive`, `Favoris`, `Récents`, `Partages`, `Corbeille`.
-- Dossiers : par nom (texte).
-- Retour : `pressKey: Back`.
-- Loupe recherche : `tapOn: 'Rechercher'` (accessibilité) ; champ = rid `search-input`.
-- FAB : `id: 'fab'` (défaut Paper ; `drive-fab` sur build frais).
-- Menu 3-points d'une ligne : `tapOn: { text: 'folder actions', rightOf: { text: <nom> } }`
-  (⚠️ `id: 'icon-button'` seul est ambigu — partagé par la loupe/aide/lignes).
-- Création dossier : `Nouveau dossier` → champ auto-focus → saisie → `pressKey: Enter`
-  (le champ a `returnKeyType=done` + `onSubmitEditing`) → apparition **async** (extendedWaitUntil).
-- Menu dossier (labels FR confirmés) : `Déplacer…`, `Garder hors-ligne`, `Partager`, `Supprimer`.
-- Offline : `Garder hors-ligne` / `Retirer du hors-ligne`.
+## Recette de sélecteurs CROSS-PLATFORM (marche iOS ET Android)
+Les labels/accessibilité diffèrent entre plateformes → règles :
+- **Onglets** : `{ text: 'Récents.*' }` (iOS = « Récents, tab, 3 of 7 » ; Android = « Récents »).
+- **Dossiers/fichiers** : `{ text: 'nom.*' }` (iOS = « nom, folder actions »).
+- **Boutons** : **testIDs** (`appbar-search-button`, `appbar-back-button`, `drive-fab`,
+  `search-input`, `create-folder-name-input`…) → `accessibilityIdentifier` sur iOS,
+  `resource-id` sur Android. Cohérents.
+- **Retour** : `{ id: 'appbar-back-button' }` (iOS n'a PAS de retour matériel → pas de `pressKey: Back`).
+- **Labels FR statiques** (Nouveau dossier, Annuler…) : identiques sur les 2 → texte direct OK.
+- **Assertions « on est dans le drive »** : `{ text: 'Mon Drive.*' }` (le titre exact « Mon Drive »
+  n'existe que sur l'onglet Mon Drive ; le regex tolère le suffixe onglet iOS).
 
-## Statut par flow (Pixel, build frais avec testIDs — 2e passage)
-| Flow | Statut | Note |
-|------|--------|------|
-| 01 launch-browse | ✅ VERT | device-validé |
-| 02 tabs | ✅ VERT | device-validé |
-| 03 search | ✅ VERT (reachability) | résultats serveur non déterministes (paginé + `.includes()` sur gros drive) — **pas un bug**, c'est le design |
-| 04 folder-crud | 🟡 CREATE ✅ / DELETE = souci d'auto | **create validé** ; la SUPPRESSION marche À LA MAIN (pas un bug app) — c'est le tap du bouton dialog Paper via Maestro/adb qui ne déclenche pas le `onPress` de façon fiable |
-| 07 offline-pin | ✅ VERT | device-validé (pin → « Retirer du hors-ligne » → unpin), ciblé sur dossier vide |
-| 10 fileprovider | ✅ **VERT** | **cross-app device-validé** : Files by Google → « Autre espace de stockage » → « Twake Drive » → contenu réel du drive |
-| 11 share-to-drive | 🟢 receiver validé | Twake a bien les intent filters `SEND`/`SEND_MULTIPLE` (apparaît dans le share sheet) + device-validé antérieurement ; auto complète (galerie→share→import→upload) = fiddly + **upload réel** → à finaliser à part |
-| 05 preview | 🔵 à jouer | testIDs `preview-*` présents dans le build ; besoin d'un fichier image/pdf connu |
-| 06 editor | 🔵 à jouer | testIDs `*-webview` présents ; besoin d'un fichier Office/note |
-| 00 login | 🔵 semi-manuel | code email manuel ; exclu des runs |
+## Statut par flow (cross-platform)
+| Flow | iOS | Android | Note |
+|------|-----|---------|------|
+| 00-welcome (pré-auth) | ✅ | ✅ | boot → welcome → login form |
+| 01 launch-browse | ✅ | ✅ | dossier regex + back testID |
+| 02 tabs | ✅ | ✅ | onglets regex |
+| 03 search | ✅ | ✅ | testIDs ; résultats serveur non assertés (paginé) |
+| 04 folder-crud | ✅ | ✅ | **non-mutant** (FAB → dialog → champ) — idempotent |
+| 10 fileprovider | — | ✅ | Android cross-app (Files by Google → « Twake Drive ») |
+| 07 offline-pin | 🔵 | 🟡 | Android labels validés ; iOS = folder-actions combiné (testID à cibler) |
+| 05 preview / 06 editor | 🔵 | 🔵 | testIDs présents ; besoin d'un fichier fixture (image/pdf, office/note) |
+| 11 share-to-drive | — | 🟢 | receiver enregistré (intent filters SEND) ; auto à finaliser |
+| 00-login | 🔵 | 🔵 | semi-manuel (code email), exclu des runs |
 
-**testIDs confirmés présents dans le build frais** (uiautomator) : `appbar-search-button`, `drive-fab`, `folder-actions`, etc. → sélecteurs robustes OK.
-**Gotcha foldable** : le Pixel 10 Pro Fold a 2 displays → `maestro hierarchy` peut revenir vide (driver stale) ; `maestro test` réinitialise le driver et marche ; `screencap -p` en stdout est corrompu (warning multi-display) → passer par un fichier device + pull.
+## Le VERROU iOS levé : SecureStore sur simulateur
+`tokenStorage` réclame un **shared keychain access group** (pour les extensions). Sur un
+build simu **ad-hoc/non-signé**, cet entitlement n'est pas accordé → SecureStore jette
+« A required entitlement isn't present » → **login impossible**. Fix (`fix(auth)`, TDD) :
+**fallback vers le keychain par défaut** quand le groupe partagé échoue → login + session
+persistent sur le simulateur, **sans device réel**. Sur build device signé, le groupe
+partagé marche et le fallback ne tourne jamais.
 
-## Quirks connus
-- **Suppression dossier** : le dialog « Supprimer le dossier ? » s'ouvre, mais le
-  tap de confirmation ne committait pas la suppression lors du bring-up (ni retirée
-  de Mon Drive, ni en Corbeille). À investiguer : tap conteneur Paper Dialog vs
-  noeud texte ; voie long-press/multi-select ; lag réplication PouchDB.
-- **Recherche** : renvoyait 0 résultat + label i18n cassé sur l'ancien build. Le
-  **bug i18n `drive.search` (clé dupliquée string/objet) est corrigé en source**
-  (commit `fix(i18n): drive.search…`). Résultats serveur à revalider sur build frais.
+## Quirks / limitations connues
+- **Suppression de dossier** : la CRÉATION marche ; la **SUPPRESSION ne se déclenche PAS via
+  tap synthétique** (maestro XCUITest/UIAutomator, adb input, point) alors qu'elle marche
+  **à la main** — le dialog est correct (« 1 éléments »), le bon bouton (`id=button`) est tapé
+  (COMPLETED) mais l'`onPress` n'agit pas, **cross-platform**. → flow 04 rendu **non-mutant**
+  (pas de faux positif). Le round-trip create+delete réel attend l'investigation de ce point.
+- **Foldable (Pixel Fold)** : 2 displays → `maestro hierarchy` / `screencap -p` (stdout) peuvent
+  cibler le mauvais écran ; `maestro test` réinit le driver, `uiautomator dump` direct + pull marchent.
+- **Recherche** : résultats serveur non déterministes (paginé + `.includes()` sur gros drive) — pas un bug.
+- **Maestro iOS** : `launchApp` peut échouer une assertion immédiate par timing (rendu) → `extendedWaitUntil`.
 
-## Rappel exécution
-`export PATH="$PATH:$HOME/.maestro/bin"` puis `maestro test <flow>`.
-Runs groupés : `npm run e2e:android` (inapp+android) / `npm run e2e:ios` (inapp).
+## Exécution
+`export PATH="$PATH:$HOME/.maestro/bin"` puis :
+- `npm run e2e:ios` / `npm run e2e:android` (ciblent la bonne plateforme).
+- Un flow ciblé : `maestro --platform ios test e2e/maestro/flows/in-app/02-tabs.yaml`.

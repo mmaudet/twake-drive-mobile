@@ -12,6 +12,6 @@ if [ -n "${APP_PATH:-}" ]; then
   xcrun simctl install "$SIM" "$APP_PATH"
 fi
 
-maestro test "$ROOT/e2e/maestro/flows" \
+maestro --platform ios test "$ROOT/e2e/maestro/flows" \
   --include-tags inapp \
   --exclude-tags login

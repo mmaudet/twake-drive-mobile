@@ -1,7 +1,6 @@
 appId: com.linagora.twakedrive
 ---
-# Amène l'app sur la racine du drive (onglet "Mon Drive"), session pré-auth
-# supposée active. launchApp relance à froid sans effacer les données.
+# Amène l'app sur la racine du drive, session pré-auth supposée active.
+# launchApp relance à froid → atterrit sur l'onglet Mon Drive par défaut.
 - launchApp
 - runFlow: assertLoggedIn.yaml
-- tapOn: 'Mon Drive'

@@ -4,12 +4,12 @@ tags:
 env:
   SEARCH_QUERY: 'Rapport'
 ---
-# Smoke : la recherche est joignable et accepte la saisie.
-# NB : l'assertion sur les résultats serveur est volontairement omise — la
-# recherche est paginée côté serveur + filtrée .includes() côté client (cf.
-# historique du feature), donc la présence d'un résultat donné n'est pas
-# déterministe sur un gros drive. À couvrir avec des fixtures sur un build frais.
+# Recherche joignable + saisie (testIDs cross-platform). Assertion sur résultat
+# serveur volontairement omise (paginé + .includes() → non déterministe).
 - runFlow: ../../subflows/openDrive.yaml
-- tapOn: 'Rechercher'
+- tapOn:
+    id: 'appbar-search-button'
+- assertVisible:
+    id: 'search-input'
 - inputText: '${SEARCH_QUERY}'
 - assertVisible: '${SEARCH_QUERY}'

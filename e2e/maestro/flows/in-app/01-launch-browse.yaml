@@ -4,9 +4,12 @@ tags:
 env:
   TEST_FOLDER: 'LINAGORA'
 ---
-# Pré-requis : dossier ${TEST_FOLDER} présent à la racine du drive.
-# Parcours : accueil → entrer dans un dossier → retour → toujours connecté.
+# Cross-platform. Sur iOS le dossier a l'accessibilité "<nom>, folder actions" →
+# le regex '${TEST_FOLDER}.*' matche iOS ET Android. Retour via le testID
+# appbar-back-button (iOS n'a pas de bouton retour matériel).
 - runFlow: ../../subflows/openDrive.yaml
-- tapOn: '${TEST_FOLDER}'
-- pressKey: Back
+- tapOn:
+    text: '${TEST_FOLDER}.*'
+- tapOn:
+    id: 'appbar-back-button'
 - runFlow: ../../subflows/assertLoggedIn.yaml

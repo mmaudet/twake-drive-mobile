@@ -21,6 +21,6 @@ adb -s "$DEVICE" shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_
   -d file:///sdcard/Pictures/E2E/sample.jpg >/dev/null
 
 # Volets in-app + android cross-app ; le login manuel est exclu.
-maestro test "$ROOT/e2e/maestro/flows" \
+maestro --platform android test "$ROOT/e2e/maestro/flows" \
   --include-tags inapp,android \
   --exclude-tags login
