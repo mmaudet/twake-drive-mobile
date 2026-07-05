@@ -368,7 +368,7 @@ describe('createPublicLink', () => {
     await createPublicLink(client, { _id: 'file-1', type: 'file' })
     expect(createSharingLink).toHaveBeenCalledWith(
       { _id: 'file-1', _type: 'io.cozy.files', type: 'file' },
-      { tiny: true, verbs: ['GET'] }
+      { verbs: ['GET'] }
     )
   })
 
@@ -378,7 +378,7 @@ describe('createPublicLink', () => {
     await createPublicLink(client, { _id: 'file-1', type: 'file' }, 'write')
     expect(createSharingLink).toHaveBeenCalledWith(
       { _id: 'file-1', _type: 'io.cozy.files', type: 'file' },
-      { tiny: true, verbs: ['GET', 'POST', 'PUT', 'PATCH'] }
+      { verbs: ['GET', 'POST', 'PUT', 'PATCH'] }
     )
   })
 
@@ -388,8 +388,17 @@ describe('createPublicLink', () => {
     await createPublicLink(client, { _id: 'file-1', type: 'file' }, 'readOnly')
     expect(createSharingLink).toHaveBeenCalledWith(
       { _id: 'file-1', _type: 'io.cozy.files', type: 'file' },
-      { tiny: true, verbs: ['GET'] }
+      { verbs: ['GET'] }
     )
+  })
+
+  it('does NOT request a tiny shortcode (the stack rejects tiny without a ttl, but a public link must be permanent)', async () => {
+    const createSharingLink = jest.fn().mockResolvedValue({ data: { _id: 'p1' } })
+    const client = makeClient({ 'io.cozy.permissions': { createSharingLink } })
+    await createPublicLink(client, { _id: 'file-1', type: 'file' })
+    const options = createSharingLink.mock.calls[0][1]
+    expect(options).not.toHaveProperty('tiny')
+    expect(options).not.toHaveProperty('ttl')
   })
 
   it('triggers sharings + permissions pouch replications on success', async () => {

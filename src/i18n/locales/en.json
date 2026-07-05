@@ -233,6 +233,9 @@
       "hint": "Type at least 2 characters",
       "empty": "No file found",
       "action": "Search"
+    },
+    "open": {
+      "noApp": "No app on your device can open this file type"
     }
   },
   "a11y": {

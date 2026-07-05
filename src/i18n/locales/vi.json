@@ -224,6 +224,9 @@
       "hint": "Nhập ít nhất 2 ký tự",
       "empty": "Không tìm thấy tệp nào",
       "action": "Tìm kiếm"
+    },
+    "open": {
+      "noApp": "Không có ứng dụng nào có thể mở loại tệp này"
     }
   },
   "a11y": {

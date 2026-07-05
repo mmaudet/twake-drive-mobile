@@ -242,6 +242,9 @@
       "hint": "Escribe al menos 2 caracteres",
       "empty": "No se encontró ningún archivo",
       "action": "Buscar"
+    },
+    "open": {
+      "noApp": "Ninguna aplicación puede abrir este tipo de archivo"
     }
   },
   "a11y": {

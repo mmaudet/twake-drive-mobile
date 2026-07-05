@@ -2,6 +2,7 @@ import * as FileSystem from 'expo-file-system/legacy'
 import FileViewer from 'react-native-file-viewer'
 
 import { openFileNatively } from './openFile'
+import { NoCompatibleAppError } from './errors'
 import { OfflineFilesStore } from '@/offline/OfflineFilesStore'
 
 const mockIsPinnedAndDownloaded = OfflineFilesStore.isPinnedAndDownloaded as jest.Mock
@@ -118,6 +119,30 @@ describe('openFileNatively', () => {
     ;(FileSystem.getInfoAsync as jest.Mock).mockResolvedValueOnce({ exists: false })
     await expect(openFileNatively(makeClient(), { _id: 'abc', name: 't.pdf' })).rejects.toThrow(
       /missing on disk/
+    )
+  })
+
+  it('translates FileViewer "no app associated" rejection into NoCompatibleAppError', async () => {
+    ;(FileSystem.downloadAsync as jest.Mock).mockResolvedValueOnce({
+      status: 200,
+      uri: 'file:///cache/twake-drive/abc-t.bin'
+    })
+    ;(FileViewer.open as jest.Mock).mockRejectedValueOnce(
+      new Error('No app associated with this mime type')
+    )
+    await expect(
+      openFileNatively(makeClient(), { _id: 'abc', name: 't.bin' })
+    ).rejects.toBeInstanceOf(NoCompatibleAppError)
+  })
+
+  it('passes a generic FileViewer error through unchanged', async () => {
+    ;(FileSystem.downloadAsync as jest.Mock).mockResolvedValueOnce({
+      status: 200,
+      uri: 'file:///cache/twake-drive/abc-t.bin'
+    })
+    ;(FileViewer.open as jest.Mock).mockRejectedValueOnce(new Error('kaboom'))
+    await expect(openFileNatively(makeClient(), { _id: 'abc', name: 't.bin' })).rejects.toThrow(
+      /kaboom/
     )
   })
 

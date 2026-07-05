@@ -7,6 +7,7 @@ import type CozyClient from 'cozy-client'
 
 import { OfflineFilesStore } from '@/offline/OfflineFilesStore'
 import { FileSystemRepo } from '@/offline/FileSystemRepo'
+import { NoCompatibleAppError } from './errors'
 
 export interface OpenableFile {
   _id: string
@@ -23,6 +24,20 @@ interface MinimalStackClient {
 
 const cacheAliasPath = (cacheDir: string, file: OpenableFile): string =>
   `${cacheDir}twake-drive/${file._id}-${sanitizeName(file.name)}`
+
+// Hand a local path to the OS viewer. Android's FileViewer rejects with
+// "No app associated with this mime type" when nothing can open it; translate
+// that into a typed error so callers can surface a friendly message instead of
+// leaking the raw string. Other failures pass through unchanged.
+const openInViewer = async (path: string): Promise<void> => {
+  try {
+    await FileViewer.open(path, { showOpenWithDialog: true, showAppsSuggestions: true })
+  } catch (e) {
+    const message = (e as { message?: string } | null)?.message ?? ''
+    if (/no app associated/i.test(message)) throw new NoCompatibleAppError()
+    throw e instanceof Error ? e : new Error(String(e))
+  }
+}
 
 export const openFileNatively = async (client: CozyClient, file: OpenableFile): Promise<void> => {
   const cacheDir = FileSystem.cacheDirectory
@@ -45,10 +60,7 @@ export const openFileNatively = async (client: CozyClient, file: OpenableFile): 
     if (!aliasInfo.exists) {
       await FileSystem.copyAsync({ from: blobPath, to: aliasPath })
     }
-    await FileViewer.open(aliasPath, {
-      showOpenWithDialog: true,
-      showAppsSuggestions: true
-    })
+    await openInViewer(aliasPath)
     return
   }
 
@@ -66,8 +78,5 @@ export const openFileNatively = async (client: CozyClient, file: OpenableFile): 
     throw new Error(`Download failed (HTTP ${result.status})`)
   }
 
-  await FileViewer.open(result.uri, {
-    showOpenWithDialog: true,
-    showAppsSuggestions: true
-  })
+  await openInViewer(result.uri)
 }

@@ -35,6 +35,7 @@ import { useSessionCode } from '@/auth/useSessionCode'
 import { softDeleteEntry } from '@/files/deleteFile'
 import { renameEntry } from '@/files/renameEntry'
 import { openFileFromList } from '@/files/openFromList'
+import { surfaceOpenError } from '@/files/errors'
 import { useFlag } from '@/client/useFlag'
 import { useIsOnline } from '@/network/useIsOnline'
 import { requireOnline } from '@/network/requireOnline'
@@ -319,10 +320,9 @@ export default function FilesScreen() {
             return
           }
           if (!client) return
-          void openFileFromList(client, router, file).catch(e => {
-            console.error('[FilesScreen] openFileFromList failed', e)
-            setSnackbar((e as Error).message ?? t('drive.preview.loadFailed'))
-          })
+          void openFileFromList(client, router, file).catch(e =>
+            surfaceOpenError(e, setSnackbar, t, 'FilesScreen')
+          )
         }}
         onLongPress={file => selection.select(file._id)}
         onShare={
@@ -357,10 +357,9 @@ export default function FilesScreen() {
             router.push(`/(drive)/files/${[...(path ?? []), file._id].join('/')}`)
           } else {
             if (!client) return
-            void openFileFromList(client, router, file).catch(e => {
-              console.error('[FilesScreen] openFileFromList failed', e)
-              setSnackbar((e as Error).message ?? t('drive.preview.loadFailed'))
-            })
+            void openFileFromList(client, router, file).catch(e =>
+              surfaceOpenError(e, setSnackbar, t, 'FilesScreen')
+            )
           }
         }}
         onLongPress={file => selection.select(file._id)}

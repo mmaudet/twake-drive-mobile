@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as FileSystem from 'expo-file-system/legacy'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useClient, useQuery } from 'cozy-client'
@@ -302,6 +303,7 @@ const ErrorOverlay = ({ message }: { message: string }) => (
 export default function PreviewScreen() {
   const router = useRouter()
   const { t } = useTranslation()
+  const insets = useSafeAreaInsets()
   const client = useClient()
   const { fileId } = useLocalSearchParams<{ fileId: string }>()
   const [externalError, setExternalError] = useState<string | null>(null)
@@ -452,6 +454,22 @@ export default function PreviewScreen() {
     <View style={styles.container}>
       {!isChromeless ? <AppBar title={title} onBack={() => router.back()} /> : null}
       {isLoadingFile ? <LoadingState /> : renderViewer()}
+      {/* Chromeless kinds (pdf/image/video) drop the AppBar for immersion, but a
+          full-screen scrollable/zoomable viewer (notably react-native-pdf)
+          captures the pageSheet swipe-to-dismiss gesture — leaving no way back.
+          A floating close button guarantees an explicit exit on every platform. */}
+      {isChromeless ? (
+        <Pressable
+          onPress={() => router.back()}
+          accessibilityRole="button"
+          accessibilityLabel={t('common.close')}
+          testID="preview-close-button"
+          hitSlop={12}
+          style={[styles.closeButton, { top: insets.top + 8 }]}
+        >
+          <CozyIcon name="cross" size={22} color="#fff" />
+        </Pressable>
+      ) : null}
       {externalError ? (
         <Text style={[styles.actionError, !isChromeless && styles.actionErrorChromed]}>
           {externalError}
@@ -465,6 +483,17 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
+  closeButton: {
+    position: 'absolute',
+    left: 12,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    zIndex: 10
+  },
   viewerContainer: { flex: 1 },
   pdf: { flex: 1, width: SCREEN_WIDTH, backgroundColor: '#000' },
   transparent: { backgroundColor: 'transparent' },

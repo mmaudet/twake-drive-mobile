@@ -1,5 +1,6 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { FlatList, RefreshControl } from 'react-native'
+import { Snackbar } from 'react-native-paper'
 import { useFocusEffect, useRouter } from 'expo-router'
 import { useClient, useQuery } from 'cozy-client'
 import { useTranslation } from 'react-i18next'
@@ -16,12 +17,14 @@ import { getErrorMessageKey } from '@/utils/errorMessages'
 import { favoritesQuery, favoritesQueryAs, FileQueryResult } from '@/client/queries'
 import { isFavorite } from '@/files/favorites'
 import { openFileFromList } from '@/files/openFromList'
+import { surfaceOpenError } from '@/files/errors'
 
 export default function FavoritesScreen() {
   const router = useRouter()
   const { t } = useTranslation()
   const { logout } = useAuth()
   const client = useClient()
+  const [snackbar, setSnackbar] = useState<string | null>(null)
   const query = useQuery(favoritesQuery(), { as: favoritesQueryAs })
 
   const queryRef = useRef(query)
@@ -49,9 +52,9 @@ export default function FavoritesScreen() {
         file={{ ...item, size: item.size ?? null }}
         onPress={file => {
           if (!client) return
-          void openFileFromList(client, router, file).catch(e => {
-            console.error('[FavoritesScreen] openFileFromList failed', e)
-          })
+          void openFileFromList(client, router, file).catch(e =>
+            surfaceOpenError(e, setSnackbar, t, 'FavoritesScreen')
+          )
         }}
         onShare={file => router.push(`/share/${file._id}`)}
         onMove={file => router.push(`/move/${file._id}`)}
@@ -90,6 +93,9 @@ export default function FavoritesScreen() {
           }
         />
       )}
+      <Snackbar visible={!!snackbar} onDismiss={() => setSnackbar(null)} duration={3000}>
+        {snackbar ?? ''}
+      </Snackbar>
     </ScreenContainer>
   )
 }

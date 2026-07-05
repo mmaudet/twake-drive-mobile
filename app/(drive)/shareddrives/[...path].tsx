@@ -25,6 +25,7 @@ import { useOfflineActions } from '@/offline/useOfflineActions'
 import { OfflineFilesStore } from '@/offline/OfflineFilesStore'
 import { BigFolderConfirmDialog } from '@/offline/BigFolderConfirmDialog'
 import { openFileFromList } from '@/files/openFromList'
+import { surfaceOpenError } from '@/files/errors'
 
 interface DriveChild {
   _id: string
@@ -213,10 +214,9 @@ export default function SharedDrivesScreen() {
         file={{ ...(item as unknown as FileQueryResult), size: item.size ?? null }}
         onPress={file => {
           if (!client) return
-          void openFileFromList(client, router, file).catch(e => {
-            console.error('[SharedDrives] openFileFromList failed', e)
-            setResolveError((e as Error).message ?? t('drive.preview.loadFailed'))
-          })
+          void openFileFromList(client, router, file).catch(e =>
+            surfaceOpenError(e, setResolveError, t, 'SharedDrives')
+          )
         }}
         onMove={file => router.push(`/move/${file._id}`)}
         onTogglePin={onToggleFilePin}

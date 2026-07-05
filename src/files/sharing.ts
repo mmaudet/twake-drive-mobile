@@ -223,12 +223,13 @@ export const createPublicLink = async (
 ): Promise<PublicLinkPermission> => {
   const document = { _id: file._id, _type: FILES_DOCTYPE, type: file.type }
   const verbs = editingRights === 'write' ? [...WRITE_PERMS] : [...READ_ONLY_PERMS]
-  // tiny: true asks the cozy-stack to also generate a shortcode alongside the
-  // long sharecode. buildPublicLinkUrl prefers the shortcode when available.
-  const result = await getPermissions(client).createSharingLink(document, {
-    tiny: true,
-    verbs
-  })
+  // NB: do NOT pass `tiny: true`. The cozy-stack only mints a tiny shortcode
+  // when the link also carries a short `ttl` (< 1h) — see PermissionCollection
+  // .createSharingLink docs — so requesting `tiny` without a ttl makes the
+  // stack reject the POST, which is why the "public link" toggle silently
+  // failed. A public link must be permanent (no ttl), so we accept the long
+  // sharecode; buildPublicLinkUrl falls back to `codes.code` for the URL.
+  const result = await getPermissions(client).createSharingLink(document, { verbs })
   triggerPouchReplication(client, 'io.cozy.sharings')
   triggerPouchReplication(client, 'io.cozy.permissions')
   return result.data

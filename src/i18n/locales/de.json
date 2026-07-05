@@ -233,6 +233,9 @@
       "hint": "Geben Sie mindestens 2 Zeichen ein",
       "empty": "Keine Datei gefunden",
       "action": "Suchen"
+    },
+    "open": {
+      "noApp": "Keine App kann diesen Dateityp öffnen"
     }
   },
   "a11y": {

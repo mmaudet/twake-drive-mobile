@@ -19,6 +19,7 @@ import { recentQuery, recentQueryAs, FileQueryResult, HIDDEN_ROOT_DIR_IDS } from
 import { softDeleteEntry } from '@/files/deleteFile'
 import { renameEntry } from '@/files/renameEntry'
 import { openFileFromList } from '@/files/openFromList'
+import { surfaceOpenError } from '@/files/errors'
 import { useIsOnline } from '@/network/useIsOnline'
 import { requireOnline } from '@/network/requireOnline'
 import { useOfflineActions } from '@/offline/useOfflineActions'
@@ -88,10 +89,9 @@ export default function RecentScreen() {
       file={{ ...item, size: item.size ?? null }}
       onPress={file => {
         if (!client) return
-        void openFileFromList(client, router, file).catch(e => {
-          console.error('[RecentScreen] openFileFromList failed', e)
-          setSnackbar((e as Error).message ?? t('drive.preview.loadFailed'))
-        })
+        void openFileFromList(client, router, file).catch(e =>
+          surfaceOpenError(e, setSnackbar, t, 'RecentScreen')
+        )
       }}
       onShare={file => {
         if (!requireOnline(isOnline, setSnackbar, t)) return

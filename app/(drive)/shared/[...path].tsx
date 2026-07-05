@@ -30,6 +30,7 @@ import { useOfflineActions } from '@/offline/useOfflineActions'
 import { OfflineFilesStore } from '@/offline/OfflineFilesStore'
 import { BigFolderConfirmDialog } from '@/offline/BigFolderConfirmDialog'
 import { openFileFromList } from '@/files/openFromList'
+import { surfaceOpenError } from '@/files/errors'
 
 export default function SharedScreen() {
   const router = useRouter()
@@ -142,10 +143,9 @@ export default function SharedScreen() {
         file={{ ...item, size: item.size ?? null }}
         onPress={file => {
           if (!client) return
-          void openFileFromList(client, router, file).catch(e => {
-            console.error('[SharedScreen] openFileFromList failed', e)
-            setSnackbar((e as Error).message ?? t('drive.preview.loadFailed'))
-          })
+          void openFileFromList(client, router, file).catch(e =>
+            surfaceOpenError(e, setSnackbar, t, 'SharedScreen')
+          )
         }}
         onShare={file => router.push(`/share/${file._id}`)}
         onMove={file => router.push(`/move/${file._id}`)}
