@@ -65,7 +65,7 @@ describe('FolderRow', () => {
       )
     )
     expect(screen.getByTestId('folder-row')).toBeOnTheScreen()
-    expect(screen.getByTestId('folder-actions')).toBeOnTheScreen()
+    expect(screen.getByTestId('folder-actions:Documents')).toBeOnTheScreen()
   })
 
   it('renders a Move… menu item when onMove is provided', () => {
