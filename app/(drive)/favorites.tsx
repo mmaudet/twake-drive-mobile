@@ -37,10 +37,17 @@ export default function FavoritesScreen() {
     if (item.type === 'directory') {
       return (
         <FolderRow
-          folder={{ _id: item._id, name: item.name, cozyMetadata: item.cozyMetadata }}
+          folder={{
+            _id: item._id,
+            _type: item._type,
+            _rev: item._rev,
+            name: item.name,
+            cozyMetadata: item.cozyMetadata
+          }}
           onPress={() => router.push(`/(drive)/files/${item._id}`)}
           onShare={folder => router.push(`/share/${folder._id}`)}
           onMove={folder => router.push(`/move/${folder._id}`)}
+          onFavoriteChange={() => void query.fetch()}
         />
       )
     }
@@ -56,6 +63,7 @@ export default function FavoritesScreen() {
         onShare={file => router.push(`/share/${file._id}`)}
         onMove={file => router.push(`/move/${file._id}`)}
         onInfo={file => router.push(`/metadata/${file._id}`)}
+        onFavoriteChange={() => void query.fetch()}
       />
     )
   }

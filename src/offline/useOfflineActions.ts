@@ -73,12 +73,20 @@ export const useOfflineActions = (): UseOfflineActionsResult => {
   }, [])
 
   const doPinFolder = useCallback(
-    async (folder: FileShape, files: FileShape[], subfolders: FileShape[]): Promise<void> => {
+    async (
+      folder: FileShape,
+      files: FileShape[],
+      subfolders: FileShape[],
+      ancestors: string[] = []
+    ): Promise<void> => {
       if (!client) return
+      // Record the ancestor chain so unpinning a parent can find + purge this
+      // subfolder (and its files) recursively.
       OfflineFilesStore.pinFolder(folder._id, {
         dirId: folder._id,
         name: folder.name,
-        pinnedAt: Date.now()
+        pinnedAt: Date.now(),
+        ancestorPins: ancestors
       })
       for (const f of files) {
         OfflineFilesStore.pinViaFolder(f._id, folder._id, fileMeta(f))
@@ -89,7 +97,7 @@ export const useOfflineActions = (): UseOfflineActionsResult => {
           client,
           sub._id
         )
-        await doPinFolder(sub, subFiles, subSubs)
+        await doPinFolder(sub, subFiles, subSubs, [...ancestors, folder._id])
       }
     },
     [client]

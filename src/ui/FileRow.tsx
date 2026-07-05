@@ -49,6 +49,9 @@ interface Props {
   onMove?: (file: FileItem) => void
   /** Opens the metadata/details sheet for this row. */
   onInfo?: (file: FileItem) => void
+  /** Called after a favorite toggle so the parent can refetch its query — the
+   * lists are non-reactive, so without this a removed favorite lingers. */
+  onFavoriteChange?: () => void
   /** Stable id for E2E (Maestro) selection. */
   testID?: string
 }
@@ -65,6 +68,7 @@ export const FileRow = ({
   onTogglePin,
   onMove,
   onInfo,
+  onFavoriteChange,
   testID
 }: Props) => {
   const { t, i18n } = useTranslation()
@@ -74,6 +78,11 @@ export const FileRow = ({
   const [menuVisible, setMenuVisible] = useState(false)
   const offlineEntry = useOfflineState(file._id)
   const isPinned = !!offlineEntry
+  // "Retirer du hors-ligne" can only apply to a DIRECT pin. A file that's offline
+  // solely because its parent folder is pinned must show "Garder hors-ligne"
+  // (which adds a direct pin) — showing "Retirer" there made onToggleFilePin fall
+  // through and RE-PIN the file instead of removing it (opposite of the label).
+  const isDirectPin = !!offlineEntry?.isDirectPin
   const size = formatFileSize(file.size)
   const dateLocale = i18n.language?.startsWith('fr') ? fr : enUS
   const date = file.updated_at
@@ -134,9 +143,9 @@ export const FileRow = ({
           >
             {onTogglePin ? (
               <Menu.Item
-                leadingIcon={isPinned ? 'cloud-off-outline' : 'cloud-download-outline'}
-                title={t(isPinned ? 'drive.offline.unpin' : 'drive.offline.pin')}
-                disabled={!isPinned && !isOnline}
+                leadingIcon={isDirectPin ? 'cloud-off-outline' : 'cloud-download-outline'}
+                title={t(isDirectPin ? 'drive.offline.unpin' : 'drive.offline.pin')}
+                disabled={!isDirectPin && !isOnline}
                 onPress={() => {
                   setMenuVisible(false)
                   onTogglePin(file)
@@ -239,13 +248,12 @@ export const FileRow = ({
                 setMenuVisible(false)
                 if (!client) return
                 const next = !isFavorite(file as Parameters<typeof isFavorite>[0])
-                void toggleFavorite(
-                  client,
-                  file as Parameters<typeof toggleFavorite>[1],
-                  next
-                ).then(() => {
-                  triggerPouchReplication(client)
-                })
+                void toggleFavorite(client, file as Parameters<typeof toggleFavorite>[1], next)
+                  .then(() => {
+                    triggerPouchReplication(client)
+                    onFavoriteChange?.()
+                  })
+                  .catch(e => console.error('[FileRow] toggleFavorite failed', e))
               }}
             />
             <Menu.Item

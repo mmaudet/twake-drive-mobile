@@ -94,6 +94,21 @@ describe('OfflineFilesStore', () => {
     expect(OfflineFilesStore.get('f2')?.isDirectPin).toBe(true)
   })
 
+  it('unpinFolder recursively purges nested subfolders + their files (no disk leak)', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const FS = jest.requireMock('./FileSystemRepo').FileSystemRepo as { delete: jest.Mock }
+    FS.delete.mockClear()
+    // A ⊃ B ⊃ f : B records A as an ancestor; f is tagged under its immediate parent B.
+    OfflineFilesStore.pinFolder('A', { name: 'A', dirId: 'A', pinnedAt: 0, ancestorPins: [] })
+    OfflineFilesStore.pinFolder('B', { name: 'B', dirId: 'B', pinnedAt: 0, ancestorPins: ['A'] })
+    OfflineFilesStore.pinViaFolder('f', 'B', baseMeta)
+    await OfflineFilesStore.unpinFolder('A')
+    expect(OfflineFilesStore.getFolder('A')).toBeUndefined()
+    expect(OfflineFilesStore.getFolder('B')).toBeUndefined() // nested subfolder removed
+    expect(OfflineFilesStore.get('f')).toBeUndefined() // nested file purged
+    expect(FS.delete).toHaveBeenCalledWith('f') // blob deleted from disk
+  })
+
   it('subscribe is called on every mutation; unsubscribe stops notifications', () => {
     const listener = jest.fn()
     const off = OfflineFilesStore.subscribe('f1', listener)

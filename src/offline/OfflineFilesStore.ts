@@ -129,12 +129,20 @@ export const OfflineFilesStore = {
   },
 
   async unpinFolder(dirId: string): Promise<void> {
-    offlineFilesStorage.remove(folderKey(dirId))
+    // Collect this folder AND every descendant subfolder (matched via
+    // `ancestorPins`). Without this, nested subfolders' blobs leak on disk with a
+    // live store entry the startup GC can't reclaim — the local purge is
+    // incomplete for any folder that contains pinned subfolders.
+    const removed = new Set<string>([dirId])
+    for (const folder of OfflineFilesStore.getAllFolders()) {
+      if (folder.ancestorPins?.includes(dirId)) removed.add(folder.dirId)
+    }
+    for (const d of removed) offlineFilesStorage.remove(folderKey(d))
     for (const entry of OfflineFilesStore.getAll()) {
-      if (!entry.parentFolderPins.includes(dirId)) continue
+      if (!entry.parentFolderPins.some(d => removed.has(d))) continue
       const next = {
         ...entry,
-        parentFolderPins: entry.parentFolderPins.filter(d => d !== dirId)
+        parentFolderPins: entry.parentFolderPins.filter(d => !removed.has(d))
       }
       if (next.parentFolderPins.length === 0 && !next.isDirectPin) {
         await FileSystemRepo.delete(entry.fileId)

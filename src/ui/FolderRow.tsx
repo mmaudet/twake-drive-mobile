@@ -17,6 +17,11 @@ import { SharedBadge } from './SharedBadge'
 
 export interface FolderItem {
   _id: string
+  // `_type`/`_rev` are required by cozy-client's `save` — without them
+  // toggleFavorite throws "must have a `_type` property" and, since the caller
+  // swallows the rejection, a folder's favorite is never persisted.
+  _type?: string
+  _rev?: string
   name: string
   cozyMetadata?: { favorite?: boolean }
 }
@@ -39,6 +44,9 @@ interface Props {
   onDelete?: (folder: FolderItem) => void
   onTogglePin?: (folder: FolderItem) => void
   onMove?: (folder: FolderItem) => void
+  /** Called after a favorite toggle so the parent can refetch its query — the
+   * lists are non-reactive, so without this a removed favorite lingers. */
+  onFavoriteChange?: () => void
   /** Stable id for E2E (Maestro) selection. */
   testID?: string
 }
@@ -54,6 +62,7 @@ export const FolderRow = ({
   onDelete,
   onTogglePin,
   onMove,
+  onFavoriteChange,
   testID
 }: Props) => {
   const { t } = useTranslation()
@@ -225,13 +234,12 @@ export const FolderRow = ({
               setMenuVisible(false)
               if (!client) return
               const next = !isFavorite(folder as Parameters<typeof isFavorite>[0])
-              void toggleFavorite(
-                client,
-                folder as Parameters<typeof toggleFavorite>[1],
-                next
-              ).then(() => {
-                triggerPouchReplication(client)
-              })
+              void toggleFavorite(client, folder as Parameters<typeof toggleFavorite>[1], next)
+                .then(() => {
+                  triggerPouchReplication(client)
+                  onFavoriteChange?.()
+                })
+                .catch(e => console.error('[FolderRow] toggleFavorite failed', e))
             }}
           />
         </Menu>
