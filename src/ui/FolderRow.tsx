@@ -217,13 +217,13 @@ export const FolderRow = ({
                 setMenuVisible(false)
                 if (!client) return
                 const next = !isFavorite(folder as Parameters<typeof isFavorite>[0])
-                void toggleFavorite(
-                  client,
-                  folder as Parameters<typeof toggleFavorite>[1],
-                  next
-                ).then(() => {
-                  triggerPouchReplication(client)
-                })
+                void toggleFavorite(client, folder as Parameters<typeof toggleFavorite>[1], next)
+                  .then(() => {
+                    triggerPouchReplication(client)
+                  })
+                  .catch((e: unknown) => {
+                    console.error('[FolderRow] toggleFavorite failed', e)
+                  })
               }}
             />
           </Menu>

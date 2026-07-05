@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react-native'
+import { render, screen, fireEvent } from '@testing-library/react-native'
 import { Provider as PaperProvider } from 'react-native-paper'
 import { I18nextProvider } from 'react-i18next'
 
@@ -78,11 +78,20 @@ jest.mock('@/files/openFromList', () => ({
 }))
 
 jest.mock('@/pouchdb/triggerReplication', () => ({
-  getPouchLink: () => null
+  getPouchLink: () => null,
+  triggerPouchReplication: jest.fn()
+}))
+
+// Real isFavorite (strict === true) + a spy on toggleFavorite so we can assert
+// the FULL document (with _type/_rev) is what flows to the favourite toggle.
+jest.mock('@/files/favorites', () => ({
+  isFavorite: (f: { cozyMetadata?: { favorite?: boolean } }) => f?.cozyMetadata?.favorite === true,
+  toggleFavorite: jest.fn().mockResolvedValue(undefined)
 }))
 
 import FavoritesScreen from './favorites'
 import i18n from '@/i18n'
+import { toggleFavorite } from '@/files/favorites'
 
 const wrap = (ui: React.ReactElement) => (
   <I18nextProvider i18n={i18n}>
@@ -179,5 +188,34 @@ describe('FavoritesScreen', () => {
     expect(screen.getByText('Real favourite.pdf')).toBeOnTheScreen()
     expect(screen.queryByText('Not a favourite')).toBeNull()
     expect(screen.queryByText('No favourite flag')).toBeNull()
+  })
+
+  // Regression (folders): removing a folder from favourites did nothing because the
+  // screen passed FolderRow a stripped {_id, name, cozyMetadata} object with no
+  // _type/_rev, so toggleFavorite's client.save silently failed. The screen must
+  // hand FolderRow the FULL document so the save can resolve its doctype + revision.
+  it('passes the full folder document (with _type/_rev) to the favourite toggle', () => {
+    ;(toggleFavorite as jest.Mock).mockClear()
+    mockUseQuery.mockReturnValue(
+      makeQueryResult([
+        {
+          _id: 'dir-1',
+          _type: 'io.cozy.files',
+          _rev: '3-abc',
+          name: 'My Project',
+          type: 'directory',
+          dir_id: 'io.cozy.files.root-dir',
+          cozyMetadata: { favorite: true }
+        }
+      ])
+    )
+    render(wrap(<FavoritesScreen />))
+    fireEvent.press(screen.getByTestId('folder-actions:My Project'))
+    fireEvent.press(screen.getByText('Retirer des favoris'))
+    expect(toggleFavorite).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ _type: 'io.cozy.files', _rev: '3-abc' }),
+      false
+    )
   })
 })
