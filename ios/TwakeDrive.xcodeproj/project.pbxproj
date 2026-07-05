@@ -19,6 +19,9 @@
 		D239315EC78F41EE476DF3E2 /* libPods-TwakeDrive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FECC114309FD433CB51D581B /* libPods-TwakeDrive.a */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 		F1E1BF243138470285BA718F /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE3437028BA4902966362A6 /* ShareViewController.swift */; };
+		A59EDE1D90FE4CB79A04219F /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088AA070B914550BC2AB533 /* SessionTests.swift */; };
+		2134B4C02DE8465FA359252D /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824B10A2FE1848BCA4609F6A /* Session.swift */; };
+		C330B9343B7D4474AB8CB174 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824B10A2FE1848BCA4609F6A /* Session.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +90,8 @@
 		FCA38D6E763341A0BE4A1F91 /* TwakeDriveFileProviderExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; name = TwakeDriveFileProviderExt.appex; path = TwakeDriveFileProviderExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDE3437028BA4902966362A6 /* ShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShareViewController.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		FECC114309FD433CB51D581B /* libPods-TwakeDrive.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TwakeDrive.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6088AA070B914550BC2AB533 /* SessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
+		824B10A2FE1848BCA4609F6A /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +165,7 @@
 				842CA699CB31465EBB77C5E5 /* FileProviderExtension.swift */,
 				047FACE0D3584A0A83EFA654 /* Info.plist */,
 				845E0D73487342379615CDAF /* TwakeDriveFileProviderExt.entitlements */,
+				824B10A2FE1848BCA4609F6A /* Session.swift */,
 			);
 			name = TwakeDriveFileProviderExt;
 			path = TwakeDriveFileProviderExt;
@@ -178,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				FAF70364A958432A838C4A87 /* SmokeTest.swift */,
+				6088AA070B914550BC2AB533 /* SessionTests.swift */,
 			);
 			name = TwakeDriveFileProviderExtTests;
 			path = TwakeDriveFileProviderExtTests;
@@ -556,6 +563,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B2A78C6EE0C4C14BF599D0D /* FileProviderExtension.swift in Sources */,
+				2134B4C02DE8465FA359252D /* Session.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -572,6 +580,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				6229EE32FAEB48A2B1E5A67F /* SmokeTest.swift in Sources */,
+				A59EDE1D90FE4CB79A04219F /* SessionTests.swift in Sources */,
+				C330B9343B7D4474AB8CB174 /* Session.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
