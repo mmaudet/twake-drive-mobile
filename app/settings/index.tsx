@@ -1,10 +1,11 @@
 import React from 'react'
 import { ScrollView } from 'react-native'
-import { List } from 'react-native-paper'
+import { Avatar, List } from 'react-native-paper'
 import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 
 import { ScreenContainer } from '@/ui/ScreenContainer'
+import { useCurrentUser } from '@/account/useCurrentUser'
 import { getLocalePreference, LOCALE_SYSTEM } from '@/preferences/localePreference'
 import { localeDisplayName } from '@/i18n/localeNames'
 import { useThemePreference, ThemePref } from '@/preferences/themePreference'
@@ -12,6 +13,7 @@ import { useThemePreference, ThemePref } from '@/preferences/themePreference'
 export default function SettingsIndex(): React.ReactElement {
   const { t } = useTranslation()
   const router = useRouter()
+  const { name, email, initials } = useCurrentUser()
   const localePref = getLocalePreference()
   const languageValue =
     localePref === LOCALE_SYSTEM ? t('settings.systemLanguage') : localeDisplayName(localePref)
@@ -24,6 +26,11 @@ export default function SettingsIndex(): React.ReactElement {
   return (
     <ScreenContainer>
       <ScrollView>
+        <List.Item
+          title={name ?? email ?? t('settings.account')}
+          description={name ? email : undefined}
+          left={() => <Avatar.Text size={40} label={initials} />}
+        />
         <List.Item
           title={t('settings.language')}
           description={languageValue}

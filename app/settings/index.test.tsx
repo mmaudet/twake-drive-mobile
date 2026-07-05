@@ -14,6 +14,13 @@ jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 })
 }))
 
+// SettingsIndex now renders the account header via useCurrentUser (Task 4),
+// which calls cozy-client's useQuery under the hood — this suite has no
+// CozyClient in the render tree, so mock it locally (see task-8-brief.md).
+jest.mock('@/account/useCurrentUser', () => ({
+  useCurrentUser: () => ({ initials: 'MM', loading: false })
+}))
+
 // useThemePreference is exercised elsewhere against the real MMKV-backed store
 // (src/preferences/themePreference.ts has its own coverage). Stubbing it here
 // isolates SettingsIndex's wiring: pressing a row must call setPref with the

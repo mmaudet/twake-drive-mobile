@@ -45,6 +45,15 @@ jest.mock('@/ui/SyncIndicator', () => ({
   SyncIndicator: () => null
 }))
 
+// FavoritesScreen renders AppBar, which now reads the account identity via
+// useCurrentUser (Task 4/8). The local cozy-client Q() mock above only stubs
+// the chainable methods favoritesQuery() needs (where/sortBy/limitBy/...) —
+// it has no .getById, which useCurrentUser's module-level query descriptor
+// calls at import time, so mock the hook directly instead.
+jest.mock('@/account/useCurrentUser', () => ({
+  useCurrentUser: () => ({ initials: 'MM', loading: false })
+}))
+
 // FolderRow / FileRow pull in offline + sharing hooks
 jest.mock('@/offline/useOfflineState', () => ({
   useOfflineState: jest.fn().mockReturnValue(undefined),

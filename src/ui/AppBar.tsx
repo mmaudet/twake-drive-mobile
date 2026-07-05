@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router'
 import { SyncIndicator } from './SyncIndicator'
 import { TwakeLogo } from '@/ui/icons/TwakeLogo'
 import { CozyIcon } from '@/ui/icons/CozyIcon'
+import { useCurrentUser } from '@/account/useCurrentUser'
 
 export interface AppBarSelectionAction {
   icon: string
@@ -47,7 +48,7 @@ export const AppBar = ({ title, onBack, onLogout, showSearch, selection }: Props
   const [menuVisible, setMenuVisible] = useState(false)
   const theme = useTheme()
   const router = useRouter()
-  const initials = 'MM'
+  const { initials } = useCurrentUser()
 
   if (selection) {
     return (

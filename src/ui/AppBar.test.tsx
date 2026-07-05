@@ -9,6 +9,12 @@ jest.mock('react-i18next', () => ({
 jest.mock('./SyncIndicator', () => ({
   SyncIndicator: () => null
 }))
+// AppBar now reads the account identity via useCurrentUser (Task 4), which calls
+// cozy-client's useQuery under the hood — this suite has no CozyClient in the
+// render tree, so mock it locally (see task-8-brief.md).
+jest.mock('@/account/useCurrentUser', () => ({
+  useCurrentUser: () => ({ initials: 'MM', loading: false })
+}))
 const mockPush = jest.fn()
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, back: jest.fn() })
