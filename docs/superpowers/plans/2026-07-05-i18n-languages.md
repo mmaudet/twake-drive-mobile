@@ -174,9 +174,14 @@ git commit -m "feat(i18n): language registry + pure pickLanguage resolver"
 ```ts
 // src/i18n/languagePreference.test.ts
 import i18n from 'i18next'
+import { getStoredPreference, resolveLanguage, setLanguagePreference } from './languagePreference'
 
-// In-memory MMKV so the store round-trips within a test. The factory owns its
-// Map (jest.mock factories may only touch `mock`-prefixed or self-contained state).
+// In-memory MMKV so the store round-trips within the file. The factory owns its
+// Map (self-contained; jest.mock factories may not close over outer variables).
+// NOTE: do NOT use jest.resetModules() here — resetting the registry would give
+// languagePreference a *different* i18next singleton than the one imported above,
+// so the changeLanguage spy would never see the call. Top-level imports share one
+// singleton; shared module state is reset in afterEach instead.
 jest.mock('react-native-mmkv', () => {
   const store = new Map<string, string>()
   return {
@@ -189,30 +194,33 @@ jest.mock('react-native-mmkv', () => {
 })
 
 describe('language preference store', () => {
-  beforeEach(() => jest.resetModules())
+  let changeLanguage: jest.SpyInstance
+  beforeEach(() => {
+    // Mock for the whole test so setLanguagePreference never touches the
+    // (uninitialised) real i18next and prints init warnings.
+    changeLanguage = jest.spyOn(i18n, 'changeLanguage').mockResolvedValue(undefined as never)
+  })
+  afterEach(() => {
+    setLanguagePreference('system') // reset shared module state (uses the mock)
+    changeLanguage.mockRestore()
+  })
 
   it('defaults to "system" when nothing is stored', () => {
-    const { getStoredPreference } = require('./languagePreference')
     expect(getStoredPreference()).toBe('system')
   })
 
   it('persists and reports a concrete preference', () => {
-    const mod = require('./languagePreference')
-    mod.setLanguagePreference('es')
-    expect(mod.getStoredPreference()).toBe('es')
+    setLanguagePreference('es')
+    expect(getStoredPreference()).toBe('es')
   })
 
   it('changes the i18next language on set', () => {
-    const spy = jest.spyOn(i18n, 'changeLanguage').mockResolvedValue(undefined as never)
-    const mod = require('./languagePreference')
-    mod.setLanguagePreference('de')
-    expect(spy).toHaveBeenCalledWith('de')
-    spy.mockRestore()
+    setLanguagePreference('de')
+    expect(changeLanguage).toHaveBeenCalledWith('de')
   })
 
   it('resolves "system" against the device locale (fr in tests)', () => {
-    const mod = require('./languagePreference')
-    expect(mod.resolveLanguage('system')).toBe('fr')
+    expect(resolveLanguage('system')).toBe('fr')
   })
 })
 ```
