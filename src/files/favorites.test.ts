@@ -10,10 +10,17 @@ const makeFile = (favorite?: boolean): FileQueryResult => ({
   cozyMetadata: favorite !== undefined ? { favorite } : undefined
 })
 
-// Fake cozy-client with a tracked `save` method
+// Fake cozy-client exposing collection('io.cozy.files').updateAttributes — the
+// SAME stack-direct path renameEntry/moveEntry use (NOT the generic client.save,
+// which on mobile writes only to the offline pouch and never persists files).
 const makeMockClient = () => {
-  const save = jest.fn().mockResolvedValue({ data: {} })
-  return { save } as unknown as import('cozy-client').default & { save: jest.Mock }
+  const updateAttributes = jest.fn().mockResolvedValue({ data: {} })
+  const collection = jest.fn().mockReturnValue({ updateAttributes })
+  return {
+    client: { collection } as unknown as import('cozy-client').default,
+    collection,
+    updateAttributes
+  }
 }
 
 describe('isFavorite', () => {
@@ -36,32 +43,28 @@ describe('isFavorite', () => {
 })
 
 describe('toggleFavorite', () => {
-  it('calls client.save with cozyMetadata.favorite = true when next is true', async () => {
-    const client = makeMockClient()
-    const file = makeFile(false)
-    await toggleFavorite(client, file, true)
-    expect(client.save).toHaveBeenCalledTimes(1)
-    const arg = client.save.mock.calls[0][0] as FileQueryResult & {
-      cozyMetadata: { favorite: boolean }
-    }
-    expect(arg.cozyMetadata.favorite).toBe(true)
-    // Other fields preserved
-    expect(arg._id).toBe('file-1')
-    expect(arg.name).toBe('test.pdf')
+  it('updates io.cozy.files via updateAttributes with favorite = true when next is true', async () => {
+    const { client, collection, updateAttributes } = makeMockClient()
+    await toggleFavorite(client, makeFile(false), true)
+    expect(collection).toHaveBeenCalledWith('io.cozy.files')
+    expect(updateAttributes).toHaveBeenCalledTimes(1)
+    const [id, attributes] = updateAttributes.mock.calls[0] as [
+      string,
+      { cozyMetadata: { favorite: boolean } }
+    ]
+    expect(id).toBe('file-1')
+    expect(attributes.cozyMetadata.favorite).toBe(true)
   })
 
-  it('calls client.save with cozyMetadata.favorite = false when next is false', async () => {
-    const client = makeMockClient()
-    const file = makeFile(true)
-    await toggleFavorite(client, file, false)
-    const arg = client.save.mock.calls[0][0] as FileQueryResult & {
-      cozyMetadata: { favorite: boolean }
-    }
-    expect(arg.cozyMetadata.favorite).toBe(false)
+  it('sets favorite = false when next is false', async () => {
+    const { client, updateAttributes } = makeMockClient()
+    await toggleFavorite(client, makeFile(true), false)
+    const attributes = updateAttributes.mock.calls[0][1] as { cozyMetadata: { favorite: boolean } }
+    expect(attributes.cozyMetadata.favorite).toBe(false)
   })
 
   it('merges into existing cozyMetadata without losing other fields', async () => {
-    const client = makeMockClient()
+    const { client, updateAttributes } = makeMockClient()
     const file: FileQueryResult = {
       _id: 'f',
       _type: 'io.cozy.files',
@@ -70,15 +73,15 @@ describe('toggleFavorite', () => {
       cozyMetadata: { createdBy: { account: 'acct-1' }, favorite: false }
     }
     await toggleFavorite(client, file, true)
-    const arg = client.save.mock.calls[0][0] as { cozyMetadata: Record<string, unknown> }
-    expect(arg.cozyMetadata.createdBy).toEqual({ account: 'acct-1' })
-    expect(arg.cozyMetadata.favorite).toBe(true)
+    const attributes = updateAttributes.mock.calls[0][1] as {
+      cozyMetadata: Record<string, unknown>
+    }
+    expect(attributes.cozyMetadata.createdBy).toEqual({ account: 'acct-1' })
+    expect(attributes.cozyMetadata.favorite).toBe(true)
   })
 
-  it('returns the promise from client.save', async () => {
-    const client = makeMockClient()
-    client.save.mockResolvedValue({ data: { _id: 'file-1' } })
-    const file = makeFile(false)
-    await expect(toggleFavorite(client, file, true)).resolves.toBeUndefined()
+  it('resolves to undefined', async () => {
+    const { client } = makeMockClient()
+    await expect(toggleFavorite(client, makeFile(false), true)).resolves.toBeUndefined()
   })
 })

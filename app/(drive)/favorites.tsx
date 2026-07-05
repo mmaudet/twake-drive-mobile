@@ -14,10 +14,19 @@ import { FileRow } from '@/ui/FileRow'
 import { FolderRow } from '@/ui/FolderRow'
 import { useAuth } from '@/auth/useAuth'
 import { getErrorMessageKey } from '@/utils/errorMessages'
-import { favoritesQuery, favoritesQueryAs, FileQueryResult } from '@/client/queries'
+import { favoritesQuery, favoritesQueryAs, FileQueryResult, TRASH_DIR_ID } from '@/client/queries'
 import { isFavorite } from '@/files/favorites'
 import { openFileFromList } from '@/files/openFromList'
 import { surfaceOpenError } from '@/files/errors'
+
+// A trashed folder keeps its cozyMetadata.favorite flag. cozy-stack does NOT
+// reliably set a top-level `trashed` boolean on it, but a trashed item always
+// sits directly under the trash dir (dir_id) or somewhere under the `/.cozy_trash`
+// path — check all three so none leaks into Favoris.
+const isInTrash = (d: FileQueryResult): boolean =>
+  d.trashed === true ||
+  d.dir_id === TRASH_DIR_ID ||
+  (typeof d.path === 'string' && d.path.startsWith('/.cozy_trash'))
 
 export default function FavoritesScreen() {
   const router = useRouter()
@@ -90,6 +99,7 @@ export default function FavoritesScreen() {
   // real favourites here (isFavorite is a strict `=== true`).
   const data = ((query.data as FileQueryResult[] | null | undefined) ?? [])
     .filter(isFavorite)
+    .filter(d => !isInTrash(d))
     .filter(d => !removedIds.has(d._id))
 
   return (

@@ -180,4 +180,46 @@ describe('FavoritesScreen', () => {
     expect(screen.queryByText('Not a favourite')).toBeNull()
     expect(screen.queryByText('No favourite flag')).toBeNull()
   })
+
+  // A trashed folder keeps its cozyMetadata.favorite flag, so the fails-open
+  // query returns it. cozy-stack does NOT reliably set a `trashed` boolean, so
+  // the screen must also catch the trash dir_id and the /.cozy_trash path.
+  it('drops favourited items in the trash (trashed flag, trash dir_id, or trash path)', () => {
+    mockUseQuery.mockReturnValue(
+      makeQueryResult([
+        {
+          _id: 'live',
+          name: 'Live favourite',
+          type: 'directory',
+          cozyMetadata: { favorite: true }
+        },
+        {
+          _id: 't1',
+          name: 'Trashed by flag',
+          type: 'directory',
+          trashed: true,
+          cozyMetadata: { favorite: true }
+        },
+        {
+          _id: 't2',
+          name: 'Trashed by dir_id',
+          type: 'directory',
+          dir_id: 'io.cozy.files.trash-dir',
+          cozyMetadata: { favorite: true }
+        },
+        {
+          _id: 't3',
+          name: 'Trashed by path',
+          type: 'directory',
+          path: '/.cozy_trash/old',
+          cozyMetadata: { favorite: true }
+        }
+      ])
+    )
+    render(wrap(<FavoritesScreen />))
+    expect(screen.getByText('Live favourite')).toBeOnTheScreen()
+    expect(screen.queryByText('Trashed by flag')).toBeNull()
+    expect(screen.queryByText('Trashed by dir_id')).toBeNull()
+    expect(screen.queryByText('Trashed by path')).toBeNull()
+  })
 })
