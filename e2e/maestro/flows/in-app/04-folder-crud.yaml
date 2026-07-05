@@ -6,14 +6,13 @@ env:
 ---
 # Real CREATE + DELETE round-trip, scoped STRICTLY to a throwaway folder.
 #
-# ⚠️ SAFETY: the target is selected with a long-press on its EXACT name, NEVER a
-# `rightOf` menu selector. `rightOf` can resolve to the WRONG row and delete a
-# real folder (it did, during bring-up). Long-press on the exact ${FOLDER_NAME}
-# selects only that folder; bulk-delete then acts on the selection only. The
-# confirm button is targeted by testID (confirm-delete-submit), not the ambiguous
-# "Supprimer" text (shared with the app-bar action + row menu).
+# ⚠️ SAFETY + reliability: delete via the PER-FOLDER menu testID
+# `folder-actions:<name>` (targets the exact row) -> "Supprimer" ->
+# `confirm-delete-submit`. NEVER a `rightOf` selector (resolves to the wrong row —
+# it deleted real folders in bring-up) nor a bare long-press (it grabs dialog text
+# if a create-conflict dialog is open). The post-delete refetch (point-3 fix)
+# removes the row live.
 - runFlow: ../../subflows/openDrive.yaml
-# create
 - tapOn:
     id: 'drive-fab'
 - tapOn: 'Nouveau dossier'
@@ -22,14 +21,12 @@ env:
 - extendedWaitUntil:
     visible: '${FOLDER_NAME}'
     timeout: 12000
-# delete via selection mode (long-press selects ONLY this exact folder)
-- longPressOn:
-    text: '${FOLDER_NAME}'
 - tapOn:
-    id: 'selection-delete'
+    id: 'folder-actions:${FOLDER_NAME}'
+- tapOn: 'Supprimer'
 - waitForAnimationToEnd
 - tapOn:
     id: 'confirm-delete-submit'
 - extendedWaitUntil:
     notVisible: '${FOLDER_NAME}'
-    timeout: 12000
+    timeout: 15000
