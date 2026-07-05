@@ -29,6 +29,12 @@ const SHARED = {
   keychainAccessible: 'AFTER_FIRST_UNLOCK'
 }
 
+// Fallback keychain (no access group) used when the shared-group entitlement is
+// absent, e.g. the unsigned iOS Simulator build.
+const DEFAULT = {
+  keychainAccessible: 'AFTER_FIRST_UNLOCK'
+}
+
 describe('tokenStorage', () => {
   beforeEach(() => jest.clearAllMocks())
 
@@ -61,5 +67,17 @@ describe('tokenStorage', () => {
   it('clearSession deletes the stored item', async () => {
     await clearSession()
     expect(SecureStore.deleteItemAsync).toHaveBeenCalledWith(SESSION_KEY, SHARED)
+  })
+
+  it('falls back to the default keychain when the shared group is unavailable', async () => {
+    // Unsigned / ad-hoc iOS Simulator build: requesting the shared access group
+    // throws "A required entitlement isn't present" — the read must retry
+    // against the default keychain so login still works.
+    ;(SecureStore.getItemAsync as jest.Mock)
+      .mockRejectedValueOnce(new Error("A required entitlement isn't present"))
+      .mockResolvedValueOnce(JSON.stringify(session))
+    expect(await getSession()).toEqual(session)
+    expect(SecureStore.getItemAsync).toHaveBeenNthCalledWith(1, SESSION_KEY, SHARED)
+    expect(SecureStore.getItemAsync).toHaveBeenNthCalledWith(2, SESSION_KEY, DEFAULT)
   })
 })
