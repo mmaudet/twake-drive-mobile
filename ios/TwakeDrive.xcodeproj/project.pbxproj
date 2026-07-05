@@ -25,6 +25,15 @@
 		78DC680BFDC749B5B20D0074 /* KeychainSessionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA39DC3A43242919CD80A54 /* KeychainSessionStoreTests.swift */; };
 		CC71358F217048C5A6E7EFC4 /* KeychainSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F9A548E161441483ADF31A /* KeychainSessionStore.swift */; };
 		1A4D7ADCCDF4409FB895AF57 /* KeychainSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F9A548E161441483ADF31A /* KeychainSessionStore.swift */; };
+		A5875E424926424E91215743 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42876A95517A4AA18193F6BD /* MockURLProtocol.swift */; };
+		616E28E111C44848B7113A7D /* CozyFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEF6503DB364E439B553C79 /* CozyFileTests.swift */; };
+		342779C8DE3248AFA89A608F /* ItemMapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4BD51BF3E24F99A4275732 /* ItemMapperTests.swift */; };
+		3354FE071D8542E4A92CD122 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B7E70C56214155A5A23095 /* HTTPClient.swift */; };
+		8D6B57D7481941EC9799FEA6 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B7E70C56214155A5A23095 /* HTTPClient.swift */; };
+		D9667730EDA746E78E76BD72 /* CozyFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5D1D5E6C1B4D8EAF119CA8 /* CozyFile.swift */; };
+		C728C2AD68154318ADCCB03E /* CozyFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5D1D5E6C1B4D8EAF119CA8 /* CozyFile.swift */; };
+		AD001E26D70A44B5A62732AA /* ItemMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4643DCA0AA95481784AD3902 /* ItemMapper.swift */; };
+		F98382C3F29B4FAEABBDE66D /* ItemMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4643DCA0AA95481784AD3902 /* ItemMapper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +106,12 @@
 		824B10A2FE1848BCA4609F6A /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		BFA39DC3A43242919CD80A54 /* KeychainSessionStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainSessionStoreTests.swift; sourceTree = "<group>"; };
 		99F9A548E161441483ADF31A /* KeychainSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainSessionStore.swift; sourceTree = "<group>"; };
+		42876A95517A4AA18193F6BD /* MockURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLProtocol.swift; sourceTree = "<group>"; };
+		6DEF6503DB364E439B553C79 /* CozyFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFileTests.swift; sourceTree = "<group>"; };
+		0F4BD51BF3E24F99A4275732 /* ItemMapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemMapperTests.swift; sourceTree = "<group>"; };
+		11B7E70C56214155A5A23095 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		EE5D1D5E6C1B4D8EAF119CA8 /* CozyFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFile.swift; sourceTree = "<group>"; };
+		4643DCA0AA95481784AD3902 /* ItemMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemMapper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,6 +187,9 @@
 				845E0D73487342379615CDAF /* TwakeDriveFileProviderExt.entitlements */,
 				824B10A2FE1848BCA4609F6A /* Session.swift */,
 				99F9A548E161441483ADF31A /* KeychainSessionStore.swift */,
+				11B7E70C56214155A5A23095 /* HTTPClient.swift */,
+				EE5D1D5E6C1B4D8EAF119CA8 /* CozyFile.swift */,
+				4643DCA0AA95481784AD3902 /* ItemMapper.swift */,
 			);
 			name = TwakeDriveFileProviderExt;
 			path = TwakeDriveFileProviderExt;
@@ -192,6 +210,9 @@
 				FAF70364A958432A838C4A87 /* SmokeTest.swift */,
 				6088AA070B914550BC2AB533 /* SessionTests.swift */,
 				BFA39DC3A43242919CD80A54 /* KeychainSessionStoreTests.swift */,
+				42876A95517A4AA18193F6BD /* MockURLProtocol.swift */,
+				6DEF6503DB364E439B553C79 /* CozyFileTests.swift */,
+				0F4BD51BF3E24F99A4275732 /* ItemMapperTests.swift */,
 			);
 			name = TwakeDriveFileProviderExtTests;
 			path = TwakeDriveFileProviderExtTests;
@@ -572,6 +593,9 @@
 				5B2A78C6EE0C4C14BF599D0D /* FileProviderExtension.swift in Sources */,
 				2134B4C02DE8465FA359252D /* Session.swift in Sources */,
 				CC71358F217048C5A6E7EFC4 /* KeychainSessionStore.swift in Sources */,
+				3354FE071D8542E4A92CD122 /* HTTPClient.swift in Sources */,
+				D9667730EDA746E78E76BD72 /* CozyFile.swift in Sources */,
+				AD001E26D70A44B5A62732AA /* ItemMapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -592,6 +616,12 @@
 				C330B9343B7D4474AB8CB174 /* Session.swift in Sources */,
 				78DC680BFDC749B5B20D0074 /* KeychainSessionStoreTests.swift in Sources */,
 				1A4D7ADCCDF4409FB895AF57 /* KeychainSessionStore.swift in Sources */,
+				A5875E424926424E91215743 /* MockURLProtocol.swift in Sources */,
+				616E28E111C44848B7113A7D /* CozyFileTests.swift in Sources */,
+				342779C8DE3248AFA89A608F /* ItemMapperTests.swift in Sources */,
+				8D6B57D7481941EC9799FEA6 /* HTTPClient.swift in Sources */,
+				C728C2AD68154318ADCCB03E /* CozyFile.swift in Sources */,
+				F98382C3F29B4FAEABBDE66D /* ItemMapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

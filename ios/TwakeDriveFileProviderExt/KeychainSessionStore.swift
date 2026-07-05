@@ -43,8 +43,7 @@ struct KeychainSessionStore: SessionStoring {
     let data = try JSONEncoder().encode(session)
     guard access.write(data, service: Self.writeService, account: account,
                        accessGroup: accessGroup, accessible: kSecAttrAccessibleAfterFirstUnlock) else {
-      // TODO(Task 5): swap to CozyError.serverUnreachable (CozyError doesn't exist until Task 5).
-      throw NSError(domain: "KeychainSessionStore", code: -1)
+      throw CozyError.serverUnreachable
     }
   }
 }
