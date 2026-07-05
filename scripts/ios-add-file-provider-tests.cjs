@@ -26,7 +26,7 @@ const TEST_GROUP = 'TwakeDriveFileProviderExtTests';  // folder ios/TwakeDriveFi
 // --- membership manifests (tasks append here) ------------------------------
 const SHARED_SOURCES = [
   'Session.swift',
-  // T4: 'KeychainSessionStore.swift',
+  'KeychainSessionStore.swift',
   // T5: 'HTTPClient.swift', 'CozyFile.swift', 'ItemMapper.swift',
   // T6: 'TokenProvider.swift',
   // T7/T8: 'CozyFilesApi.swift',
@@ -35,6 +35,7 @@ const SHARED_SOURCES = [
 const TEST_ONLY_SOURCES = [
   'SmokeTest.swift',
   'SessionTests.swift',
+  'KeychainSessionStoreTests.swift',
   // T5: 'MockURLProtocol.swift', 'Fakes.swift',
   // per-task: '<Name>Tests.swift'
 ];
