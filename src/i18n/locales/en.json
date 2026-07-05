@@ -10,7 +10,9 @@
     "help": "Help"
   },
   "settings": {
-    "title": "Settings"
+    "title": "Settings",
+    "language": "Language",
+    "languageSystem": "System default"
   },
   "auth": {
     "welcomeTitle": "Welcome to Twake Drive",
@@ -60,13 +62,16 @@
     "delete": {
       "confirmFileTitle": "Delete file?",
       "confirmFolderTitle": "Delete folder?",
-      "confirmBulkTitle": "Delete {{count}} items?",
+      "confirmBulkTitle_one": "Delete {{count}} item?",
+      "confirmBulkTitle_other": "Delete {{count}} items?",
       "confirmBody": "\"{{name}}\" will be moved to the trash.",
-      "confirmBulkBody": "{{count}} items will be moved to the trash.",
+      "confirmBulkBody_one": "{{count}} item will be moved to the trash.",
+      "confirmBulkBody_other": "{{count}} items will be moved to the trash.",
       "confirm": "Delete",
       "successFile": "File moved to trash",
       "successFolder": "Folder moved to trash",
-      "successBulk": "{{count}} items moved to trash",
+      "successBulk_one": "{{count}} item moved to trash",
+      "successBulk_other": "{{count}} items moved to trash",
       "errorGeneric": "Could not delete"
     },
     "move": {
@@ -74,7 +79,8 @@
       "action": "Move here",
       "successFile": "File moved",
       "successFolder": "Folder moved",
-      "successBulk": "{{count}} items moved",
+      "successBulk_one": "{{count}} item moved",
+      "successBulk_other": "{{count}} items moved",
       "errorGeneric": "Move failed",
       "newFolder": "New folder"
     },
@@ -83,7 +89,8 @@
       "confirm": "Import here",
       "uploading": "Importing… {{done}}/{{total}}",
       "successFile": "File imported",
-      "successBulk": "{{count}} files imported",
+      "successBulk_one": "{{count}} file imported",
+      "successBulk_other": "{{count}} files imported",
       "partial": "{{succeeded}}/{{total}} imported, {{failed}} failed",
       "errorGeneric": "Import failed",
       "errorOffline": "Connection required to import",
@@ -197,11 +204,14 @@
       "failed": "Download failed",
       "notAvailableOffline": "File not available offline",
       "folderPartial": "{{count}}/{{total}} files",
-      "folderSummary": "{{count}} files · {{size}}",
-      "folderConfirm": "This folder contains {{count}} files (~{{size}}). Continue?",
+      "folderSummary_one": "{{count}} file · {{size}}",
+      "folderSummary_other": "{{count}} files · {{size}}",
+      "folderConfirm_one": "This folder contains {{count}} file (~{{size}}). Continue?",
+      "folderConfirm_other": "This folder contains {{count}} files (~{{size}}). Continue?",
       "bigFolderTitle": "Confirm download",
       "diskFull": "Device storage full. Remove items to free up space.",
-      "deleteAllConfirm": "Remove {{count}} files ({{size}})? This cannot be undone.",
+      "deleteAllConfirm_one": "Remove {{count}} file ({{size}})? This cannot be undone.",
+      "deleteAllConfirm_other": "Remove {{count}} files ({{size}})? This cannot be undone.",
       "storageTitle": "Offline storage",
       "totalUsed": "Total used",
       "deleteAll": "Delete all",
@@ -217,6 +227,13 @@
       "empty": "No file found",
       "action": "Search"
     }
+  },
+  "a11y": {
+    "listView": "List view",
+    "gridView": "Grid view",
+    "folderActions": "Folder actions",
+    "fileActions": "File actions",
+    "removeRecipient": "Remove recipient"
   },
   "errors": {
     "noNetwork": "No connection",

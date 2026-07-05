@@ -10,7 +10,9 @@
     "help": "Aide"
   },
   "settings": {
-    "title": "Paramètres"
+    "title": "Paramètres",
+    "language": "Langue",
+    "languageSystem": "Langue du système"
   },
   "auth": {
     "welcomeTitle": "Bienvenue sur Twake Drive",
@@ -60,13 +62,16 @@
     "delete": {
       "confirmFileTitle": "Supprimer le fichier ?",
       "confirmFolderTitle": "Supprimer le dossier ?",
-      "confirmBulkTitle": "Supprimer {{count}} éléments ?",
+      "confirmBulkTitle_one": "Supprimer {{count}} élément ?",
+      "confirmBulkTitle_other": "Supprimer {{count}} éléments ?",
       "confirmBody": "« {{name}} » sera déplacé dans la corbeille.",
-      "confirmBulkBody": "{{count}} éléments seront déplacés dans la corbeille.",
+      "confirmBulkBody_one": "{{count}} élément sera déplacé dans la corbeille.",
+      "confirmBulkBody_other": "{{count}} éléments seront déplacés dans la corbeille.",
       "confirm": "Supprimer",
       "successFile": "Fichier déplacé dans la corbeille",
       "successFolder": "Dossier déplacé dans la corbeille",
-      "successBulk": "{{count}} éléments déplacés dans la corbeille",
+      "successBulk_one": "{{count}} élément déplacé dans la corbeille",
+      "successBulk_other": "{{count}} éléments déplacés dans la corbeille",
       "errorGeneric": "Impossible de supprimer"
     },
     "move": {
@@ -74,7 +79,8 @@
       "action": "Déplacer ici",
       "successFile": "Fichier déplacé",
       "successFolder": "Dossier déplacé",
-      "successBulk": "{{count}} éléments déplacés",
+      "successBulk_one": "{{count}} élément déplacé",
+      "successBulk_other": "{{count}} éléments déplacés",
       "errorGeneric": "Impossible de déplacer",
       "newFolder": "Nouveau dossier"
     },
@@ -83,7 +89,8 @@
       "confirm": "Importer ici",
       "uploading": "Import en cours… {{done}}/{{total}}",
       "successFile": "Fichier importé",
-      "successBulk": "{{count}} fichiers importés",
+      "successBulk_one": "{{count}} fichier importé",
+      "successBulk_other": "{{count}} fichiers importés",
       "partial": "{{succeeded}}/{{total}} importés, {{failed}} en échec",
       "errorGeneric": "L'import a échoué",
       "errorOffline": "Connexion requise pour importer",
@@ -197,11 +204,14 @@
       "failed": "Échec du téléchargement",
       "notAvailableOffline": "Fichier non disponible hors-ligne",
       "folderPartial": "{{count}}/{{total}} fichiers",
-      "folderSummary": "{{count}} fichiers · {{size}}",
-      "folderConfirm": "Ce dossier contient {{count}} fichiers (~{{size}}). Continuer ?",
+      "folderSummary_one": "{{count}} fichier · {{size}}",
+      "folderSummary_other": "{{count}} fichiers · {{size}}",
+      "folderConfirm_one": "Ce dossier contient {{count}} fichier (~{{size}}). Continuer ?",
+      "folderConfirm_other": "Ce dossier contient {{count}} fichiers (~{{size}}). Continuer ?",
       "bigFolderTitle": "Confirmer le téléchargement",
       "diskFull": "Stockage de l'appareil plein. Supprimez des fichiers pour libérer de l'espace.",
-      "deleteAllConfirm": "Supprimer {{count}} fichiers ({{size}}) ? Cette action est irréversible.",
+      "deleteAllConfirm_one": "Supprimer {{count}} fichier ({{size}}) ? Cette action est irréversible.",
+      "deleteAllConfirm_other": "Supprimer {{count}} fichiers ({{size}}) ? Cette action est irréversible.",
       "storageTitle": "Stockage hors-ligne",
       "totalUsed": "Total utilisé",
       "deleteAll": "Tout supprimer",
@@ -217,6 +227,13 @@
       "empty": "Aucun fichier trouvé",
       "action": "Rechercher"
     }
+  },
+  "a11y": {
+    "listView": "Vue liste",
+    "gridView": "Vue grille",
+    "folderActions": "Actions du dossier",
+    "fileActions": "Actions du fichier",
+    "removeRecipient": "Retirer le destinataire"
   },
   "errors": {
     "noNetwork": "Pas de connexion",
