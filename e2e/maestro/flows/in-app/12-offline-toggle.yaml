@@ -1,0 +1,26 @@
+appId: com.linagora.twakedrive
+tags:
+  - inapp
+env:
+  FOLDER: 'E2Eoff'
+  MENU_SUFFIX: ''
+---
+# Hors-ligne : pin → le menu montre "Retirer du hors-ligne" (pinné) → unpin → le menu
+# remontre "Garder hors-ligne". (La PURGE locale des blobs au unpin est couverte par
+# le test unitaire OfflineFilesStore — l'E2E ne peut pas inspecter le filesystem.)
+- runFlow: ../../subflows/openDrive.yaml
+- tapOn: { id: 'drive-fab' }
+- tapOn: 'Nouveau dossier'
+- inputText: '${FOLDER}'
+- pressKey: Enter
+- extendedWaitUntil: { visible: '${FOLDER}', timeout: 12000 }
+- tapOn: { id: 'folder-actions:${FOLDER}${MENU_SUFFIX}' }
+- tapOn: 'Garder hors-ligne'
+- tapOn: { id: 'folder-actions:${FOLDER}${MENU_SUFFIX}' }
+- assertVisible: 'Retirer du hors-ligne'
+- tapOn: 'Retirer du hors-ligne'
+- tapOn: { id: 'folder-actions:${FOLDER}${MENU_SUFFIX}' }
+- assertVisible: 'Garder hors-ligne'
+- tapOn: 'Supprimer'
+- waitForAnimationToEnd
+- tapOn: { id: 'confirm-delete-submit' }
