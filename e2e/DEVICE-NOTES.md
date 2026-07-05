@@ -10,7 +10,10 @@ Toujours cibler explicitement : `maestro --platform ios test …` / `--platform 
 ## Recette de sélecteurs CROSS-PLATFORM (marche iOS ET Android)
 Les labels/accessibilité diffèrent entre plateformes → règles :
 - **Onglets** : `{ text: 'Récents.*' }` (iOS = « Récents, tab, 3 of 7 » ; Android = « Récents »).
-- **Dossiers/fichiers** : `{ text: 'nom.*' }` (iOS = « nom, folder actions »).
+- **Dossiers/fichiers** : `{ text: 'nom.*' }` (iOS = « nom, <libellé actions
+  localisé> », ex. « nom, Actions du dossier » en FR — le regex n'ancre que sur
+  le nom). Libellé désormais localisé : JAMAIS comme sélecteur — le bouton
+  d'actions du dossier se cible par testID (`{ id: 'folder-actions' }`).
 - **Boutons** : **testIDs** (`appbar-search-button`, `appbar-back-button`, `drive-fab`,
   `search-input`, `create-folder-name-input`…) → `accessibilityIdentifier` sur iOS,
   `resource-id` sur Android. Cohérents.

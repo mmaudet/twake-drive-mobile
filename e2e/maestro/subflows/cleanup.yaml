@@ -16,7 +16,7 @@ env:
       visible: '${FOLDER_NAME}'
     commands:
       - tapOn:
-          text: 'folder actions'
+          id: 'folder-actions'
           rightOf:
             text: '${FOLDER_NAME}'
       - tapOn: 'Supprimer'

@@ -4,8 +4,11 @@ tags:
 env:
   TEST_FOLDER: 'LINAGORA'
 ---
-# Cross-platform. Sur iOS le dossier a l'accessibilité "<nom>, folder actions" →
-# le regex '${TEST_FOLDER}.*' matche iOS ET Android. Retour via le testID
+# Cross-platform. Sur iOS le dossier a l'accessibilité "<nom>, <libellé actions
+# localisé>" (ex. "Actions du dossier" en FR) → le regex '${TEST_FOLDER}.*'
+# matche iOS ET Android car il n'ancre que sur le nom, jamais sur ce libellé
+# (désormais localisé : ne JAMAIS le sélectionner par texte — le bouton
+# d'actions se cible par testID id: 'folder-actions'). Retour via le testID
 # appbar-back-button (iOS n'a pas de bouton retour matériel).
 - runFlow: ../../subflows/openDrive.yaml
 - tapOn:
