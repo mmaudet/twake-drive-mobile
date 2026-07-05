@@ -25,7 +25,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write # attach the signed IPA to the GitHub Release (like release-android)
 
 jobs:
   release-ios:
@@ -121,3 +121,17 @@ jobs:
           path: ios/build/TwakeDrive.ipa
           if-no-files-found: warn
           retention-days: 14
+
+      # Parity with release-android: put the signed IPA on the tag's GitHub Release
+      # too (alongside the APK). TestFlight remains the real iOS distribution; this
+      # is for archival. Runs on tag pushes and tag-ref workflow_dispatch.
+      - name: Attach signed IPA to a GitHub Release
+        if: startsWith(github.ref, 'refs/tags/') && hashFiles('ios/build/TwakeDrive.ipa') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOTES="${{ github.event.inputs.release_notes }}"
+          [ -z "$NOTES" ] && NOTES="Release ${GITHUB_REF_NAME}"
+          gh release create "${GITHUB_REF_NAME}" ios/build/TwakeDrive.ipa \
+            --title "Twake Drive ${GITHUB_REF_NAME}" --notes "$NOTES" --prerelease \
+          || gh release upload "${GITHUB_REF_NAME}" ios/build/TwakeDrive.ipa --clobber
