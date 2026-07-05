@@ -56,3 +56,22 @@ partagé marche et le fallback ne tourne jamais.
 `export PATH="$PATH:$HOME/.maestro/bin"` puis :
 - `npm run e2e:ios` / `npm run e2e:android` (ciblent la bonne plateforme).
 - Un flow ciblé : `maestro --platform ios test e2e/maestro/flows/in-app/02-tabs.yaml`.
+
+## Passe bug-fix + partage (2026-07-05)
+Bugs trouvés via l'E2E + corrigés (device-validés sauf mention) :
+- **Badge offline absent en grid** (`FileGridItem` ne rendait pas `PinnedBadge`) — validé.
+- **Favoris listait TOUT** (le `where` nested `cozyMetadata.favorite` échoue "ouvert" en pouch local) → tri favoris-d'abord + filtre client `isFavorite` — validé.
+- **Récents ~1 min** (`recentQuery` avec `partialIndex` → nom d'index ≠ warmup `by_updated_at` → reconstruction pleine collection) → drop du partialIndex + filtre client — validé (~2s à chaud).
+- **Récents dates futures / doublons** → exclusion des `updated_at` futurs + dédup `_id`.
+- **Suppression via automatisation** : le code était bon ; le bouton confirmer n'avait pas de testID + label « Supprimer » ambigu → **testID `confirm-delete-submit`**. ⚠️ **La suppression MARCHE** — mes "échecs" venaient d'un sélecteur `rightOf` qui ciblait le **mauvais dossier** (2 vrais dossiers supprimés puis restaurés en bring-up).
+- **Refresh liste après delete/restore** : `confirmDelete`/`confirmBulkDelete` ne refetch pas (fix : refetch) ; restore/empty = server-only → retrait optimiste (`removedIds`).
+
+**Sélecteurs sûrs pour actions destructives (LEÇON) :**
+- **JAMAIS `rightOf`** pour ouvrir le menu d'une ligne → il matche la mauvaise ligne.
+- Menu d'un dossier précis : **`{ id: 'folder-actions:<nom>' }`** (testID par-dossier).
+- Suppression sûre : **long-press du nom exact** (sélectionne cette ligne uniquement) → `{ id: 'selection-delete' }` → `{ id: 'confirm-delete-submit' }`.
+
+**Nouveaux flows :**
+- **04 folder-crud** : vrai create+delete round-trip, scoping strict sur E2E-smoke (long-press + testIDs).
+- **08 share-internal** : ouvre le partage interne d'un dossier (lien + destinataires) puis ferme — **non-mutant** (aucun partage créé), cleanup.
+- **11 share-to-drive** (OS share sheet) : fixture `sample.jpg` réelle en place (poussée par run-android.sh) ; run cross-app device = manuel.
