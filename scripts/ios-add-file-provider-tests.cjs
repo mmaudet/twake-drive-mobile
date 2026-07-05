@@ -30,7 +30,7 @@ const SHARED_SOURCES = [
   'HTTPClient.swift',
   'CozyFile.swift',
   'ItemMapper.swift',
-  // T6: 'TokenProvider.swift',
+  'TokenProvider.swift',
   // T7/T8: 'CozyFilesApi.swift',
   // T9: 'ConflictResolver.swift',
 ];
@@ -41,6 +41,8 @@ const TEST_ONLY_SOURCES = [
   'MockURLProtocol.swift',
   'CozyFileTests.swift',
   'ItemMapperTests.swift',
+  'TokenProviderTests.swift',
+  'Fakes.swift',
   // per-task: '<Name>Tests.swift'
 ];
 
