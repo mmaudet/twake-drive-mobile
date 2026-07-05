@@ -38,6 +38,9 @@
 		93C04082703449A5896923B9 /* Fakes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB4E4A46EFD412493A65896 /* Fakes.swift */; };
 		C5EF3192A5EE4B11BA98ACC3 /* TokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9B8F4154114F8EB323712F /* TokenProvider.swift */; };
 		17DD79D02D5E4A008F4E10EB /* TokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9B8F4154114F8EB323712F /* TokenProvider.swift */; };
+		48E1DCC5CCFF4F0A834314BD /* CozyFilesApiReadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0DEF53EED3C47CAA43752F0 /* CozyFilesApiReadTests.swift */; };
+		A3E275F08CCE4327B06FA95E /* CozyFilesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C4845487E245F780E1F34C /* CozyFilesApi.swift */; };
+		E3C5870010564AECBF5A6F2C /* CozyFilesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C4845487E245F780E1F34C /* CozyFilesApi.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -119,6 +122,8 @@
 		2761C76F42914415BB545ABC /* TokenProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenProviderTests.swift; sourceTree = "<group>"; };
 		1CB4E4A46EFD412493A65896 /* Fakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fakes.swift; sourceTree = "<group>"; };
 		8E9B8F4154114F8EB323712F /* TokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenProvider.swift; sourceTree = "<group>"; };
+		E0DEF53EED3C47CAA43752F0 /* CozyFilesApiReadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApiReadTests.swift; sourceTree = "<group>"; };
+		45C4845487E245F780E1F34C /* CozyFilesApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApi.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +203,7 @@
 				EE5D1D5E6C1B4D8EAF119CA8 /* CozyFile.swift */,
 				4643DCA0AA95481784AD3902 /* ItemMapper.swift */,
 				8E9B8F4154114F8EB323712F /* TokenProvider.swift */,
+				45C4845487E245F780E1F34C /* CozyFilesApi.swift */,
 			);
 			name = TwakeDriveFileProviderExt;
 			path = TwakeDriveFileProviderExt;
@@ -223,6 +229,7 @@
 				0F4BD51BF3E24F99A4275732 /* ItemMapperTests.swift */,
 				2761C76F42914415BB545ABC /* TokenProviderTests.swift */,
 				1CB4E4A46EFD412493A65896 /* Fakes.swift */,
+				E0DEF53EED3C47CAA43752F0 /* CozyFilesApiReadTests.swift */,
 			);
 			name = TwakeDriveFileProviderExtTests;
 			path = TwakeDriveFileProviderExtTests;
@@ -607,6 +614,7 @@
 				D9667730EDA746E78E76BD72 /* CozyFile.swift in Sources */,
 				AD001E26D70A44B5A62732AA /* ItemMapper.swift in Sources */,
 				C5EF3192A5EE4B11BA98ACC3 /* TokenProvider.swift in Sources */,
+				A3E275F08CCE4327B06FA95E /* CozyFilesApi.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -636,6 +644,8 @@
 				BA115FCDF458411F966CFBAB /* TokenProviderTests.swift in Sources */,
 				93C04082703449A5896923B9 /* Fakes.swift in Sources */,
 				17DD79D02D5E4A008F4E10EB /* TokenProvider.swift in Sources */,
+				48E1DCC5CCFF4F0A834314BD /* CozyFilesApiReadTests.swift in Sources */,
+				E3C5870010564AECBF5A6F2C /* CozyFilesApi.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

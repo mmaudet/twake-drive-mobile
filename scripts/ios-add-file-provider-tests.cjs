@@ -31,7 +31,7 @@ const SHARED_SOURCES = [
   'CozyFile.swift',
   'ItemMapper.swift',
   'TokenProvider.swift',
-  // T7/T8: 'CozyFilesApi.swift',
+  'CozyFilesApi.swift',   // T7 (read); extended in T8 (write)
   // T9: 'ConflictResolver.swift',
 ];
 const TEST_ONLY_SOURCES = [
@@ -43,6 +43,7 @@ const TEST_ONLY_SOURCES = [
   'ItemMapperTests.swift',
   'TokenProviderTests.swift',
   'Fakes.swift',
+  'CozyFilesApiReadTests.swift',
   // per-task: '<Name>Tests.swift'
 ];
 
