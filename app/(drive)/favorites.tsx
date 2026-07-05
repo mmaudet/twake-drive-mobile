@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { FlatList, RefreshControl } from 'react-native'
 import { useFocusEffect, useRouter } from 'expo-router'
 import { useClient, useQuery } from 'cozy-client'
@@ -27,6 +27,14 @@ export default function FavoritesScreen() {
   const queryRef = useRef(query)
   queryRef.current = query
 
+  // Optimistic removal: unfavoriting writes cozyMetadata.favorite=false to Pouch,
+  // but the Mango index the query reads lags a beat, so an immediate refetch still
+  // returns the (stale) favorite — the row would linger until the next focus. Track
+  // just-unfavorited ids and hide them right away (mirrors trash.tsx). Not reset in
+  // the focus effect (that would setState during render under the test's mock); the
+  // entries become redundant anyway once isFavorite filters the refreshed data.
+  const [removedIds, setRemovedIds] = useState<Set<string>>(new Set())
+
   useFocusEffect(
     useCallback(() => {
       void queryRef.current.fetch()
@@ -47,7 +55,10 @@ export default function FavoritesScreen() {
           onPress={() => router.push(`/(drive)/files/${item._id}`)}
           onShare={folder => router.push(`/share/${folder._id}`)}
           onMove={folder => router.push(`/move/${folder._id}`)}
-          onFavoriteChange={() => void query.fetch()}
+          onFavoriteChange={() => {
+            setRemovedIds(prev => new Set(prev).add(item._id))
+            void query.fetch()
+          }}
         />
       )
     }
@@ -63,7 +74,10 @@ export default function FavoritesScreen() {
         onShare={file => router.push(`/share/${file._id}`)}
         onMove={file => router.push(`/move/${file._id}`)}
         onInfo={file => router.push(`/metadata/${file._id}`)}
-        onFavoriteChange={() => void query.fetch()}
+        onFavoriteChange={() => {
+          setRemovedIds(prev => new Set(prev).add(item._id))
+          void query.fetch()
+        }}
       />
     )
   }
@@ -71,7 +85,9 @@ export default function FavoritesScreen() {
   // favoritesQuery's nested-favourite filter is unreliable in the offline pouch
   // replica and returns every file (favourites sort first); filter it down to
   // real favourites here (isFavorite is a strict `=== true`).
-  const data = ((query.data as FileQueryResult[] | null | undefined) ?? []).filter(isFavorite)
+  const data = ((query.data as FileQueryResult[] | null | undefined) ?? [])
+    .filter(isFavorite)
+    .filter(d => !removedIds.has(d._id))
 
   return (
     <ScreenContainer>
