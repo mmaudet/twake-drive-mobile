@@ -27,17 +27,17 @@
   },
   "drive": {
     "myFiles": "Мои файлы",
-    "myDrive": "Мой Диск",
+    "myDrive": "Мой Drive",
     "favorites": "Избранное",
     "shares": "Общий доступ",
     "emptyFavorites": "Нет избранного",
     "shared": "Доступные мне",
-    "sharedDrives": "Диски",
+    "sharedDrives": "Drives",
     "recent": "Недавние",
     "trash": "Корзина",
     "emptyFolder": "В этой папке нет файлов",
     "emptyShared": "Вам не предоставлен доступ к файлам",
-    "emptySharedDrives": "Пока нет общих дисков",
+    "emptySharedDrives": "Пока нет общих Drive",
     "emptyRecent": "Нет недавних файлов",
     "emptyTrash": "Корзина пуста",
     "sortAZ": "A-Z",
@@ -240,7 +240,7 @@
       "retry": "Повторить"
     },
     "search": {
-      "placeholder": "Поиск на Диске",
+      "placeholder": "Поиск в Drive",
       "hint": "Введите не менее 2 символов",
       "empty": "Файлы не найдены",
       "action": "Найти"
