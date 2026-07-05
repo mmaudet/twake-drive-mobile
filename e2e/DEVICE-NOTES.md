@@ -78,3 +78,14 @@ Bugs trouvés via l'E2E + corrigés (device-validés sauf mention) :
 - **04 folder-crud** : vrai create+delete round-trip, scoping strict sur E2E-smoke (long-press + testIDs).
 - **08 share-internal** : ouvre le partage interne d'un dossier (lien + destinataires) puis ferme — **non-mutant** (aucun partage créé), cleanup.
 - **11 share-to-drive** (OS share sheet) : fixture `sample.jpg` réelle en place (poussée par run-android.sh) ; run cross-app device = manuel.
+
+## Menus de ligne sur iOS (a11y) — fix FolderRow (device-validé iOS 26.4)
+Sur iOS, la `List.Item` de Paper (touchable via `onPress`) **groupe ses enfants en
+UN élément d'accessibilité** → le bouton 3-points du slot `right` était absorbé
+(testID perdu, un tap ouvrait le dossier au lieu du menu). **Fix** : sortir le menu
+(et le chevron) du slot `right` en **SIBLING** de la `List.Item`. Device-validé
+iOS 26.4 : testIDs `folder-actions:<nom>` exposés → **04 delete, 07 pin, 08 share
+VERTS**. Nuances : sélecteur iOS = `folder-actions:<nom>-container-outer-layer`
+(le nu est ambigu) vs Android `folder-actions:<nom>` ; `inputText` mange le tiret
+sur iOS (noms sans tiret) ; la session iOS persiste à travers `simctl install`.
+Suivi : même restructure sur `FileRow`.

@@ -75,174 +75,181 @@ export const FolderRow = ({
         })
       : undefined
 
+  // The 3-dot menu button is a SIBLING of the List.Item, NOT its `right` slot.
+  // On iOS, List.Item's touchable (it has onPress) groups its children into ONE
+  // accessibility element, which absorbs the button — its testID is dropped and a
+  // synthetic tap lands on the row (opening the folder) instead of the button.
+  // As a sibling of the row it stays an independent, testID-addressable element
+  // on both platforms, so E2E can open a SPECIFIC row's menu via
+  // `folder-actions:<name>` without a `rightOf` selector (which resolves to the
+  // wrong row — it caused wrong-folder deletions during bring-up).
   return (
-    <List.Item
-      testID={testID}
-      title={folder.name}
-      description={description}
-      // Honour the `style` Paper passes to `left` so the folder icon aligns
-      // with file thumbnails in the same list (matching column widths).
-      left={props => (
-        <View style={[props.style, styles.leftSlot]}>
-          {selected ? (
-            <View style={[styles.checkmark, { backgroundColor: theme.colors.primary }]}>
-              <CozyIcon name="check" size={24} color={theme.colors.onPrimary} />
-            </View>
-          ) : (
-            <View style={styles.thumbWrap}>
-              <FileTypeIcon icon="folder" size={40} />
-              <SharedBadge status={sharingStatus} />
-              <PinnedBadge
-                entry={
-                  isPinned && folderOfflineState.aggregate
-                    ? folderBadgeEntry(folderOfflineState.aggregate)
-                    : undefined
-                }
-                testID="pinned-badge"
-              />
-            </View>
-          )}
-        </View>
-      )}
-      right={props =>
-        hasMenu ? (
-          <Menu
-            visible={menuVisible}
-            onDismiss={() => setMenuVisible(false)}
-            anchor={
-              <IconButton
-                {...props}
-                icon={p => <CozyIcon name="dotsVertical" size={p?.size ?? 24} color={p?.color} />}
-                onPress={() => setMenuVisible(true)}
-                accessibilityLabel={t('a11y.folderActions')}
-                // Per-folder testID so E2E can open a SPECIFIC row's menu without
-                // a `rightOf` selector (which resolves to the wrong row — it caused
-                // wrong-folder deletions during bring-up).
-                testID={`folder-actions:${folder.name}`}
-              />
-            }
-          >
-            {onTogglePin ? (
-              <Menu.Item
-                leadingIcon={isPinned ? 'cloud-off-outline' : 'cloud-download-outline'}
-                title={t(isPinned ? 'drive.offline.unpin' : 'drive.offline.pin')}
-                disabled={!isPinned && !isOnline}
-                onPress={() => {
-                  setMenuVisible(false)
-                  onTogglePin(folder)
-                }}
-              />
-            ) : null}
-            {onShare ? (
-              <Menu.Item
-                leadingIcon={() => (
-                  <CozyIcon name="shareExternal" size={24} color={theme.colors.onSurface} />
-                )}
-                title={t('drive.fileMeta.share')}
-                disabled={!isOnline}
-                onPress={() => {
-                  setMenuVisible(false)
-                  onShare(folder)
-                }}
-              />
-            ) : null}
-            {onRename ? (
-              <Menu.Item
-                leadingIcon={() => (
-                  <CozyIcon name="rename" size={24} color={theme.colors.onSurface} />
-                )}
-                title={t('drive.fileMeta.rename')}
-                disabled={!isOnline}
-                onPress={() => {
-                  setMenuVisible(false)
-                  onRename(folder)
-                }}
-              />
-            ) : null}
-            {onRestore ? (
-              <Menu.Item
-                leadingIcon={() => (
-                  <CozyIcon name="restore" size={24} color={theme.colors.onSurface} />
-                )}
-                title={t('drive.trashActions.restore')}
-                disabled={!isOnline}
-                onPress={() => {
-                  setMenuVisible(false)
-                  onRestore(folder)
-                }}
-              />
-            ) : null}
-            {onDelete ? (
-              <Menu.Item
-                leadingIcon={() => (
-                  <CozyIcon name="trash" size={24} color={theme.colors.onSurface} />
-                )}
-                title={t('drive.fileMeta.delete')}
-                disabled={!isOnline}
-                onPress={() => {
-                  setMenuVisible(false)
-                  onDelete(folder)
-                }}
-              />
-            ) : null}
-            {onMove ? (
-              <Menu.Item
-                leadingIcon={() => (
-                  <CozyIcon name="moveto" size={24} color={theme.colors.onSurface} />
-                )}
-                title={t('drive.fileMeta.move')}
-                disabled={!isOnline}
-                onPress={() => {
-                  setMenuVisible(false)
-                  onMove(folder)
-                }}
-              />
-            ) : null}
-            <Menu.Item
-              leadingIcon={() => (
-                <CozyIcon
-                  name={
-                    isFavorite(folder as Parameters<typeof isFavorite>[0]) ? 'star' : 'starOutline'
+    <View
+      style={[styles.rowContainer, selected && { backgroundColor: theme.colors.primaryContainer }]}
+    >
+      <List.Item
+        style={styles.item}
+        testID={testID}
+        title={folder.name}
+        description={description}
+        onPress={() => onPress(folder)}
+        onLongPress={onLongPress ? () => onLongPress(folder) : undefined}
+        // Honour the `style` Paper passes to `left` so the folder icon aligns
+        // with file thumbnails in the same list (matching column widths).
+        left={props => (
+          <View style={[props.style, styles.leftSlot]}>
+            {selected ? (
+              <View style={[styles.checkmark, { backgroundColor: theme.colors.primary }]}>
+                <CozyIcon name="check" size={24} color={theme.colors.onPrimary} />
+              </View>
+            ) : (
+              <View style={styles.thumbWrap}>
+                <FileTypeIcon icon="folder" size={40} />
+                <SharedBadge status={sharingStatus} />
+                <PinnedBadge
+                  entry={
+                    isPinned && folderOfflineState.aggregate
+                      ? folderBadgeEntry(folderOfflineState.aggregate)
+                      : undefined
                   }
-                  size={24}
-                  color={theme.colors.onSurface}
+                  testID="pinned-badge"
                 />
-              )}
-              title={t(
-                isFavorite(folder as Parameters<typeof isFavorite>[0])
-                  ? 'drive.fileMeta.unfavorite'
-                  : 'drive.fileMeta.favorite'
-              )}
+              </View>
+            )}
+          </View>
+        )}
+      />
+      {hasMenu ? (
+        <Menu
+          visible={menuVisible}
+          onDismiss={() => setMenuVisible(false)}
+          anchor={
+            <IconButton
+              icon={p => <CozyIcon name="dotsVertical" size={p?.size ?? 24} color={p?.color} />}
+              onPress={() => setMenuVisible(true)}
+              accessibilityLabel={t('a11y.folderActions')}
+              testID={`folder-actions:${folder.name}`}
+            />
+          }
+        >
+          {onTogglePin ? (
+            <Menu.Item
+              leadingIcon={isPinned ? 'cloud-off-outline' : 'cloud-download-outline'}
+              title={t(isPinned ? 'drive.offline.unpin' : 'drive.offline.pin')}
+              disabled={!isPinned && !isOnline}
               onPress={() => {
                 setMenuVisible(false)
-                if (!client) return
-                const next = !isFavorite(folder as Parameters<typeof isFavorite>[0])
-                void toggleFavorite(
-                  client,
-                  folder as Parameters<typeof toggleFavorite>[1],
-                  next
-                ).then(() => {
-                  triggerPouchReplication(client)
-                })
+                onTogglePin(folder)
               }}
             />
-          </Menu>
-        ) : (
-          <List.Icon
-            {...props}
-            icon={p => <CozyIcon name="chevronRight" size={p?.size ?? 24} color={p?.color} />}
+          ) : null}
+          {onShare ? (
+            <Menu.Item
+              leadingIcon={() => (
+                <CozyIcon name="shareExternal" size={24} color={theme.colors.onSurface} />
+              )}
+              title={t('drive.fileMeta.share')}
+              disabled={!isOnline}
+              onPress={() => {
+                setMenuVisible(false)
+                onShare(folder)
+              }}
+            />
+          ) : null}
+          {onRename ? (
+            <Menu.Item
+              leadingIcon={() => (
+                <CozyIcon name="rename" size={24} color={theme.colors.onSurface} />
+              )}
+              title={t('drive.fileMeta.rename')}
+              disabled={!isOnline}
+              onPress={() => {
+                setMenuVisible(false)
+                onRename(folder)
+              }}
+            />
+          ) : null}
+          {onRestore ? (
+            <Menu.Item
+              leadingIcon={() => (
+                <CozyIcon name="restore" size={24} color={theme.colors.onSurface} />
+              )}
+              title={t('drive.trashActions.restore')}
+              disabled={!isOnline}
+              onPress={() => {
+                setMenuVisible(false)
+                onRestore(folder)
+              }}
+            />
+          ) : null}
+          {onDelete ? (
+            <Menu.Item
+              leadingIcon={() => <CozyIcon name="trash" size={24} color={theme.colors.onSurface} />}
+              title={t('drive.fileMeta.delete')}
+              disabled={!isOnline}
+              onPress={() => {
+                setMenuVisible(false)
+                onDelete(folder)
+              }}
+            />
+          ) : null}
+          {onMove ? (
+            <Menu.Item
+              leadingIcon={() => (
+                <CozyIcon name="moveto" size={24} color={theme.colors.onSurface} />
+              )}
+              title={t('drive.fileMeta.move')}
+              disabled={!isOnline}
+              onPress={() => {
+                setMenuVisible(false)
+                onMove(folder)
+              }}
+            />
+          ) : null}
+          <Menu.Item
+            leadingIcon={() => (
+              <CozyIcon
+                name={
+                  isFavorite(folder as Parameters<typeof isFavorite>[0]) ? 'star' : 'starOutline'
+                }
+                size={24}
+                color={theme.colors.onSurface}
+              />
+            )}
+            title={t(
+              isFavorite(folder as Parameters<typeof isFavorite>[0])
+                ? 'drive.fileMeta.unfavorite'
+                : 'drive.fileMeta.favorite'
+            )}
+            onPress={() => {
+              setMenuVisible(false)
+              if (!client) return
+              const next = !isFavorite(folder as Parameters<typeof isFavorite>[0])
+              void toggleFavorite(
+                client,
+                folder as Parameters<typeof toggleFavorite>[1],
+                next
+              ).then(() => {
+                triggerPouchReplication(client)
+              })
+            }}
           />
-        )
-      }
-      onPress={() => onPress(folder)}
-      onLongPress={onLongPress ? () => onLongPress(folder) : undefined}
-      style={[styles.row, selected && { backgroundColor: theme.colors.primaryContainer }]}
-    />
+        </Menu>
+      ) : (
+        <IconButton
+          icon={p => <CozyIcon name="chevronRight" size={p?.size ?? 24} color={p?.color} />}
+          disabled
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+        />
+      )}
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  row: { paddingVertical: 4 },
+  rowContainer: { flexDirection: 'row', alignItems: 'center' },
+  item: { flex: 1, paddingVertical: 4 },
   leftSlot: { justifyContent: 'center', alignItems: 'center', width: 40, height: 40 },
   thumbWrap: { position: 'relative', width: 40, height: 40 },
   checkmark: {
