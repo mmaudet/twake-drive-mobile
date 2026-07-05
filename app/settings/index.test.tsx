@@ -42,9 +42,19 @@ jest.mock('@/preferences/themePreference', () => ({
   useThemePreference: () => ({ pref: 'system', setPref: mockSetPref })
 }))
 
+// SettingsIndex now renders a logout row (Task 9) wired to useAuth().logout.
+// The real useAuth() throws when rendered outside an AuthProvider, so this
+// isolated render must mock the hook directly (same pattern as
+// app/(drive)/favorites.test.tsx) rather than spy on the real module.
+const mockLogout = jest.fn()
+jest.mock('@/auth/useAuth', () => ({
+  useAuth: () => ({ logout: mockLogout })
+}))
+
 describe('SettingsIndex', () => {
   beforeEach(() => {
     mockUser = { initials: 'MM', loading: false }
+    mockLogout.mockReset()
   })
 
   it('offers three theme options and applies the choice', () => {
@@ -77,5 +87,11 @@ describe('SettingsIndex', () => {
       expect(getByText('Compte')).toBeTruthy()
       expect(getByText('U')).toBeTruthy()
     })
+  })
+
+  it('renders the app version and a logout row that calls logout', () => {
+    const { getByText } = render(<SettingsIndex />)
+    fireEvent.press(getByText('Se déconnecter'))
+    expect(mockLogout).toHaveBeenCalled()
   })
 })

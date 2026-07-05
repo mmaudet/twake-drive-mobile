@@ -3,17 +3,20 @@ import { ScrollView } from 'react-native'
 import { Avatar, List } from 'react-native-paper'
 import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
+import Constants from 'expo-constants'
 
 import { ScreenContainer } from '@/ui/ScreenContainer'
 import { useCurrentUser } from '@/account/useCurrentUser'
 import { getLocalePreference, LOCALE_SYSTEM } from '@/preferences/localePreference'
 import { localeDisplayName } from '@/i18n/localeNames'
 import { useThemePreference, ThemePref } from '@/preferences/themePreference'
+import { useAuth } from '@/auth/useAuth'
 
 export default function SettingsIndex(): React.ReactElement {
   const { t } = useTranslation()
   const router = useRouter()
   const { name, email, initials } = useCurrentUser()
+  const { logout } = useAuth()
   const localePref = getLocalePreference()
   const languageValue =
     localePref === LOCALE_SYSTEM ? t('settings.systemLanguage') : localeDisplayName(localePref)
@@ -23,6 +26,7 @@ export default function SettingsIndex(): React.ReactElement {
     { key: 'light', label: t('settings.themeLight') },
     { key: 'dark', label: t('settings.themeDark') }
   ]
+  const version = Constants.expoConfig?.version ?? ''
   return (
     <ScreenContainer>
       <ScrollView>
@@ -53,6 +57,13 @@ export default function SettingsIndex(): React.ReactElement {
             right={p => (themePref === o.key ? <List.Icon {...p} icon="check" /> : null)}
           />
         ))}
+        <List.Subheader>{t('settings.about')}</List.Subheader>
+        <List.Item title={t('settings.version')} description={version} />
+        <List.Item
+          title={t('common.logout')}
+          left={p => <List.Icon {...p} icon="logout" />}
+          onPress={() => void logout()}
+        />
       </ScrollView>
     </ScreenContainer>
   )

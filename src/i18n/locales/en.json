@@ -17,7 +17,9 @@
     "theme": "Theme",
     "themeSystem": "System",
     "themeLight": "Light",
-    "themeDark": "Dark"
+    "themeDark": "Dark",
+    "about": "About",
+    "version": "Version"
   },
   "auth": {
     "welcomeTitle": "Welcome to Twake Drive",
