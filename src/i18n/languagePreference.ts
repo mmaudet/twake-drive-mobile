@@ -34,9 +34,12 @@ export function resolveLanguage(preference: LanguagePreference = currentPreferen
 
 /** Persist a preference, switch i18next, and notify subscribers. */
 export function setLanguagePreference(preference: LanguagePreference): void {
+  if (preference === currentPreference) return
   currentPreference = preference
   storage?.set(STORAGE_KEY, preference) // stores 'system' | concrete code
-  void i18n.changeLanguage(resolveLanguage(preference))
+  void i18n
+    .changeLanguage(resolveLanguage(preference))
+    .catch((e: unknown) => console.error('[languagePreference] changeLanguage failed', e))
   listeners.forEach(l => l())
 }
 

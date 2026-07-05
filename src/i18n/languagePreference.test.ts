@@ -1,5 +1,11 @@
 import i18n from 'i18next'
-import { getStoredPreference, resolveLanguage, setLanguagePreference } from './languagePreference'
+import { renderHook, act } from '@testing-library/react-native'
+import {
+  getStoredPreference,
+  resolveLanguage,
+  setLanguagePreference,
+  useLanguagePreference
+} from './languagePreference'
 
 // In-memory MMKV so the store round-trips within the file. The factory owns its
 // Map (self-contained; jest.mock factories may not close over outer variables).
@@ -39,6 +45,12 @@ describe('language preference store', () => {
     expect(getStoredPreference()).toBe('es')
   })
 
+  it('writes the concrete preference through to MMKV', () => {
+    const mmkv = require('react-native-mmkv').createMMKV()
+    setLanguagePreference('es')
+    expect(mmkv.getString('language')).toBe('es')
+  })
+
   it('changes the i18next language on set', () => {
     setLanguagePreference('de')
     expect(changeLanguage).toHaveBeenCalledWith('de')
@@ -46,5 +58,20 @@ describe('language preference store', () => {
 
   it('resolves "system" against the device locale (fr in tests)', () => {
     expect(resolveLanguage('system')).toBe('fr')
+  })
+
+  it('exposes preference + resolvedLanguage and reacts to setPreference', () => {
+    const { result, unmount } = renderHook(() => useLanguagePreference())
+    expect(result.current.preference).toBe('system')
+    expect(result.current.resolvedLanguage).toBe('fr') // device locale in tests
+    act(() => result.current.setPreference('es'))
+    expect(result.current.preference).toBe('es')
+    expect(result.current.resolvedLanguage).toBe('es')
+    // Unmount before this describe's afterEach resets the store: RTL's own
+    // auto-cleanup afterEach is registered at file-import time (outer scope) and
+    // Jest runs afterEach inner-first, so it would otherwise fire *after* our
+    // reset — leaving this subscriber mounted while the reset updates state
+    // outside act().
+    unmount()
   })
 })
