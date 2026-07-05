@@ -8,6 +8,7 @@ export default function SettingsLayout() {
     <Stack>
       <Stack.Screen name="index" options={{ title: t('settings.title') }} />
       <Stack.Screen name="offline-storage" options={{ title: t('drive.offline.storageTitle') }} />
+      <Stack.Screen name="language" options={{ title: t('settings.language') }} />
     </Stack>
   )
 }
