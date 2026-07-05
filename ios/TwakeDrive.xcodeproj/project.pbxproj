@@ -42,6 +42,9 @@
 		A3E275F08CCE4327B06FA95E /* CozyFilesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C4845487E245F780E1F34C /* CozyFilesApi.swift */; };
 		E3C5870010564AECBF5A6F2C /* CozyFilesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C4845487E245F780E1F34C /* CozyFilesApi.swift */; };
 		97FC01E93A4A4599BD18F80E /* CozyFilesApiWriteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E853BEADAA1B47458F8E3B13 /* CozyFilesApiWriteTests.swift */; };
+		674B23ABE6E64E429818D9BB /* ConflictResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492FC4836432405683389C2C /* ConflictResolverTests.swift */; };
+		CCBC7C663E3D4AD38D5F2F86 /* ConflictResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8506E4A34DC647209AC14C6D /* ConflictResolver.swift */; };
+		091507EBD5FF446C839A1FE1 /* ConflictResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8506E4A34DC647209AC14C6D /* ConflictResolver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,6 +129,8 @@
 		E0DEF53EED3C47CAA43752F0 /* CozyFilesApiReadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApiReadTests.swift; sourceTree = "<group>"; };
 		45C4845487E245F780E1F34C /* CozyFilesApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApi.swift; sourceTree = "<group>"; };
 		E853BEADAA1B47458F8E3B13 /* CozyFilesApiWriteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApiWriteTests.swift; sourceTree = "<group>"; };
+		492FC4836432405683389C2C /* ConflictResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictResolverTests.swift; sourceTree = "<group>"; };
+		8506E4A34DC647209AC14C6D /* ConflictResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictResolver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -206,6 +211,7 @@
 				4643DCA0AA95481784AD3902 /* ItemMapper.swift */,
 				8E9B8F4154114F8EB323712F /* TokenProvider.swift */,
 				45C4845487E245F780E1F34C /* CozyFilesApi.swift */,
+				8506E4A34DC647209AC14C6D /* ConflictResolver.swift */,
 			);
 			name = TwakeDriveFileProviderExt;
 			path = TwakeDriveFileProviderExt;
@@ -233,6 +239,7 @@
 				1CB4E4A46EFD412493A65896 /* Fakes.swift */,
 				E0DEF53EED3C47CAA43752F0 /* CozyFilesApiReadTests.swift */,
 				E853BEADAA1B47458F8E3B13 /* CozyFilesApiWriteTests.swift */,
+				492FC4836432405683389C2C /* ConflictResolverTests.swift */,
 			);
 			name = TwakeDriveFileProviderExtTests;
 			path = TwakeDriveFileProviderExtTests;
@@ -618,6 +625,7 @@
 				AD001E26D70A44B5A62732AA /* ItemMapper.swift in Sources */,
 				C5EF3192A5EE4B11BA98ACC3 /* TokenProvider.swift in Sources */,
 				A3E275F08CCE4327B06FA95E /* CozyFilesApi.swift in Sources */,
+				CCBC7C663E3D4AD38D5F2F86 /* ConflictResolver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,6 +658,8 @@
 				48E1DCC5CCFF4F0A834314BD /* CozyFilesApiReadTests.swift in Sources */,
 				E3C5870010564AECBF5A6F2C /* CozyFilesApi.swift in Sources */,
 				97FC01E93A4A4599BD18F80E /* CozyFilesApiWriteTests.swift in Sources */,
+				674B23ABE6E64E429818D9BB /* ConflictResolverTests.swift in Sources */,
+				091507EBD5FF446C839A1FE1 /* ConflictResolver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
