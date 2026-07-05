@@ -10,9 +10,19 @@ struct CozyFilesApi {
   enum Method: String { case get = "GET", post = "POST", put = "PUT", patch = "PATCH", delete = "DELETE" }
 
   private func request(_ path: String, method: Method, token: String,
-                       accept: Bool, contentType: String? = nil, body: Data? = nil) -> URLRequest {
-    // `path` may be a bare path or already-encoded query; resolve against base.
-    var req = URLRequest(url: URL(string: baseURL + path)!)
+                       accept: Bool, contentType: String? = nil, body: Data? = nil) throws -> URLRequest {
+    // `path` may be a bare path or already-encoded query. One exception: cozy-stack's
+    // JSON:API pagination links (`list`'s `links.next`, stored verbatim/base-stripped) carry
+    // literal, unencoded `[`/`]` (e.g. `page[cursor]=...`), which `URL(string:)` isn't
+    // guaranteed to accept on our iOS 16.0 floor. Percent-encode just those two characters —
+    // a no-op for paths that don't contain them, and it never touches bytes that are already
+    // percent-encoded elsewhere in `path` (brackets can't appear inside a `%XX` escape).
+    let safePath = path.replacingOccurrences(of: "[", with: "%5B")
+                       .replacingOccurrences(of: "]", with: "%5D")
+    guard let url = URL(string: baseURL + safePath) else {
+      throw CozyError.serverUnreachable
+    }
+    var req = URLRequest(url: url)
     req.httpMethod = method.rawValue
     req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
     if accept { req.setValue("application/vnd.api+json", forHTTPHeaderField: "Accept") }
@@ -28,10 +38,10 @@ struct CozyFilesApi {
   func send(_ path: String, method: Method, accept: Bool = true,
             contentType: String? = nil, body: Data? = nil) async throws -> Data {
     var token = try await tokens.validAccessToken()
-    var (data, resp) = try await client.send(request(path, method: method, token: token, accept: accept, contentType: contentType, body: body))
+    var (data, resp) = try await client.send(try request(path, method: method, token: token, accept: accept, contentType: contentType, body: body))
     if resp.statusCode == 401 {
       token = try await tokens.forceRefresh(previous: token)
-      (data, resp) = try await client.send(request(path, method: method, token: token, accept: accept, contentType: contentType, body: body))
+      (data, resp) = try await client.send(try request(path, method: method, token: token, accept: accept, contentType: contentType, body: body))
     }
     try Self.mapStatus(resp.statusCode)
     return data

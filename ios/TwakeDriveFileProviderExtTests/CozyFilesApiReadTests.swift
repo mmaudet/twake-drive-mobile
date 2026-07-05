@@ -53,6 +53,43 @@ final class CozyFilesApiReadTests: XCTestCase {
     XCTAssertNil(next)
   }
 
+  /// Round-trips a real cozy-stack pagination cursor: `links.next` carries literal, unencoded
+  /// JSON:API brackets (`page[cursor]=...`), stored verbatim (base-stripped) by `list`. Feeding
+  /// that value back in as the second call's `page` must build a valid request URL — not crash
+  /// a force-unwrapped `URL(string:)` — and must still carry the cursor through to cozy-stack.
+  /// This is exactly what Task 10's enumerator does across multi-page folders.
+  func testListRoundTripsBracketedPageCursorIntoNextRequest() async throws {
+    var callCount = 0
+    let api = makeApi { req in
+      callCount += 1
+      if callCount == 1 {
+        XCTAssertEqual(req.url?.path, "/files/dir-1")
+        let json = #"""
+        {"included":[
+          {"id":"c1","attributes":{"type":"file","name":"one.txt","dir_id":"dir-1","size":"1"}}
+        ],"links":{"next":"https://alice.twake.app/files/dir-1?page[cursor]=Y29zdG8="}}
+        """#
+        return httpResponse(req.url!, 200, json)
+      }
+      // Second call: the round-tripped `next` page must have produced a well-formed URL (no
+      // crash from the unencoded `[`/`]`) and the cursor must still be present and correct.
+      let comps = try XCTUnwrap(URLComponents(url: try XCTUnwrap(req.url), resolvingAgainstBaseURL: false))
+      XCTAssertEqual(comps.path, "/files/dir-1")
+      XCTAssertEqual(comps.queryItems?.first(where: { $0.name == "page[cursor]" })?.value, "Y29zdG8=")
+      return httpResponse(req.url!, 200, #"{"included":[]}"#)
+    }
+
+    let (firstFiles, next) = try await api.list(dirId: "dir-1", page: nil)
+    XCTAssertEqual(firstFiles.map(\.id), ["c1"])
+    let nextPage = try XCTUnwrap(next)
+    XCTAssertEqual(nextPage, "/files/dir-1?page[cursor]=Y29zdG8=")   // base stripped, brackets verbatim
+
+    let (secondFiles, secondNext) = try await api.list(dirId: "dir-1", page: nextPage)
+    XCTAssertTrue(secondFiles.isEmpty)
+    XCTAssertNil(secondNext)
+    XCTAssertEqual(callCount, 2)
+  }
+
   func testRetriesOnceOn401ThenSucceeds() async throws {
     let store = FakeSessionStore(makeSession(access: "at-old"))
     var calls = 0
