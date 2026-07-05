@@ -11,7 +11,8 @@
   },
   "settings": {
     "title": "Paramètres",
-    "language": "Langue"
+    "language": "Langue",
+    "systemLanguage": "Système (langue de l'appareil)"
   },
   "auth": {
     "welcomeTitle": "Bienvenue sur Twake Drive",
