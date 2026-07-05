@@ -1,0 +1,263 @@
+{
+  "common": {
+    "close": "Закрыть",
+    "retry": "Повторить",
+    "loading": "Загрузка…",
+    "logout": "Выйти",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить",
+    "back": "Назад",
+    "help": "Помощь"
+  },
+  "settings": {
+    "title": "Настройки",
+    "language": "Язык",
+    "languageSystem": "Системный язык"
+  },
+  "auth": {
+    "welcomeTitle": "Добро пожаловать в Twake Drive",
+    "welcomeSubtitle": "Ваши файлы везде и в безопасности.",
+    "loginCta": "Войти",
+    "emailLabel": "Адрес электронной почты",
+    "emailPlaceholder": "primer@pochta.com",
+    "continue": "Продолжить",
+    "errorDomainUnsupported": "Этот домен не поддерживает Twake Drive.",
+    "errorNetwork": "Нет подключения. Проверьте сеть.",
+    "errorGeneric": "Не удалось войти. Повторите попытку."
+  },
+  "drive": {
+    "myFiles": "Мои файлы",
+    "myDrive": "Мой Диск",
+    "favorites": "Избранное",
+    "shares": "Общий доступ",
+    "emptyFavorites": "Нет избранного",
+    "shared": "Доступные мне",
+    "sharedDrives": "Диски",
+    "recent": "Недавние",
+    "trash": "Корзина",
+    "emptyFolder": "В этой папке нет файлов",
+    "emptyShared": "Вам не предоставлен доступ к файлам",
+    "emptySharedDrives": "Пока нет общих дисков",
+    "emptyRecent": "Нет недавних файлов",
+    "emptyTrash": "Корзина пуста",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "fileMeta": {
+      "type": "Тип",
+      "size": "Размер",
+      "modified": "Изменён",
+      "path": "Путь",
+      "owner": "Владелец",
+      "open": "Открыть",
+      "downloading": "Скачивание…",
+      "share": "Поделиться",
+      "rename": "Переименовать",
+      "delete": "Удалить",
+      "info": "Сведения",
+      "move": "Переместить…",
+      "favorite": "Добавить в избранное",
+      "unfavorite": "Убрать из избранного",
+      "download": "Скачать"
+    },
+    "delete": {
+      "confirmFileTitle": "Удалить файл?",
+      "confirmFolderTitle": "Удалить папку?",
+      "confirmBulkTitle_one": "Удалить {{count}} элемент?",
+      "confirmBulkTitle_few": "Удалить {{count}} элемента?",
+      "confirmBulkTitle_many": "Удалить {{count}} элементов?",
+      "confirmBulkTitle_other": "Удалить {{count}} элемента?",
+      "confirmBody": "«{{name}}» будет перемещён в корзину.",
+      "confirmBulkBody_one": "{{count}} элемент будет перемещён в корзину.",
+      "confirmBulkBody_few": "{{count}} элемента будут перемещены в корзину.",
+      "confirmBulkBody_many": "{{count}} элементов будут перемещены в корзину.",
+      "confirmBulkBody_other": "{{count}} элемента будут перемещены в корзину.",
+      "confirm": "Удалить",
+      "successFile": "Файл перемещён в корзину",
+      "successFolder": "Папка перемещена в корзину",
+      "successBulk_one": "{{count}} элемент перемещён в корзину",
+      "successBulk_few": "{{count}} элемента перемещены в корзину",
+      "successBulk_many": "{{count}} элементов перемещены в корзину",
+      "successBulk_other": "{{count}} элемента перемещены в корзину",
+      "errorGeneric": "Не удалось удалить"
+    },
+    "move": {
+      "title": "Переместить",
+      "action": "Переместить сюда",
+      "successFile": "Файл перемещён",
+      "successFolder": "Папка перемещена",
+      "successBulk_one": "{{count}} элемент перемещён",
+      "successBulk_few": "{{count}} элемента перемещены",
+      "successBulk_many": "{{count}} элементов перемещены",
+      "successBulk_other": "{{count}} элемента перемещены",
+      "errorGeneric": "Не удалось переместить",
+      "newFolder": "Новая папка"
+    },
+    "import": {
+      "title": "Импортировать в…",
+      "confirm": "Импортировать сюда",
+      "uploading": "Импорт… {{done}}/{{total}}",
+      "successFile": "Файл импортирован",
+      "successBulk_one": "{{count}} файл импортирован",
+      "successBulk_few": "{{count}} файла импортировано",
+      "successBulk_many": "{{count}} файлов импортировано",
+      "successBulk_other": "{{count}} файла импортировано",
+      "partial": "Импортировано {{succeeded}}/{{total}}, не удалось: {{failed}}",
+      "errorGeneric": "Не удалось импортировать",
+      "errorOffline": "Для импорта требуется подключение",
+      "errorQuota": "Недостаточно места",
+      "loginRequired": "Войдите, чтобы импортировать"
+    },
+    "selection": {
+      "count_one": "{{count}} выбран",
+      "count_few": "{{count}} выбрано",
+      "count_many": "{{count}} выбрано",
+      "count_other": "{{count}} выбрано",
+      "move": "Переместить"
+    },
+    "share": {
+      "title": "Поделиться",
+      "linkTitle": "Публичная ссылка",
+      "linkOn": "Любой, у кого есть ссылка, может получить доступ",
+      "linkCopy": "Копировать ссылку",
+      "linkCopied": "Ссылка скопирована",
+      "linkRightsReader": "Читатель",
+      "linkRightsEditor": "Редактор",
+      "recipientsTitle": "Получатели",
+      "addRecipient": "Добавить получателя",
+      "suggestionsLoading": "Поиск контактов…",
+      "emailPlaceholder": "email@primer.com",
+      "readOnly": "Только чтение",
+      "send": "Отправить",
+      "remove": "Убрать",
+      "errorLoad": "Не удалось загрузить информацию о доступе",
+      "errorMutate": "Не удалось выполнить операцию",
+      "statusPending": "Ожидание",
+      "statusReady": "Активно",
+      "statusRevoked": "Отозвано"
+    },
+    "createFolder": {
+      "title": "Новая папка",
+      "nameLabel": "Имя",
+      "submit": "Создать",
+      "errorConflict": "Папка с таким именем уже существует.",
+      "errorGeneric": "Не удалось создать папку."
+    },
+    "rename": {
+      "titleFile": "Переименовать файл",
+      "titleFolder": "Переименовать папку",
+      "nameLabel": "Имя",
+      "submit": "Переименовать",
+      "errorConflict": "Элемент с таким именем уже существует.",
+      "errorGeneric": "Не удалось переименовать.",
+      "successFile": "Файл переименован",
+      "successFolder": "Папка переименована"
+    },
+    "trashActions": {
+      "restore": "Восстановить",
+      "restoreSuccess": "Восстановлено",
+      "restoreError": "Не удалось восстановить",
+      "emptyButton": "Очистить корзину",
+      "emptyConfirmTitle": "Очистить корзину?",
+      "emptyConfirmBody": "Все объекты в корзине будут удалены безвозвратно. Это действие нельзя отменить.",
+      "emptyConfirm": "Очистить",
+      "emptySuccess": "Корзина очищена",
+      "emptyError": "Не удалось очистить корзину"
+    },
+    "createMenu": {
+      "folder": "Новая папка",
+      "note": "Новая заметка",
+      "docs": "Новый документ",
+      "text": "Документ Word",
+      "sheet": "Таблица",
+      "slide": "Презентация",
+      "excalidraw": "Excalidraw",
+      "shortcut": "Ярлык"
+    },
+    "createShortcut": {
+      "title": "Новый ярлык",
+      "nameLabel": "Имя",
+      "urlLabel": "URL",
+      "submit": "Создать",
+      "errorGeneric": "Не удалось создать ярлык."
+    },
+    "createOffice": {
+      "title": "Имя документа",
+      "submit": "Создать",
+      "errorGeneric": "Не удалось создать документ."
+    },
+    "onlyoffice": {
+      "title": "Документ"
+    },
+    "preview": {
+      "title": "Просмотр",
+      "loadFailed": "Не удалось загрузить просмотр",
+      "openExternally": "Открыть в другом приложении"
+    },
+    "audio": {
+      "unsupportedCodec": "Этот аудиоформат не воспроизводится на этом устройстве напрямую.",
+      "openWith": "Открыть с помощью…",
+      "noAppHint": "Если ничего не появилось, ни одно установленное приложение не может открыть этот формат. Попробуйте VLC."
+    },
+    "note": {
+      "title": "Заметка"
+    },
+    "docs": {
+      "title": "Документ"
+    },
+    "offline": {
+      "requiresOnline": "Будет доступно, когда вы снова окажетесь в сети",
+      "banner": "Офлайн — показаны сохранённые данные",
+      "pin": "Сохранить офлайн",
+      "unpin": "Убрать из офлайн",
+      "keepOffline": "Сохранить офлайн",
+      "disabledOffline": "Подключитесь снова, чтобы включить офлайн-режим",
+      "downloading": "Скачивание…",
+      "downloaded": "Доступно офлайн",
+      "failed": "Не удалось скачать",
+      "notAvailableOffline": "Файл недоступен офлайн",
+      "folderPartial": "{{count}}/{{total}} файлов",
+      "folderSummary_one": "{{count}} файл · {{size}}",
+      "folderSummary_few": "{{count}} файла · {{size}}",
+      "folderSummary_many": "{{count}} файлов · {{size}}",
+      "folderSummary_other": "{{count}} файла · {{size}}",
+      "folderConfirm_one": "Эта папка содержит {{count}} файл (~{{size}}). Продолжить?",
+      "folderConfirm_few": "Эта папка содержит {{count}} файла (~{{size}}). Продолжить?",
+      "folderConfirm_many": "Эта папка содержит {{count}} файлов (~{{size}}). Продолжить?",
+      "folderConfirm_other": "Эта папка содержит {{count}} файла (~{{size}}). Продолжить?",
+      "bigFolderTitle": "Подтвердите скачивание",
+      "diskFull": "Память устройства заполнена. Удалите объекты, чтобы освободить место.",
+      "deleteAllConfirm_one": "Удалить {{count}} файл ({{size}})? Это действие необратимо.",
+      "deleteAllConfirm_few": "Удалить {{count}} файла ({{size}})? Это действие необратимо.",
+      "deleteAllConfirm_many": "Удалить {{count}} файлов ({{size}})? Это действие необратимо.",
+      "deleteAllConfirm_other": "Удалить {{count}} файла ({{size}})? Это действие необратимо.",
+      "storageTitle": "Офлайн-хранилище",
+      "totalUsed": "Всего использовано",
+      "deleteAll": "Удалить всё",
+      "wifiOnly": "Скачивать только по WiFi",
+      "foldersSection": "Папки",
+      "filesSection": "Файлы",
+      "errorsSection": "Ошибки",
+      "retry": "Повторить"
+    },
+    "search": {
+      "placeholder": "Поиск на Диске",
+      "hint": "Введите не менее 2 символов",
+      "empty": "Файлы не найдены",
+      "action": "Найти"
+    }
+  },
+  "a11y": {
+    "listView": "Список",
+    "gridView": "Сетка",
+    "folderActions": "Действия с папкой",
+    "fileActions": "Действия с файлом",
+    "removeRecipient": "Удалить получателя"
+  },
+  "errors": {
+    "noNetwork": "Нет подключения",
+    "forbidden": "Доступ запрещён",
+    "notFound": "Эта папка больше не существует",
+    "server": "Ошибка сервера, повторите попытку позже",
+    "generic": "Что-то пошло не так"
+  }
+}

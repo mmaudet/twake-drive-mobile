@@ -1,0 +1,254 @@
+{
+  "common": {
+    "close": "Chiudi",
+    "retry": "Riprova",
+    "loading": "Caricamento…",
+    "logout": "Esci",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "back": "Indietro",
+    "help": "Aiuto"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "language": "Lingua",
+    "languageSystem": "Predefinito di sistema"
+  },
+  "auth": {
+    "welcomeTitle": "Benvenuto in Twake Drive",
+    "welcomeSubtitle": "I tuoi file, ovunque, in sicurezza.",
+    "loginCta": "Accedi",
+    "emailLabel": "Indirizzo email",
+    "emailPlaceholder": "tu@esempio.com",
+    "continue": "Continua",
+    "errorDomainUnsupported": "Questo dominio non supporta Twake Drive.",
+    "errorNetwork": "Nessuna connessione. Controlla la rete.",
+    "errorGeneric": "Impossibile accedere. Riprova."
+  },
+  "drive": {
+    "myFiles": "I miei file",
+    "myDrive": "Il mio Drive",
+    "favorites": "Preferiti",
+    "shares": "Condivisioni",
+    "emptyFavorites": "Nessun preferito",
+    "shared": "Condivisi con me",
+    "sharedDrives": "Drive",
+    "recent": "Recenti",
+    "trash": "Cestino",
+    "emptyFolder": "Nessun file in questa cartella",
+    "emptyShared": "Nessun file condiviso con te",
+    "emptySharedDrives": "Ancora nessun drive condiviso",
+    "emptyRecent": "Nessun file recente",
+    "emptyTrash": "Il cestino è vuoto",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "fileMeta": {
+      "type": "Tipo",
+      "size": "Dimensione",
+      "modified": "Modificato",
+      "path": "Percorso",
+      "owner": "Proprietario",
+      "open": "Apri",
+      "downloading": "Download in corso…",
+      "share": "Condividi",
+      "rename": "Rinomina",
+      "delete": "Elimina",
+      "info": "Dettagli",
+      "move": "Sposta…",
+      "favorite": "Aggiungi ai preferiti",
+      "unfavorite": "Rimuovi dai preferiti",
+      "download": "Scarica"
+    },
+    "delete": {
+      "confirmFileTitle": "Eliminare il file?",
+      "confirmFolderTitle": "Eliminare la cartella?",
+      "confirmBulkTitle_one": "Eliminare {{count}} elemento?",
+      "confirmBulkTitle_many": "Eliminare {{count}} elementi?",
+      "confirmBulkTitle_other": "Eliminare {{count}} elementi?",
+      "confirmBody": "«{{name}}» verrà spostato nel cestino.",
+      "confirmBulkBody_one": "{{count}} elemento verrà spostato nel cestino.",
+      "confirmBulkBody_many": "{{count}} elementi verranno spostati nel cestino.",
+      "confirmBulkBody_other": "{{count}} elementi verranno spostati nel cestino.",
+      "confirm": "Elimina",
+      "successFile": "File spostato nel cestino",
+      "successFolder": "Cartella spostata nel cestino",
+      "successBulk_one": "{{count}} elemento spostato nel cestino",
+      "successBulk_many": "{{count}} elementi spostati nel cestino",
+      "successBulk_other": "{{count}} elementi spostati nel cestino",
+      "errorGeneric": "Impossibile eliminare"
+    },
+    "move": {
+      "title": "Sposta",
+      "action": "Sposta qui",
+      "successFile": "File spostato",
+      "successFolder": "Cartella spostata",
+      "successBulk_one": "{{count}} elemento spostato",
+      "successBulk_many": "{{count}} elementi spostati",
+      "successBulk_other": "{{count}} elementi spostati",
+      "errorGeneric": "Spostamento non riuscito",
+      "newFolder": "Nuova cartella"
+    },
+    "import": {
+      "title": "Importa in…",
+      "confirm": "Importa qui",
+      "uploading": "Importazione… {{done}}/{{total}}",
+      "successFile": "File importato",
+      "successBulk_one": "{{count}} file importato",
+      "successBulk_many": "{{count}} file importati",
+      "successBulk_other": "{{count}} file importati",
+      "partial": "{{succeeded}}/{{total}} importati, {{failed}} non riusciti",
+      "errorGeneric": "Importazione non riuscita",
+      "errorOffline": "Connessione necessaria per importare",
+      "errorQuota": "Spazio di archiviazione insufficiente",
+      "loginRequired": "Accedi per importare"
+    },
+    "selection": {
+      "count_one": "{{count}} selezionato",
+      "count_many": "{{count}} selezionati",
+      "count_other": "{{count}} selezionati",
+      "move": "Sposta"
+    },
+    "share": {
+      "title": "Condividi",
+      "linkTitle": "Link pubblico",
+      "linkOn": "Chiunque abbia il link può accedere",
+      "linkCopy": "Copia link",
+      "linkCopied": "Link copiato",
+      "linkRightsReader": "Lettore",
+      "linkRightsEditor": "Editore",
+      "recipientsTitle": "Destinatari",
+      "addRecipient": "Aggiungi un destinatario",
+      "suggestionsLoading": "Ricerca contatti…",
+      "emailPlaceholder": "email@esempio.com",
+      "readOnly": "Sola lettura",
+      "send": "Invia",
+      "remove": "Rimuovi",
+      "errorLoad": "Impossibile caricare le informazioni di condivisione",
+      "errorMutate": "Operazione non riuscita",
+      "statusPending": "In attesa",
+      "statusReady": "Attivo",
+      "statusRevoked": "Revocato"
+    },
+    "createFolder": {
+      "title": "Nuova cartella",
+      "nameLabel": "Nome",
+      "submit": "Crea",
+      "errorConflict": "Esiste già una cartella con questo nome.",
+      "errorGeneric": "Impossibile creare la cartella."
+    },
+    "rename": {
+      "titleFile": "Rinomina file",
+      "titleFolder": "Rinomina cartella",
+      "nameLabel": "Nome",
+      "submit": "Rinomina",
+      "errorConflict": "Esiste già un elemento con questo nome.",
+      "errorGeneric": "Impossibile rinominare.",
+      "successFile": "File rinominato",
+      "successFolder": "Cartella rinominata"
+    },
+    "trashActions": {
+      "restore": "Ripristina",
+      "restoreSuccess": "Ripristinato",
+      "restoreError": "Impossibile ripristinare",
+      "emptyButton": "Svuota cestino",
+      "emptyConfirmTitle": "Svuotare il cestino?",
+      "emptyConfirmBody": "Tutti gli elementi nel cestino verranno eliminati definitivamente. L'operazione è irreversibile.",
+      "emptyConfirm": "Svuota",
+      "emptySuccess": "Cestino svuotato",
+      "emptyError": "Impossibile svuotare il cestino"
+    },
+    "createMenu": {
+      "folder": "Nuova cartella",
+      "note": "Nuova nota",
+      "docs": "Nuovo documento",
+      "text": "Documento Word",
+      "sheet": "Foglio di calcolo",
+      "slide": "Presentazione",
+      "excalidraw": "Excalidraw",
+      "shortcut": "Scorciatoia"
+    },
+    "createShortcut": {
+      "title": "Nuova scorciatoia",
+      "nameLabel": "Nome",
+      "urlLabel": "URL",
+      "submit": "Crea",
+      "errorGeneric": "Impossibile creare la scorciatoia."
+    },
+    "createOffice": {
+      "title": "Nome del documento",
+      "submit": "Crea",
+      "errorGeneric": "Impossibile creare il documento."
+    },
+    "onlyoffice": {
+      "title": "Documento"
+    },
+    "preview": {
+      "title": "Anteprima",
+      "loadFailed": "Impossibile caricare l'anteprima",
+      "openExternally": "Apri con un'altra app"
+    },
+    "audio": {
+      "unsupportedCodec": "Questo formato audio non viene riprodotto in modo nativo su questo dispositivo.",
+      "openWith": "Apri con…",
+      "noAppHint": "Se non è apparso nulla, nessuna app installata può leggere questo formato. Prova con VLC."
+    },
+    "note": {
+      "title": "Nota"
+    },
+    "docs": {
+      "title": "Documento"
+    },
+    "offline": {
+      "requiresOnline": "Disponibile quando tornerai online",
+      "banner": "Offline: visualizzazione dei dati in cache",
+      "pin": "Mantieni offline",
+      "unpin": "Rimuovi da offline",
+      "keepOffline": "Mantieni offline",
+      "disabledOffline": "Riconnettiti per attivare la modalità offline",
+      "downloading": "Download in corso…",
+      "downloaded": "Disponibile offline",
+      "failed": "Download non riuscito",
+      "notAvailableOffline": "File non disponibile offline",
+      "folderPartial": "{{count}}/{{total}} file",
+      "folderSummary_one": "{{count}} file · {{size}}",
+      "folderSummary_many": "{{count}} file · {{size}}",
+      "folderSummary_other": "{{count}} file · {{size}}",
+      "folderConfirm_one": "Questa cartella contiene {{count}} file (~{{size}}). Continuare?",
+      "folderConfirm_many": "Questa cartella contiene {{count}} file (~{{size}}). Continuare?",
+      "folderConfirm_other": "Questa cartella contiene {{count}} file (~{{size}}). Continuare?",
+      "bigFolderTitle": "Conferma download",
+      "diskFull": "Spazio di archiviazione del dispositivo pieno. Rimuovi elementi per liberare spazio.",
+      "deleteAllConfirm_one": "Rimuovere {{count}} file ({{size}})? L'azione è irreversibile.",
+      "deleteAllConfirm_many": "Rimuovere {{count}} file ({{size}})? L'azione è irreversibile.",
+      "deleteAllConfirm_other": "Rimuovere {{count}} file ({{size}})? L'azione è irreversibile.",
+      "storageTitle": "Archiviazione offline",
+      "totalUsed": "Totale utilizzato",
+      "deleteAll": "Elimina tutto",
+      "wifiOnly": "Scarica solo con WiFi",
+      "foldersSection": "Cartelle",
+      "filesSection": "File",
+      "errorsSection": "Errori",
+      "retry": "Riprova"
+    },
+    "search": {
+      "placeholder": "Cerca in Drive",
+      "hint": "Digita almeno 2 caratteri",
+      "empty": "Nessun file trovato",
+      "action": "Cerca"
+    }
+  },
+  "a11y": {
+    "listView": "Vista elenco",
+    "gridView": "Vista griglia",
+    "folderActions": "Azioni cartella",
+    "fileActions": "Azioni file",
+    "removeRecipient": "Rimuovi destinatario"
+  },
+  "errors": {
+    "noNetwork": "Nessuna connessione",
+    "forbidden": "Accesso negato",
+    "notFound": "Questa cartella non esiste più",
+    "server": "Errore del server, riprova più tardi",
+    "generic": "Si è verificato un problema"
+  }
+}

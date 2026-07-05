@@ -1,0 +1,245 @@
+{
+  "common": {
+    "close": "Schließen",
+    "retry": "Erneut versuchen",
+    "loading": "Wird geladen…",
+    "logout": "Abmelden",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "back": "Zurück",
+    "help": "Hilfe"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "language": "Sprache",
+    "languageSystem": "Systemstandard"
+  },
+  "auth": {
+    "welcomeTitle": "Willkommen bei Twake Drive",
+    "welcomeSubtitle": "Ihre Dateien, überall, sicher.",
+    "loginCta": "Anmelden",
+    "emailLabel": "E-Mail-Adresse",
+    "emailPlaceholder": "name@beispiel.com",
+    "continue": "Weiter",
+    "errorDomainUnsupported": "Diese Domain wird von Twake Drive nicht unterstützt.",
+    "errorNetwork": "Keine Verbindung. Überprüfen Sie Ihr Netzwerk.",
+    "errorGeneric": "Anmeldung fehlgeschlagen. Versuchen Sie es erneut."
+  },
+  "drive": {
+    "myFiles": "Meine Dateien",
+    "myDrive": "Mein Drive",
+    "favorites": "Favoriten",
+    "shares": "Freigaben",
+    "emptyFavorites": "Keine Favoriten",
+    "shared": "Für mich freigegeben",
+    "sharedDrives": "Drives",
+    "recent": "Zuletzt verwendet",
+    "trash": "Papierkorb",
+    "emptyFolder": "Keine Dateien in diesem Ordner",
+    "emptyShared": "Keine für Sie freigegebenen Dateien",
+    "emptySharedDrives": "Noch keine geteilten Drives",
+    "emptyRecent": "Keine kürzlich verwendeten Dateien",
+    "emptyTrash": "Papierkorb ist leer",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "fileMeta": {
+      "type": "Typ",
+      "size": "Größe",
+      "modified": "Geändert",
+      "path": "Pfad",
+      "owner": "Besitzer",
+      "open": "Öffnen",
+      "downloading": "Wird heruntergeladen…",
+      "share": "Teilen",
+      "rename": "Umbenennen",
+      "delete": "Löschen",
+      "info": "Details",
+      "move": "Verschieben…",
+      "favorite": "Zu Favoriten hinzufügen",
+      "unfavorite": "Aus Favoriten entfernen",
+      "download": "Herunterladen"
+    },
+    "delete": {
+      "confirmFileTitle": "Datei löschen?",
+      "confirmFolderTitle": "Ordner löschen?",
+      "confirmBulkTitle_one": "{{count}} Element löschen?",
+      "confirmBulkTitle_other": "{{count}} Elemente löschen?",
+      "confirmBody": "„{{name}}“ wird in den Papierkorb verschoben.",
+      "confirmBulkBody_one": "{{count}} Element wird in den Papierkorb verschoben.",
+      "confirmBulkBody_other": "{{count}} Elemente werden in den Papierkorb verschoben.",
+      "confirm": "Löschen",
+      "successFile": "Datei in den Papierkorb verschoben",
+      "successFolder": "Ordner in den Papierkorb verschoben",
+      "successBulk_one": "{{count}} Element in den Papierkorb verschoben",
+      "successBulk_other": "{{count}} Elemente in den Papierkorb verschoben",
+      "errorGeneric": "Löschen fehlgeschlagen"
+    },
+    "move": {
+      "title": "Verschieben",
+      "action": "Hierher verschieben",
+      "successFile": "Datei verschoben",
+      "successFolder": "Ordner verschoben",
+      "successBulk_one": "{{count}} Element verschoben",
+      "successBulk_other": "{{count}} Elemente verschoben",
+      "errorGeneric": "Verschieben fehlgeschlagen",
+      "newFolder": "Neuer Ordner"
+    },
+    "import": {
+      "title": "Importieren nach…",
+      "confirm": "Hierher importieren",
+      "uploading": "Wird importiert… {{done}}/{{total}}",
+      "successFile": "Datei importiert",
+      "successBulk_one": "{{count}} Datei importiert",
+      "successBulk_other": "{{count}} Dateien importiert",
+      "partial": "{{succeeded}}/{{total}} importiert, {{failed}} fehlgeschlagen",
+      "errorGeneric": "Import fehlgeschlagen",
+      "errorOffline": "Verbindung zum Importieren erforderlich",
+      "errorQuota": "Nicht genügend Speicher",
+      "loginRequired": "Zum Importieren anmelden"
+    },
+    "selection": {
+      "count_one": "{{count}} ausgewählt",
+      "count_other": "{{count}} ausgewählt",
+      "move": "Verschieben"
+    },
+    "share": {
+      "title": "Teilen",
+      "linkTitle": "Öffentlicher Link",
+      "linkOn": "Jeder mit dem Link kann darauf zugreifen",
+      "linkCopy": "Link kopieren",
+      "linkCopied": "Link kopiert",
+      "linkRightsReader": "Leser",
+      "linkRightsEditor": "Bearbeiter",
+      "recipientsTitle": "Empfänger",
+      "addRecipient": "Empfänger hinzufügen",
+      "suggestionsLoading": "Kontakte werden gesucht…",
+      "emailPlaceholder": "email@beispiel.com",
+      "readOnly": "Nur Lesen",
+      "send": "Senden",
+      "remove": "Entfernen",
+      "errorLoad": "Freigabeinformationen konnten nicht geladen werden",
+      "errorMutate": "Vorgang fehlgeschlagen",
+      "statusPending": "Ausstehend",
+      "statusReady": "Aktiv",
+      "statusRevoked": "Widerrufen"
+    },
+    "createFolder": {
+      "title": "Neuer Ordner",
+      "nameLabel": "Name",
+      "submit": "Erstellen",
+      "errorConflict": "Ein Ordner mit diesem Namen existiert bereits.",
+      "errorGeneric": "Ordner konnte nicht erstellt werden."
+    },
+    "rename": {
+      "titleFile": "Datei umbenennen",
+      "titleFolder": "Ordner umbenennen",
+      "nameLabel": "Name",
+      "submit": "Umbenennen",
+      "errorConflict": "Ein Element mit diesem Namen existiert bereits.",
+      "errorGeneric": "Umbenennen fehlgeschlagen.",
+      "successFile": "Datei umbenannt",
+      "successFolder": "Ordner umbenannt"
+    },
+    "trashActions": {
+      "restore": "Wiederherstellen",
+      "restoreSuccess": "Wiederhergestellt",
+      "restoreError": "Wiederherstellen fehlgeschlagen",
+      "emptyButton": "Papierkorb leeren",
+      "emptyConfirmTitle": "Papierkorb leeren?",
+      "emptyConfirmBody": "Alle Elemente im Papierkorb werden dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.",
+      "emptyConfirm": "Leeren",
+      "emptySuccess": "Papierkorb geleert",
+      "emptyError": "Papierkorb konnte nicht geleert werden"
+    },
+    "createMenu": {
+      "folder": "Neuer Ordner",
+      "note": "Neue Notiz",
+      "docs": "Neues Dokument",
+      "text": "Word-Dokument",
+      "sheet": "Tabelle",
+      "slide": "Präsentation",
+      "excalidraw": "Excalidraw",
+      "shortcut": "Verknüpfung"
+    },
+    "createShortcut": {
+      "title": "Neue Verknüpfung",
+      "nameLabel": "Name",
+      "urlLabel": "URL",
+      "submit": "Erstellen",
+      "errorGeneric": "Verknüpfung konnte nicht erstellt werden."
+    },
+    "createOffice": {
+      "title": "Dokumentname",
+      "submit": "Erstellen",
+      "errorGeneric": "Dokument konnte nicht erstellt werden."
+    },
+    "onlyoffice": {
+      "title": "Dokument"
+    },
+    "preview": {
+      "title": "Vorschau",
+      "loadFailed": "Vorschau konnte nicht geladen werden",
+      "openExternally": "Mit anderer App öffnen"
+    },
+    "audio": {
+      "unsupportedCodec": "Dieses Audioformat wird auf diesem Gerät nicht nativ wiedergegeben.",
+      "openWith": "Öffnen mit…",
+      "noAppHint": "Wenn nichts erschienen ist, kann keine installierte App dieses Format lesen. Versuchen Sie es mit VLC."
+    },
+    "note": {
+      "title": "Notiz"
+    },
+    "docs": {
+      "title": "Dokument"
+    },
+    "offline": {
+      "requiresOnline": "Verfügbar, sobald Sie wieder online sind",
+      "banner": "Offline – zwischengespeicherte Daten werden angezeigt",
+      "pin": "Offline behalten",
+      "unpin": "Aus Offline entfernen",
+      "keepOffline": "Offline behalten",
+      "disabledOffline": "Verbinden Sie sich erneut, um den Offline-Modus zu aktivieren",
+      "downloading": "Wird heruntergeladen…",
+      "downloaded": "Offline verfügbar",
+      "failed": "Download fehlgeschlagen",
+      "notAvailableOffline": "Datei offline nicht verfügbar",
+      "folderPartial": "{{count}}/{{total}} Dateien",
+      "folderSummary_one": "{{count}} Datei · {{size}}",
+      "folderSummary_other": "{{count}} Dateien · {{size}}",
+      "folderConfirm_one": "Dieser Ordner enthält {{count}} Datei (~{{size}}). Fortfahren?",
+      "folderConfirm_other": "Dieser Ordner enthält {{count}} Dateien (~{{size}}). Fortfahren?",
+      "bigFolderTitle": "Download bestätigen",
+      "diskFull": "Gerätespeicher voll. Entfernen Sie Elemente, um Speicherplatz freizugeben.",
+      "deleteAllConfirm_one": "{{count}} Datei ({{size}}) entfernen? Dies kann nicht rückgängig gemacht werden.",
+      "deleteAllConfirm_other": "{{count}} Dateien ({{size}}) entfernen? Dies kann nicht rückgängig gemacht werden.",
+      "storageTitle": "Offline-Speicher",
+      "totalUsed": "Gesamt genutzt",
+      "deleteAll": "Alle löschen",
+      "wifiOnly": "Nur über WiFi herunterladen",
+      "foldersSection": "Ordner",
+      "filesSection": "Dateien",
+      "errorsSection": "Fehler",
+      "retry": "Erneut versuchen"
+    },
+    "search": {
+      "placeholder": "In Drive suchen",
+      "hint": "Geben Sie mindestens 2 Zeichen ein",
+      "empty": "Keine Datei gefunden",
+      "action": "Suchen"
+    }
+  },
+  "a11y": {
+    "listView": "Listenansicht",
+    "gridView": "Rasteransicht",
+    "folderActions": "Ordneraktionen",
+    "fileActions": "Dateiaktionen",
+    "removeRecipient": "Empfänger entfernen"
+  },
+  "errors": {
+    "noNetwork": "Keine Verbindung",
+    "forbidden": "Zugriff verweigert",
+    "notFound": "Dieser Ordner existiert nicht mehr",
+    "server": "Serverfehler, versuchen Sie es später erneut",
+    "generic": "Etwas ist schiefgelaufen"
+  }
+}

@@ -1,0 +1,236 @@
+{
+  "common": {
+    "close": "Đóng",
+    "retry": "Thử lại",
+    "loading": "Đang tải…",
+    "logout": "Đăng xuất",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "back": "Quay lại",
+    "help": "Trợ giúp"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "languageSystem": "Mặc định của hệ thống"
+  },
+  "auth": {
+    "welcomeTitle": "Chào mừng đến với Twake Drive",
+    "welcomeSubtitle": "Tệp của bạn, ở mọi nơi, an toàn.",
+    "loginCta": "Đăng nhập",
+    "emailLabel": "Địa chỉ email",
+    "emailPlaceholder": "ban@vidu.com",
+    "continue": "Tiếp tục",
+    "errorDomainUnsupported": "Miền này không hỗ trợ Twake Drive.",
+    "errorNetwork": "Không có kết nối. Kiểm tra mạng của bạn.",
+    "errorGeneric": "Không thể đăng nhập. Hãy thử lại."
+  },
+  "drive": {
+    "myFiles": "Tệp của tôi",
+    "myDrive": "Drive của tôi",
+    "favorites": "Yêu thích",
+    "shares": "Chia sẻ",
+    "emptyFavorites": "Không có mục yêu thích",
+    "shared": "Được chia sẻ với tôi",
+    "sharedDrives": "Drive",
+    "recent": "Gần đây",
+    "trash": "Thùng rác",
+    "emptyFolder": "Không có tệp trong thư mục này",
+    "emptyShared": "Không có tệp nào được chia sẻ với bạn",
+    "emptySharedDrives": "Chưa có drive chia sẻ nào",
+    "emptyRecent": "Không có tệp gần đây",
+    "emptyTrash": "Thùng rác trống",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "fileMeta": {
+      "type": "Loại",
+      "size": "Kích thước",
+      "modified": "Đã sửa đổi",
+      "path": "Đường dẫn",
+      "owner": "Chủ sở hữu",
+      "open": "Mở",
+      "downloading": "Đang tải xuống…",
+      "share": "Chia sẻ",
+      "rename": "Đổi tên",
+      "delete": "Xóa",
+      "info": "Chi tiết",
+      "move": "Di chuyển…",
+      "favorite": "Thêm vào yêu thích",
+      "unfavorite": "Xóa khỏi yêu thích",
+      "download": "Tải xuống"
+    },
+    "delete": {
+      "confirmFileTitle": "Xóa tệp?",
+      "confirmFolderTitle": "Xóa thư mục?",
+      "confirmBulkTitle_other": "Xóa {{count}} mục?",
+      "confirmBody": "“{{name}}” sẽ được chuyển vào thùng rác.",
+      "confirmBulkBody_other": "{{count}} mục sẽ được chuyển vào thùng rác.",
+      "confirm": "Xóa",
+      "successFile": "Đã chuyển tệp vào thùng rác",
+      "successFolder": "Đã chuyển thư mục vào thùng rác",
+      "successBulk_other": "Đã chuyển {{count}} mục vào thùng rác",
+      "errorGeneric": "Không thể xóa"
+    },
+    "move": {
+      "title": "Di chuyển",
+      "action": "Di chuyển vào đây",
+      "successFile": "Đã di chuyển tệp",
+      "successFolder": "Đã di chuyển thư mục",
+      "successBulk_other": "Đã di chuyển {{count}} mục",
+      "errorGeneric": "Di chuyển thất bại",
+      "newFolder": "Thư mục mới"
+    },
+    "import": {
+      "title": "Nhập vào…",
+      "confirm": "Nhập vào đây",
+      "uploading": "Đang nhập… {{done}}/{{total}}",
+      "successFile": "Đã nhập tệp",
+      "successBulk_other": "Đã nhập {{count}} tệp",
+      "partial": "Đã nhập {{succeeded}}/{{total}}, {{failed}} thất bại",
+      "errorGeneric": "Nhập thất bại",
+      "errorOffline": "Cần kết nối để nhập",
+      "errorQuota": "Không đủ bộ nhớ",
+      "loginRequired": "Đăng nhập để nhập"
+    },
+    "selection": {
+      "count_other": "Đã chọn {{count}}",
+      "move": "Di chuyển"
+    },
+    "share": {
+      "title": "Chia sẻ",
+      "linkTitle": "Liên kết công khai",
+      "linkOn": "Bất kỳ ai có liên kết đều có thể truy cập",
+      "linkCopy": "Sao chép liên kết",
+      "linkCopied": "Đã sao chép liên kết",
+      "linkRightsReader": "Người đọc",
+      "linkRightsEditor": "Người chỉnh sửa",
+      "recipientsTitle": "Người nhận",
+      "addRecipient": "Thêm người nhận",
+      "suggestionsLoading": "Đang tìm danh bạ…",
+      "emailPlaceholder": "email@vidu.com",
+      "readOnly": "Chỉ đọc",
+      "send": "Gửi",
+      "remove": "Xóa",
+      "errorLoad": "Không thể tải thông tin chia sẻ",
+      "errorMutate": "Thao tác thất bại",
+      "statusPending": "Đang chờ",
+      "statusReady": "Đang hoạt động",
+      "statusRevoked": "Đã thu hồi"
+    },
+    "createFolder": {
+      "title": "Thư mục mới",
+      "nameLabel": "Tên",
+      "submit": "Tạo",
+      "errorConflict": "Đã tồn tại thư mục có tên này.",
+      "errorGeneric": "Không thể tạo thư mục."
+    },
+    "rename": {
+      "titleFile": "Đổi tên tệp",
+      "titleFolder": "Đổi tên thư mục",
+      "nameLabel": "Tên",
+      "submit": "Đổi tên",
+      "errorConflict": "Đã tồn tại một mục có tên này.",
+      "errorGeneric": "Không thể đổi tên.",
+      "successFile": "Đã đổi tên tệp",
+      "successFolder": "Đã đổi tên thư mục"
+    },
+    "trashActions": {
+      "restore": "Khôi phục",
+      "restoreSuccess": "Đã khôi phục",
+      "restoreError": "Không thể khôi phục",
+      "emptyButton": "Dọn thùng rác",
+      "emptyConfirmTitle": "Dọn sạch thùng rác?",
+      "emptyConfirmBody": "Tất cả các mục trong thùng rác sẽ bị xóa vĩnh viễn. Không thể hoàn tác.",
+      "emptyConfirm": "Dọn sạch",
+      "emptySuccess": "Đã dọn thùng rác",
+      "emptyError": "Không thể dọn thùng rác"
+    },
+    "createMenu": {
+      "folder": "Thư mục mới",
+      "note": "Ghi chú mới",
+      "docs": "Tài liệu mới",
+      "text": "Tài liệu Word",
+      "sheet": "Bảng tính",
+      "slide": "Bản trình bày",
+      "excalidraw": "Excalidraw",
+      "shortcut": "Lối tắt"
+    },
+    "createShortcut": {
+      "title": "Lối tắt mới",
+      "nameLabel": "Tên",
+      "urlLabel": "URL",
+      "submit": "Tạo",
+      "errorGeneric": "Không thể tạo lối tắt."
+    },
+    "createOffice": {
+      "title": "Tên tài liệu",
+      "submit": "Tạo",
+      "errorGeneric": "Không thể tạo tài liệu."
+    },
+    "onlyoffice": {
+      "title": "Tài liệu"
+    },
+    "preview": {
+      "title": "Xem trước",
+      "loadFailed": "Không thể tải bản xem trước",
+      "openExternally": "Mở bằng ứng dụng khác"
+    },
+    "audio": {
+      "unsupportedCodec": "Định dạng âm thanh này không được phát trực tiếp trên thiết bị này.",
+      "openWith": "Mở bằng…",
+      "noAppHint": "Nếu không có gì hiện ra, không có ứng dụng nào đã cài đặt có thể đọc định dạng này. Hãy thử VLC."
+    },
+    "note": {
+      "title": "Ghi chú"
+    },
+    "docs": {
+      "title": "Tài liệu"
+    },
+    "offline": {
+      "requiresOnline": "Có sẵn khi bạn trực tuyến trở lại",
+      "banner": "Ngoại tuyến — đang hiển thị dữ liệu đã lưu",
+      "pin": "Giữ ngoại tuyến",
+      "unpin": "Xóa khỏi ngoại tuyến",
+      "keepOffline": "Giữ ngoại tuyến",
+      "disabledOffline": "Kết nối lại để bật chế độ ngoại tuyến",
+      "downloading": "Đang tải xuống…",
+      "downloaded": "Có sẵn ngoại tuyến",
+      "failed": "Tải xuống thất bại",
+      "notAvailableOffline": "Tệp không có sẵn ngoại tuyến",
+      "folderPartial": "{{count}}/{{total}} tệp",
+      "folderSummary_other": "{{count}} tệp · {{size}}",
+      "folderConfirm_other": "Thư mục này chứa {{count}} tệp (~{{size}}). Tiếp tục?",
+      "bigFolderTitle": "Xác nhận tải xuống",
+      "diskFull": "Bộ nhớ thiết bị đã đầy. Xóa các mục để giải phóng dung lượng.",
+      "deleteAllConfirm_other": "Xóa {{count}} tệp ({{size}})? Hành động này không thể hoàn tác.",
+      "storageTitle": "Bộ nhớ ngoại tuyến",
+      "totalUsed": "Tổng đã dùng",
+      "deleteAll": "Xóa tất cả",
+      "wifiOnly": "Chỉ tải xuống qua WiFi",
+      "foldersSection": "Thư mục",
+      "filesSection": "Tệp",
+      "errorsSection": "Lỗi",
+      "retry": "Thử lại"
+    },
+    "search": {
+      "placeholder": "Tìm kiếm trong Drive",
+      "hint": "Nhập ít nhất 2 ký tự",
+      "empty": "Không tìm thấy tệp nào",
+      "action": "Tìm kiếm"
+    }
+  },
+  "a11y": {
+    "listView": "Xem dạng danh sách",
+    "gridView": "Xem dạng lưới",
+    "folderActions": "Tác vụ thư mục",
+    "fileActions": "Tác vụ tệp",
+    "removeRecipient": "Xóa người nhận"
+  },
+  "errors": {
+    "noNetwork": "Không có kết nối",
+    "forbidden": "Truy cập bị từ chối",
+    "notFound": "Thư mục này không còn tồn tại",
+    "server": "Lỗi máy chủ, hãy thử lại sau",
+    "generic": "Đã xảy ra lỗi"
+  }
+}

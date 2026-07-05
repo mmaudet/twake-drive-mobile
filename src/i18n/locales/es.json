@@ -1,0 +1,254 @@
+{
+  "common": {
+    "close": "Cerrar",
+    "retry": "Reintentar",
+    "loading": "Cargando…",
+    "logout": "Cerrar sesión",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "back": "Atrás",
+    "help": "Ayuda"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "language": "Idioma",
+    "languageSystem": "Predeterminado del sistema"
+  },
+  "auth": {
+    "welcomeTitle": "Bienvenido a Twake Drive",
+    "welcomeSubtitle": "Tus archivos, en todas partes, de forma segura.",
+    "loginCta": "Iniciar sesión",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu@ejemplo.com",
+    "continue": "Continuar",
+    "errorDomainUnsupported": "Este dominio no es compatible con Twake Drive.",
+    "errorNetwork": "Sin conexión. Comprueba tu red.",
+    "errorGeneric": "No se pudo iniciar sesión. Inténtalo de nuevo."
+  },
+  "drive": {
+    "myFiles": "Mis archivos",
+    "myDrive": "Mi Drive",
+    "favorites": "Favoritos",
+    "shares": "Compartidos",
+    "emptyFavorites": "No hay favoritos",
+    "shared": "Compartidos conmigo",
+    "sharedDrives": "Drives",
+    "recent": "Recientes",
+    "trash": "Papelera",
+    "emptyFolder": "No hay archivos en esta carpeta",
+    "emptyShared": "No hay archivos compartidos contigo",
+    "emptySharedDrives": "Aún no hay drives compartidos",
+    "emptyRecent": "No hay archivos recientes",
+    "emptyTrash": "La papelera está vacía",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "fileMeta": {
+      "type": "Tipo",
+      "size": "Tamaño",
+      "modified": "Modificado",
+      "path": "Ruta",
+      "owner": "Propietario",
+      "open": "Abrir",
+      "downloading": "Descargando…",
+      "share": "Compartir",
+      "rename": "Renombrar",
+      "delete": "Eliminar",
+      "info": "Detalles",
+      "move": "Mover…",
+      "favorite": "Añadir a favoritos",
+      "unfavorite": "Quitar de favoritos",
+      "download": "Descargar"
+    },
+    "delete": {
+      "confirmFileTitle": "¿Eliminar el archivo?",
+      "confirmFolderTitle": "¿Eliminar la carpeta?",
+      "confirmBulkTitle_one": "¿Eliminar {{count}} elemento?",
+      "confirmBulkTitle_many": "¿Eliminar {{count}} elementos?",
+      "confirmBulkTitle_other": "¿Eliminar {{count}} elementos?",
+      "confirmBody": "«{{name}}» se moverá a la papelera.",
+      "confirmBulkBody_one": "{{count}} elemento se moverá a la papelera.",
+      "confirmBulkBody_many": "{{count}} elementos se moverán a la papelera.",
+      "confirmBulkBody_other": "{{count}} elementos se moverán a la papelera.",
+      "confirm": "Eliminar",
+      "successFile": "Archivo movido a la papelera",
+      "successFolder": "Carpeta movida a la papelera",
+      "successBulk_one": "{{count}} elemento movido a la papelera",
+      "successBulk_many": "{{count}} elementos movidos a la papelera",
+      "successBulk_other": "{{count}} elementos movidos a la papelera",
+      "errorGeneric": "No se pudo eliminar"
+    },
+    "move": {
+      "title": "Mover",
+      "action": "Mover aquí",
+      "successFile": "Archivo movido",
+      "successFolder": "Carpeta movida",
+      "successBulk_one": "{{count}} elemento movido",
+      "successBulk_many": "{{count}} elementos movidos",
+      "successBulk_other": "{{count}} elementos movidos",
+      "errorGeneric": "No se pudo mover",
+      "newFolder": "Nueva carpeta"
+    },
+    "import": {
+      "title": "Importar a…",
+      "confirm": "Importar aquí",
+      "uploading": "Importando… {{done}}/{{total}}",
+      "successFile": "Archivo importado",
+      "successBulk_one": "{{count}} archivo importado",
+      "successBulk_many": "{{count}} archivos importados",
+      "successBulk_other": "{{count}} archivos importados",
+      "partial": "{{succeeded}}/{{total}} importados, {{failed}} con errores",
+      "errorGeneric": "La importación falló",
+      "errorOffline": "Se requiere conexión para importar",
+      "errorQuota": "Almacenamiento insuficiente",
+      "loginRequired": "Inicia sesión para importar"
+    },
+    "selection": {
+      "count_one": "{{count}} seleccionado",
+      "count_many": "{{count}} seleccionados",
+      "count_other": "{{count}} seleccionados",
+      "move": "Mover"
+    },
+    "share": {
+      "title": "Compartir",
+      "linkTitle": "Enlace público",
+      "linkOn": "Cualquier persona con el enlace puede acceder",
+      "linkCopy": "Copiar enlace",
+      "linkCopied": "Enlace copiado",
+      "linkRightsReader": "Lector",
+      "linkRightsEditor": "Editor",
+      "recipientsTitle": "Destinatarios",
+      "addRecipient": "Añadir un destinatario",
+      "suggestionsLoading": "Buscando contactos…",
+      "emailPlaceholder": "correo@ejemplo.com",
+      "readOnly": "Solo lectura",
+      "send": "Enviar",
+      "remove": "Quitar",
+      "errorLoad": "No se pudo cargar la información de uso compartido",
+      "errorMutate": "La operación falló",
+      "statusPending": "Pendiente",
+      "statusReady": "Activo",
+      "statusRevoked": "Revocado"
+    },
+    "createFolder": {
+      "title": "Nueva carpeta",
+      "nameLabel": "Nombre",
+      "submit": "Crear",
+      "errorConflict": "Ya existe una carpeta con este nombre.",
+      "errorGeneric": "No se pudo crear la carpeta."
+    },
+    "rename": {
+      "titleFile": "Renombrar archivo",
+      "titleFolder": "Renombrar carpeta",
+      "nameLabel": "Nombre",
+      "submit": "Renombrar",
+      "errorConflict": "Ya existe un elemento con este nombre.",
+      "errorGeneric": "No se pudo renombrar.",
+      "successFile": "Archivo renombrado",
+      "successFolder": "Carpeta renombrada"
+    },
+    "trashActions": {
+      "restore": "Restaurar",
+      "restoreSuccess": "Restaurado",
+      "restoreError": "No se pudo restaurar",
+      "emptyButton": "Vaciar papelera",
+      "emptyConfirmTitle": "¿Vaciar la papelera?",
+      "emptyConfirmBody": "Todos los elementos de la papelera se eliminarán de forma permanente. Esta acción no se puede deshacer.",
+      "emptyConfirm": "Vaciar",
+      "emptySuccess": "Papelera vaciada",
+      "emptyError": "No se pudo vaciar la papelera"
+    },
+    "createMenu": {
+      "folder": "Nueva carpeta",
+      "note": "Nueva nota",
+      "docs": "Nuevo documento",
+      "text": "Documento de Word",
+      "sheet": "Hoja de cálculo",
+      "slide": "Presentación",
+      "excalidraw": "Excalidraw",
+      "shortcut": "Acceso directo"
+    },
+    "createShortcut": {
+      "title": "Nuevo acceso directo",
+      "nameLabel": "Nombre",
+      "urlLabel": "URL",
+      "submit": "Crear",
+      "errorGeneric": "No se pudo crear el acceso directo."
+    },
+    "createOffice": {
+      "title": "Nombre del documento",
+      "submit": "Crear",
+      "errorGeneric": "No se pudo crear el documento."
+    },
+    "onlyoffice": {
+      "title": "Documento"
+    },
+    "preview": {
+      "title": "Vista previa",
+      "loadFailed": "No se pudo cargar la vista previa",
+      "openExternally": "Abrir con otra aplicación"
+    },
+    "audio": {
+      "unsupportedCodec": "Este formato de audio no se reproduce de forma nativa en este dispositivo.",
+      "openWith": "Abrir con…",
+      "noAppHint": "Si no apareció nada, ninguna aplicación instalada puede leer este formato. Prueba con VLC."
+    },
+    "note": {
+      "title": "Nota"
+    },
+    "docs": {
+      "title": "Documento"
+    },
+    "offline": {
+      "requiresOnline": "Disponible cuando vuelvas a estar en línea",
+      "banner": "Sin conexión: mostrando datos en caché",
+      "pin": "Guardar sin conexión",
+      "unpin": "Quitar de sin conexión",
+      "keepOffline": "Guardar sin conexión",
+      "disabledOffline": "Vuelve a conectarte para activar el modo sin conexión",
+      "downloading": "Descargando…",
+      "downloaded": "Disponible sin conexión",
+      "failed": "Error de descarga",
+      "notAvailableOffline": "Archivo no disponible sin conexión",
+      "folderPartial": "{{count}}/{{total}} archivos",
+      "folderSummary_one": "{{count}} archivo · {{size}}",
+      "folderSummary_many": "{{count}} archivos · {{size}}",
+      "folderSummary_other": "{{count}} archivos · {{size}}",
+      "folderConfirm_one": "Esta carpeta contiene {{count}} archivo (~{{size}}). ¿Continuar?",
+      "folderConfirm_many": "Esta carpeta contiene {{count}} archivos (~{{size}}). ¿Continuar?",
+      "folderConfirm_other": "Esta carpeta contiene {{count}} archivos (~{{size}}). ¿Continuar?",
+      "bigFolderTitle": "Confirmar descarga",
+      "diskFull": "El almacenamiento del dispositivo está lleno. Elimina elementos para liberar espacio.",
+      "deleteAllConfirm_one": "¿Eliminar {{count}} archivo ({{size}})? Esta acción no se puede deshacer.",
+      "deleteAllConfirm_many": "¿Eliminar {{count}} archivos ({{size}})? Esta acción no se puede deshacer.",
+      "deleteAllConfirm_other": "¿Eliminar {{count}} archivos ({{size}})? Esta acción no se puede deshacer.",
+      "storageTitle": "Almacenamiento sin conexión",
+      "totalUsed": "Total usado",
+      "deleteAll": "Eliminar todo",
+      "wifiOnly": "Descargar solo con WiFi",
+      "foldersSection": "Carpetas",
+      "filesSection": "Archivos",
+      "errorsSection": "Errores",
+      "retry": "Reintentar"
+    },
+    "search": {
+      "placeholder": "Buscar en Drive",
+      "hint": "Escribe al menos 2 caracteres",
+      "empty": "No se encontró ningún archivo",
+      "action": "Buscar"
+    }
+  },
+  "a11y": {
+    "listView": "Vista de lista",
+    "gridView": "Vista de cuadrícula",
+    "folderActions": "Acciones de carpeta",
+    "fileActions": "Acciones de archivo",
+    "removeRecipient": "Quitar destinatario"
+  },
+  "errors": {
+    "noNetwork": "Sin conexión",
+    "forbidden": "Acceso denegado",
+    "notFound": "Esta carpeta ya no existe",
+    "server": "Error del servidor, inténtalo más tarde",
+    "generic": "Algo salió mal"
+  }
+}
