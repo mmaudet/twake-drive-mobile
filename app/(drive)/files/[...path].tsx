@@ -242,6 +242,9 @@ export default function FilesScreen() {
         )
       )
       setPendingDelete(null)
+      // Refetch so the removed row disappears immediately (client.destroy already
+      // wrote the deletion to local Pouch). Mirrors the create/rename handlers.
+      await Promise.all([foldersQuery.fetch(), filesQuery.fetch()])
     } catch (e) {
       console.error('[FilesScreen] delete failed', e)
       setSnackbar(t('drive.delete.errorGeneric'))
@@ -270,6 +273,7 @@ export default function FilesScreen() {
       setSnackbar(t('drive.delete.successBulk', { count: items.length }))
       selection.clear()
       setBulkConfirmVisible(false)
+      await Promise.all([foldersQuery.fetch(), filesQuery.fetch()])
     } catch (e) {
       console.error('[FilesScreen] bulk delete failed', e)
       setSnackbar(t('drive.delete.errorGeneric'))
@@ -461,7 +465,8 @@ export default function FilesScreen() {
                     icon: 'trash-can-outline',
                     onPress: () => setBulkConfirmVisible(true),
                     accessibilityLabel: t('drive.fileMeta.delete'),
-                    destructive: true
+                    destructive: true,
+                    testID: 'selection-delete'
                   }
                 ]
               }

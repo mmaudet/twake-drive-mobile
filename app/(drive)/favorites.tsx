@@ -14,6 +14,7 @@ import { FolderRow } from '@/ui/FolderRow'
 import { useAuth } from '@/auth/useAuth'
 import { getErrorMessageKey } from '@/utils/errorMessages'
 import { favoritesQuery, favoritesQueryAs, FileQueryResult } from '@/client/queries'
+import { isFavorite } from '@/files/favorites'
 import { openFileFromList } from '@/files/openFromList'
 
 export default function FavoritesScreen() {
@@ -59,7 +60,10 @@ export default function FavoritesScreen() {
     )
   }
 
-  const data = (query.data as FileQueryResult[] | null | undefined) ?? []
+  // favoritesQuery's nested-favourite filter is unreliable in the offline pouch
+  // replica and returns every file (favourites sort first); filter it down to
+  // real favourites here (isFavorite is a strict `=== true`).
+  const data = ((query.data as FileQueryResult[] | null | undefined) ?? []).filter(isFavorite)
 
   return (
     <ScreenContainer>

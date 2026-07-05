@@ -10,26 +10,10 @@ import { useFileSharingStatus } from '@/sharing/SharingProvider'
 import { useIsOnline } from '@/network/useIsOnline'
 import { useOfflineFolderState } from '@/offline/useOfflineState'
 import { PinnedBadge } from '@/offline/PinnedBadge'
-import type { OfflineFileEntry, OfflineFileState } from '@/offline/types'
+import { folderBadgeEntry } from '@/offline/folderBadgeEntry'
 import { isFavorite, toggleFavorite } from '@/files/favorites'
 import { triggerPouchReplication } from '@/pouchdb/triggerReplication'
 import { SharedBadge } from './SharedBadge'
-
-// Synthetic entry just to drive the PinnedBadge visuals. Folders don't have
-// per-folder state in the store; we synthesize one whose `state` reflects the
-// aggregated state of the folder's children.
-const folderBadgeEntry = (state: OfflineFileState): OfflineFileEntry => ({
-  fileId: '',
-  state,
-  rev: '',
-  md5sum: '',
-  size: 0,
-  name: '',
-  localPath: '',
-  pinnedAt: 0,
-  isDirectPin: false,
-  parentFolderPins: []
-})
 
 export interface FolderItem {
   _id: string
@@ -131,7 +115,10 @@ export const FolderRow = ({
                 icon={p => <CozyIcon name="dotsVertical" size={p?.size ?? 24} color={p?.color} />}
                 onPress={() => setMenuVisible(true)}
                 accessibilityLabel={t('a11y.folderActions')}
-                testID="folder-actions"
+                // Per-folder testID so E2E can open a SPECIFIC row's menu without
+                // a `rightOf` selector (which resolves to the wrong row — it caused
+                // wrong-folder deletions during bring-up).
+                testID={`folder-actions:${folder.name}`}
               />
             }
           >

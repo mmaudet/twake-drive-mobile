@@ -1,4 +1,3 @@
-import { SUPPORTED_LANGUAGES, LanguageCode } from './languages'
 import en from './locales/en.json'
 import fr from './locales/fr.json'
 import es from './locales/es.json'
@@ -8,7 +7,8 @@ import de from './locales/de.json'
 import vi from './locales/vi.json'
 import ru from './locales/ru.json'
 
-const bundles: Record<LanguageCode, unknown> = { en, fr, es, it: itLocale, de, vi, ru }
+const bundles = { en, fr, es, it: itLocale, de, vi, ru }
+type LanguageCode = keyof typeof bundles
 const PLURAL_SUFFIXES = ['_zero', '_one', '_two', '_few', '_many', '_other']
 
 /** Leaf [dotted-key, value] pairs. */
@@ -33,7 +33,7 @@ const pluralBases = new Set(
 )
 
 describe('locale parity', () => {
-  for (const { code } of SUPPORTED_LANGUAGES) {
+  for (const code of Object.keys(bundles) as LanguageCode[]) {
     describe(code, () => {
       it('has exactly the English logical key set', () => {
         const keys = logicalKeys(bundles[code])

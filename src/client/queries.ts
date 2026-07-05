@@ -83,38 +83,40 @@ export const sharedWithMeQuery = (): QueryDefinition =>
   Q('io.cozy.sharings').where({ owner: false })
 export const sharedWithMeQueryAs = 'io.cozy.sharings/with-me'
 
-// Verbatim copy of twake-drive-web's `buildRecentQuery`
-// (src/queries/index.ts).
+// Recent files: an index-backed top-N over `updated_at`.
+//
+// Perf gotcha (fixed here): a `.partialIndex(...)` makes cozy-pouch-link derive
+// a DIFFERENT index name (`by_updated_at_filter_(...)`) than the one the
+// replication warmup pre-builds (`by_updated_at`, src/pouchdb/getLinks.ts). On
+// first open pouch-find then can't find the requested index and lazily rebuilds
+// it over the WHOLE local replica — a ~1-minute UI freeze. Dropping the
+// partialIndex makes the requested index name match the warmup, so opening
+// Récents is a bounded top-N scan of an already-built index. We over-fetch and
+// drop non-file / trashed / hidden-system-dir rows client-side in the screen
+// (same shape as the search feature).
 export const recentQuery = (): QueryDefinition =>
   Q('io.cozy.files')
     .where({ updated_at: { $gt: null } })
-    .partialIndex({
-      type: 'file',
-      trashed: false,
-      dir_id: { $nin: [SHARED_DRIVES_DIR_ID, TRASH_DIR_ID] }
-    })
     .indexFields(['updated_at'])
     .sortBy([{ updated_at: 'desc' }])
-    .limitBy(50)
+    .limitBy(200)
 export const recentQueryAs = 'recent-view-query'
 
-// All files and folders marked favourite (`cozyMetadata.favorite === true`),
-// sorted by name — mirrors twake-drive-web's buildFavoritesQuery.
+// Files and folders marked favourite (`cozyMetadata.favorite === true`).
 //
-// Offline/local gotcha: cozy-pouch-link/PouchDB only matches the NESTED
-// `cozyMetadata.favorite` field when that exact path is an INDEX field. A
-// partialIndex on it, or a bare `where` selector without indexing it, returns 0
-// even when favourites exist (verified on-device: 4/18 root folders were
-// favourite, those queries returned 0). So the flag goes in `indexFields` (and,
-// to satisfy the index prefix, first in `sortBy`). The first run builds the index
-// over the local DB (one-off, ~tens of seconds on a large drive); it is then
-// persisted, so later loads are fast.
+// Offline/local gotcha: cozy-pouch-link/pouchdb-find does NOT reliably enforce
+// a `$eq: true` selector on the NESTED `cozyMetadata.favorite` path in the local
+// replica — the `where` filter fails OPEN and the query returns every file
+// (which is why the Favoris tab used to list all folders). The nested field is
+// still usable as an index/sort key, so we sort favourites FIRST (desc → `true`
+// leads) to keep them inside the window, over-fetch, and filter authoritatively
+// CLIENT-SIDE with `isFavorite` (strict `=== true`) in the Favoris screen.
 export const favoritesQuery = (): QueryDefinition =>
   Q('io.cozy.files')
     .where({ 'cozyMetadata.favorite': true })
     .indexFields(['cozyMetadata.favorite', 'name'])
-    .sortBy([{ 'cozyMetadata.favorite': 'asc' }, { name: 'asc' }])
-    .limitBy(100)
+    .sortBy([{ 'cozyMetadata.favorite': 'desc' }, { name: 'asc' }])
+    .limitBy(200)
 export const favoritesQueryAs = 'favorites-view-query'
 
 // Trash: same two-query split as `folderSubfoldersQuery` / `folderFilesQuery`,

@@ -26,11 +26,14 @@ import { ErrorBoundary } from '@/ui/ErrorBoundary'
 import { PiPSessionProvider } from '@/preview/PiPSession'
 import { SharingProvider } from '@/sharing/SharingProvider'
 import { FlagshipAuthModal } from '@/auth/FlagshipAuthModal'
+import { useThemePreference } from '@/preferences/themePreference'
 import { AppProviderTree } from './_AppProviderTree'
 
 const InnerLayout = () => {
   const colorScheme = useColorScheme()
-  const theme = colorScheme === 'dark' ? darkTheme : lightTheme
+  const { pref: themePref } = useThemePreference()
+  const activeScheme = themePref === 'system' ? colorScheme : themePref
+  const theme = activeScheme === 'dark' ? darkTheme : lightTheme
   const { client, logout } = useAuth()
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
@@ -109,6 +112,10 @@ const InnerLayout = () => {
                     />
                     <Stack.Screen
                       name="docs/new/[folderId]"
+                      options={{ presentation: 'pageSheet', animation: 'slide_from_bottom' }}
+                    />
+                    <Stack.Screen
+                      name="settings"
                       options={{ presentation: 'pageSheet', animation: 'slide_from_bottom' }}
                     />
                     <Stack.Screen name="search" options={{ animation: 'slide_from_bottom' }} />

@@ -11,8 +11,15 @@
   },
   "settings": {
     "title": "Cài đặt",
+    "account": "Tài khoản",
     "language": "Ngôn ngữ",
-    "languageSystem": "Mặc định của hệ thống"
+    "systemLanguage": "Hệ thống (ngôn ngữ thiết bị)",
+    "theme": "Giao diện",
+    "themeSystem": "Hệ thống",
+    "themeLight": "Sáng",
+    "themeDark": "Tối",
+    "about": "Giới thiệu",
+    "version": "Phiên bản"
   },
   "auth": {
     "welcomeTitle": "Chào mừng đến với Twake Drive",

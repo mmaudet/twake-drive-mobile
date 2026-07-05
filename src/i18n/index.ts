@@ -2,6 +2,8 @@
 import 'intl-pluralrules'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import { getLocales } from 'expo-localization'
+import { getLocalePreference, resolveLanguage } from '@/preferences/localePreference'
 
 import en from './locales/en.json'
 import fr from './locales/fr.json'
@@ -10,8 +12,6 @@ import it from './locales/it.json'
 import de from './locales/de.json'
 import vi from './locales/vi.json'
 import ru from './locales/ru.json'
-import { DEFAULT_LANGUAGE } from './languages'
-import { getStoredPreference, resolveLanguage } from './languagePreference'
 
 const resources = {
   en: { translation: en },
@@ -23,10 +23,13 @@ const resources = {
   ru: { translation: ru }
 }
 
+const deviceLocale = getLocales()[0]?.languageCode ?? undefined
+const lng = resolveLanguage(getLocalePreference(), deviceLocale, Object.keys(resources))
+
 i18n.use(initReactI18next).init({
   resources,
-  lng: resolveLanguage(getStoredPreference()),
-  fallbackLng: DEFAULT_LANGUAGE,
+  lng,
+  fallbackLng: 'en',
   interpolation: { escapeValue: false }
 })
 

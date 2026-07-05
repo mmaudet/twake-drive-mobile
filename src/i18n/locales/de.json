@@ -11,8 +11,15 @@
   },
   "settings": {
     "title": "Einstellungen",
+    "account": "Konto",
     "language": "Sprache",
-    "languageSystem": "Systemstandard"
+    "systemLanguage": "System (Gerätesprache)",
+    "theme": "Design",
+    "themeSystem": "System",
+    "themeLight": "Hell",
+    "themeDark": "Dunkel",
+    "about": "Über",
+    "version": "Version"
   },
   "auth": {
     "welcomeTitle": "Willkommen bei Twake Drive",

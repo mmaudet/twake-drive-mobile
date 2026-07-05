@@ -45,6 +45,15 @@ jest.mock('@/ui/SyncIndicator', () => ({
   SyncIndicator: () => null
 }))
 
+// FavoritesScreen renders AppBar, which now reads the account identity via
+// useCurrentUser (Task 4/8). The local cozy-client Q() mock above only stubs
+// the chainable methods favoritesQuery() needs (where/sortBy/limitBy/...) —
+// it has no .getById, which useCurrentUser's module-level query descriptor
+// calls at import time, so mock the hook directly instead.
+jest.mock('@/account/useCurrentUser', () => ({
+  useCurrentUser: () => ({ initials: 'MM', loading: false })
+}))
+
 // FolderRow / FileRow pull in offline + sharing hooks
 jest.mock('@/offline/useOfflineState', () => ({
   useOfflineState: jest.fn().mockReturnValue(undefined),
@@ -143,5 +152,32 @@ describe('FavoritesScreen', () => {
     )
     render(wrap(<FavoritesScreen />))
     expect(screen.getByText('My Project')).toBeOnTheScreen()
+  })
+
+  // The offline pouch query fails OPEN and returns non-favourites too; the
+  // screen must filter them out client-side (isFavorite, strict === true).
+  it('shows only real favourites, dropping non-favourites the query wrongly returns', () => {
+    mockUseQuery.mockReturnValue(
+      makeQueryResult([
+        {
+          _id: 'fav-1',
+          name: 'Real favourite.pdf',
+          type: 'file',
+          size: 1024,
+          cozyMetadata: { favorite: true }
+        },
+        {
+          _id: 'not-1',
+          name: 'Not a favourite',
+          type: 'directory',
+          cozyMetadata: { favorite: false }
+        },
+        { _id: 'not-2', name: 'No favourite flag', type: 'directory' }
+      ])
+    )
+    render(wrap(<FavoritesScreen />))
+    expect(screen.getByText('Real favourite.pdf')).toBeOnTheScreen()
+    expect(screen.queryByText('Not a favourite')).toBeNull()
+    expect(screen.queryByText('No favourite flag')).toBeNull()
   })
 })

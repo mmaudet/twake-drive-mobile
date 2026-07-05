@@ -43,7 +43,7 @@ export const ConfirmDeleteDialog = ({
           </Text>
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={onDismiss} disabled={loading}>
+          <Button onPress={onDismiss} disabled={loading} testID="confirm-delete-cancel">
             {t('common.cancel')}
           </Button>
           <Button
@@ -51,6 +51,7 @@ export const ConfirmDeleteDialog = ({
             loading={loading}
             disabled={loading}
             textColor={theme.colors.error}
+            testID="confirm-delete-submit"
           >
             {t('drive.delete.confirm')}
           </Button>

@@ -1,9 +1,12 @@
 import i18n from './index'
-import { SUPPORTED_LANGUAGES } from './languages'
+
+// The bundle is the source of truth for which languages ship (mirrors the
+// data-driven language picker). Kept as a literal so a dropped resource fails here.
+const EXPECTED_LANGUAGES = ['en', 'fr', 'es', 'it', 'de', 'vi', 'ru']
 
 describe('i18n bootstrap', () => {
   it('registers a translation bundle for every supported language', () => {
-    for (const { code } of SUPPORTED_LANGUAGES) {
+    for (const code of EXPECTED_LANGUAGES) {
       expect(i18n.hasResourceBundle(code, 'translation')).toBe(true)
     }
   })

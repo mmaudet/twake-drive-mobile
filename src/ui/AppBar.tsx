@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router'
 import { SyncIndicator } from './SyncIndicator'
 import { TwakeLogo } from '@/ui/icons/TwakeLogo'
 import { CozyIcon } from '@/ui/icons/CozyIcon'
+import { useCurrentUser } from '@/account/useCurrentUser'
 
 export interface AppBarSelectionAction {
   icon: string
@@ -16,6 +17,9 @@ export interface AppBarSelectionAction {
   destructive?: boolean
   /** Hide the action without removing it from the array (so layout is stable). */
   hidden?: boolean
+  /** Stable id for E2E (Maestro) targeting — the accessibilityLabel alone is
+   * ambiguous (shared with row menus / dialog buttons). */
+  testID?: string
 }
 
 interface AppBarSelection {
@@ -47,7 +51,7 @@ export const AppBar = ({ title, onBack, onLogout, showSearch, selection }: Props
   const [menuVisible, setMenuVisible] = useState(false)
   const theme = useTheme()
   const router = useRouter()
-  const initials = 'MM'
+  const { initials } = useCurrentUser()
 
   if (selection) {
     return (
@@ -67,6 +71,7 @@ export const AppBar = ({ title, onBack, onLogout, showSearch, selection }: Props
               onPress={a.onPress}
               accessibilityLabel={a.accessibilityLabel}
               color={a.destructive ? '#c0392b' : undefined}
+              testID={a.testID}
             />
           ))}
       </Appbar.Header>
@@ -114,7 +119,7 @@ export const AppBar = ({ title, onBack, onLogout, showSearch, selection }: Props
           <Menu.Item
             onPress={() => {
               setMenuVisible(false)
-              router.push('/(drive)/settings')
+              router.push('/settings')
             }}
             title={t('settings.title')}
             leadingIcon={() => <CozyIcon name="cog" size={24} color={theme.colors.onSurface} />}

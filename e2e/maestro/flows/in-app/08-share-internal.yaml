@@ -1,0 +1,40 @@
+appId: com.linagora.twakedrive
+tags:
+  - inapp
+env:
+  FOLDER_NAME: 'E2E-smoke'
+---
+# In-app SHARE — validates the share sheet OPENS for a folder. NON-MUTATING: it
+# only views the sheet then closes (no public link created, no recipient added).
+# The exact row's menu is opened via the per-folder `folder-actions:<name>`
+# testID — never a `rightOf` selector (that resolves to the wrong row).
+- runFlow: ../../subflows/openDrive.yaml
+# create a throwaway target
+- tapOn:
+    id: 'drive-fab'
+- tapOn: 'Nouveau dossier'
+- inputText: '${FOLDER_NAME}'
+- pressKey: Enter
+- extendedWaitUntil:
+    visible: '${FOLDER_NAME}'
+    timeout: 12000
+# open its menu -> Partager
+- tapOn:
+    id: 'folder-actions:${FOLDER_NAME}'
+- tapOn: 'Partager'
+# assert the share screen rendered (folder name + link + recipients sections)
+- extendedWaitUntil:
+    visible: 'Lien public'
+    timeout: 10000
+- assertVisible: 'Ajouter un destinataire'
+- assertVisible: '${FOLDER_NAME}'
+# close without creating any share
+- tapOn: 'Fermer'
+# cleanup: delete the throwaway via selection (safe, exact target)
+- longPressOn:
+    text: '${FOLDER_NAME}'
+- tapOn:
+    id: 'selection-delete'
+- waitForAnimationToEnd
+- tapOn:
+    id: 'confirm-delete-submit'
