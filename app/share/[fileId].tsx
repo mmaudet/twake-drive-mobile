@@ -550,6 +550,7 @@ interface RecipientRowProps {
 }
 
 const RecipientRow = ({ member, statusLabel, disabled, onRemove }: RecipientRowProps) => {
+  const { t } = useTranslation()
   const label = member.name ?? member.public_name ?? member.email ?? '—'
   return (
     <View style={styles.recipientRow}>
@@ -566,7 +567,8 @@ const RecipientRow = ({ member, statusLabel, disabled, onRemove }: RecipientRowP
         icon="delete"
         onPress={onRemove}
         disabled={disabled}
-        accessibilityLabel="remove recipient"
+        accessibilityLabel={t('a11y.removeRecipient')}
+        testID="remove-recipient"
       />
     </View>
   )

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
+import { useTranslation } from 'react-i18next'
 import { CozyIcon } from './icons/CozyIcon'
 import { useViewMode } from './useViewMode'
 
@@ -16,6 +17,7 @@ const ICON_SIZE = 24
 export function ViewSwitcher() {
   const { mode, setMode } = useViewMode()
   const { colors } = useTheme()
+  const { t } = useTranslation()
 
   const activeColor = colors.primary
   const inactiveColor = colors.onSurfaceVariant
@@ -24,7 +26,8 @@ export function ViewSwitcher() {
     <View style={styles.row}>
       <Pressable
         onPress={() => setMode('list')}
-        accessibilityLabel="list view"
+        accessibilityLabel={t('a11y.listView')}
+        testID="view-list"
         accessibilityRole="button"
         accessibilityState={{ selected: mode === 'list' }}
         style={styles.button}
@@ -38,7 +41,8 @@ export function ViewSwitcher() {
 
       <Pressable
         onPress={() => setMode('grid')}
-        accessibilityLabel="grid view"
+        accessibilityLabel={t('a11y.gridView')}
+        testID="view-grid"
         accessibilityRole="button"
         accessibilityState={{ selected: mode === 'grid' }}
         style={styles.button}

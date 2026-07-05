@@ -16,14 +16,14 @@ beforeEach(() => {
 describe('ViewSwitcher', () => {
   it('renders both list and grid icon buttons', () => {
     render(wrap(<ViewSwitcher />))
-    expect(screen.getByLabelText('list view')).toBeTruthy()
-    expect(screen.getByLabelText('grid view')).toBeTruthy()
+    expect(screen.getByTestId('view-list')).toBeTruthy()
+    expect(screen.getByTestId('view-grid')).toBeTruthy()
   })
 
   it('defaults to list mode: list icon is selected, grid is not', () => {
     render(wrap(<ViewSwitcher />))
-    const listBtn = screen.getByLabelText('list view')
-    const gridBtn = screen.getByLabelText('grid view')
+    const listBtn = screen.getByTestId('view-list')
+    const gridBtn = screen.getByTestId('view-grid')
     expect(listBtn).toBeSelected()
     expect(gridBtn).not.toBeSelected()
   })
@@ -32,7 +32,7 @@ describe('ViewSwitcher', () => {
     const { result } = renderHook(() => useViewMode())
     render(wrap(<ViewSwitcher />))
 
-    fireEvent.press(screen.getByLabelText('grid view'))
+    fireEvent.press(screen.getByTestId('view-grid'))
 
     expect(result.current.mode).toBe('grid')
   })
@@ -40,20 +40,20 @@ describe('ViewSwitcher', () => {
   it('after tapping grid, grid icon is selected and list is not', () => {
     render(wrap(<ViewSwitcher />))
 
-    fireEvent.press(screen.getByLabelText('grid view'))
+    fireEvent.press(screen.getByTestId('view-grid'))
 
-    expect(screen.getByLabelText('grid view')).toBeSelected()
-    expect(screen.getByLabelText('list view')).not.toBeSelected()
+    expect(screen.getByTestId('view-grid')).toBeSelected()
+    expect(screen.getByTestId('view-list')).not.toBeSelected()
   })
 
   it('tapping list icon after grid reverts mode to list', () => {
     const { result } = renderHook(() => useViewMode())
     render(wrap(<ViewSwitcher />))
 
-    fireEvent.press(screen.getByLabelText('grid view'))
+    fireEvent.press(screen.getByTestId('view-grid'))
     expect(result.current.mode).toBe('grid')
 
-    fireEvent.press(screen.getByLabelText('list view'))
+    fireEvent.press(screen.getByTestId('view-list'))
     expect(result.current.mode).toBe('list')
   })
 })

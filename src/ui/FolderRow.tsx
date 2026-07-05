@@ -130,7 +130,7 @@ export const FolderRow = ({
                 {...props}
                 icon={p => <CozyIcon name="dotsVertical" size={p?.size ?? 24} color={p?.color} />}
                 onPress={() => setMenuVisible(true)}
-                accessibilityLabel="folder actions"
+                accessibilityLabel={t('a11y.folderActions')}
                 testID="folder-actions"
               />
             }

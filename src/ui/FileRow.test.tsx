@@ -57,7 +57,7 @@ describe('FileRow', () => {
 
   it('renders a 3-dot menu trigger when onTogglePin is provided', () => {
     render(wrap(<FileRow file={file} onPress={jest.fn()} onTogglePin={jest.fn()} />))
-    expect(screen.getByLabelText('file actions')).toBeOnTheScreen()
+    expect(screen.getByTestId('file-actions')).toBeOnTheScreen()
   })
 
   it('exposes testIDs for Maestro selection', () => {
@@ -70,13 +70,13 @@ describe('FileRow', () => {
 
   it('renders a Move… menu item when onMove is provided', () => {
     render(wrap(<FileRow file={file} onPress={() => {}} onMove={jest.fn()} />))
-    expect(screen.getByLabelText('file actions')).toBeOnTheScreen()
+    expect(screen.getByTestId('file-actions')).toBeOnTheScreen()
   })
 
   it('calls onMove when the menu item is tapped', () => {
     const onMove = jest.fn()
     render(wrap(<FileRow file={file} onPress={() => {}} onMove={onMove} />))
-    fireEvent.press(screen.getByLabelText('file actions'))
+    fireEvent.press(screen.getByTestId('file-actions'))
     fireEvent.press(screen.getByText('drive.fileMeta.move'))
     expect(onMove).toHaveBeenCalledWith(file)
   })
@@ -85,21 +85,21 @@ describe('FileRow', () => {
     it('shows "Add to favorites" label when file is not a favorite', () => {
       ;(isFavorite as jest.Mock).mockReturnValue(false)
       render(wrap(<FileRow file={file} onPress={() => {}} onShare={jest.fn()} />))
-      fireEvent.press(screen.getByLabelText('file actions'))
+      fireEvent.press(screen.getByTestId('file-actions'))
       expect(screen.getByText('drive.fileMeta.favorite')).toBeOnTheScreen()
     })
 
     it('shows "Remove from favorites" label when file is a favorite', () => {
       ;(isFavorite as jest.Mock).mockReturnValue(true)
       render(wrap(<FileRow file={file} onPress={() => {}} onShare={jest.fn()} />))
-      fireEvent.press(screen.getByLabelText('file actions'))
+      fireEvent.press(screen.getByTestId('file-actions'))
       expect(screen.getByText('drive.fileMeta.unfavorite')).toBeOnTheScreen()
     })
 
     it('calls toggleFavorite when the favorite menu item is tapped', () => {
       ;(isFavorite as jest.Mock).mockReturnValue(false)
       render(wrap(<FileRow file={file} onPress={() => {}} onShare={jest.fn()} />))
-      fireEvent.press(screen.getByLabelText('file actions'))
+      fireEvent.press(screen.getByTestId('file-actions'))
       fireEvent.press(screen.getByText('drive.fileMeta.favorite'))
       expect(toggleFavorite).toHaveBeenCalledWith(expect.anything(), file, true)
     })
@@ -107,7 +107,7 @@ describe('FileRow', () => {
     it('calls toggleFavorite with next=false when file is already a favorite', () => {
       ;(isFavorite as jest.Mock).mockReturnValue(true)
       render(wrap(<FileRow file={file} onPress={() => {}} onShare={jest.fn()} />))
-      fireEvent.press(screen.getByLabelText('file actions'))
+      fireEvent.press(screen.getByTestId('file-actions'))
       fireEvent.press(screen.getByText('drive.fileMeta.unfavorite'))
       expect(toggleFavorite).toHaveBeenCalledWith(expect.anything(), file, false)
     })
@@ -116,13 +116,13 @@ describe('FileRow', () => {
   describe('download menu item', () => {
     it('shows "Télécharger" label in the menu', () => {
       render(wrap(<FileRow file={file} onPress={() => {}} onShare={jest.fn()} />))
-      fireEvent.press(screen.getByLabelText('file actions'))
+      fireEvent.press(screen.getByTestId('file-actions'))
       expect(screen.getByText('drive.fileMeta.download')).toBeOnTheScreen()
     })
 
     it('calls download when the download menu item is tapped', () => {
       render(wrap(<FileRow file={file} onPress={() => {}} onShare={jest.fn()} />))
-      fireEvent.press(screen.getByLabelText('file actions'))
+      fireEvent.press(screen.getByTestId('file-actions'))
       fireEvent.press(screen.getByText('drive.fileMeta.download'))
       expect(download).toHaveBeenCalledWith(expect.anything(), file)
     })

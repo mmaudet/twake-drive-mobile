@@ -127,7 +127,7 @@ export const FileRow = ({
                 {...props}
                 icon={p => <CozyIcon name="dotsVertical" size={p?.size ?? 24} color={p?.color} />}
                 onPress={() => setMenuVisible(true)}
-                accessibilityLabel="file actions"
+                accessibilityLabel={t('a11y.fileActions')}
                 testID="file-actions"
               />
             }
