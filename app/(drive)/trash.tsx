@@ -51,18 +51,24 @@ export default function TrashScreen() {
   const [emptyDialogVisible, setEmptyDialogVisible] = useState(false)
   const [emptying, setEmptying] = useState(false)
   const isOnline = useIsOnline()
+  // Optimistic removal: restoreEntry / emptyTrash hit the server only (they
+  // bypass local Pouch), so an immediate refetch races the async replication and
+  // re-shows the still-trashed doc. Hide locally-actioned ids at once; the
+  // focus/pull refetch reconciles the list once replication lands.
+  const [removedIds, setRemovedIds] = useState<Set<string>>(new Set())
 
   const folderDocs = (foldersQuery.data as FileQueryResult[] | null | undefined) ?? []
   const fileDocs = (filesQuery.data as FileQueryResult[] | null | undefined) ?? []
   // Folders first, then files — same display order as the regular folder
   // listing and as twake-drive-web's trash view.
-  const data = [...folderDocs, ...fileDocs]
+  const data = [...folderDocs, ...fileDocs].filter(d => !removedIds.has(d._id))
 
   const handleRestore = async (item: FileQueryResult): Promise<void> => {
     if (!requireOnline(isOnline, setSnackbar, t)) return
     if (!client) return
     try {
       await restoreEntry(client, item._id)
+      setRemovedIds(prev => new Set(prev).add(item._id))
       setSnackbar(t('drive.trashActions.restoreSuccess'))
       await onRefresh()
     } catch (e) {
@@ -77,6 +83,11 @@ export default function TrashScreen() {
     setEmptying(true)
     try {
       await emptyTrash(client)
+      setRemovedIds(prev => {
+        const next = new Set(prev)
+        ;[...folderDocs, ...fileDocs].forEach(d => next.add(d._id))
+        return next
+      })
       setSnackbar(t('drive.trashActions.emptySuccess'))
       setEmptyDialogVisible(false)
       await onRefresh()

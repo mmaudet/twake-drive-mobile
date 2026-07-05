@@ -16,6 +16,9 @@ export interface AppBarSelectionAction {
   destructive?: boolean
   /** Hide the action without removing it from the array (so layout is stable). */
   hidden?: boolean
+  /** Stable id for E2E (Maestro) targeting — the accessibilityLabel alone is
+   * ambiguous (shared with row menus / dialog buttons). */
+  testID?: string
 }
 
 interface AppBarSelection {
@@ -67,6 +70,7 @@ export const AppBar = ({ title, onBack, onLogout, showSearch, selection }: Props
               onPress={a.onPress}
               accessibilityLabel={a.accessibilityLabel}
               color={a.destructive ? '#c0392b' : undefined}
+              testID={a.testID}
             />
           ))}
       </Appbar.Header>
