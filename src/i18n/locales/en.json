@@ -12,7 +12,11 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "systemLanguage": "System (device language)"
+    "systemLanguage": "System (device language)",
+    "theme": "Theme",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark"
   },
   "auth": {
     "welcomeTitle": "Welcome to Twake Drive",
