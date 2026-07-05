@@ -19,12 +19,11 @@ actor TokenProvider {
       cached = s.token.accessToken
       return s.token.accessToken
     }
-    return try await forceRefresh()
+    return try await forceRefresh(previous: nil)
   }
 
-  func forceRefresh() async throws -> String {
+  func forceRefresh(previous: String?) async throws -> String {
     if let inflight = refreshTask { return try await inflight.value }   // single-flight (intra-process)
-    let previous = cached
     let task = Task { try await self.performRefresh(previous: previous) }
     refreshTask = task
     defer { refreshTask = nil }
@@ -45,19 +44,7 @@ actor TokenProvider {
   // nonisolated so it runs off the actor executor (safe: touches only the injected store/client).
   nonisolated private static func doRefresh(store: SessionStoring, client: HTTPClient, previous: String?) async throws -> String {
     guard var session = try store.load() else { throw CozyError.notAuthenticated }
-    // Another process refreshed while we waited on the lock (re-read short-circuit).
-    // `previous` must be a genuine prior belief (non-nil): on a freshly-instantiated actor
-    // (previous == nil, e.g. the very first forceRefresh() of this process's lifetime) there is
-    // nothing to have raced against yet, so any non-empty store token must NOT trigger this
-    // branch — only a real divergence from a token we ourselves already held should. Without
-    // the `previous != nil` requirement, `session.token.accessToken != previous` is trivially
-    // true for any non-empty stored token compared against nil, so forceRefresh() would return
-    // the (possibly already-expired) stored token forever without ever calling the network —
-    // silently breaking refresh in the most common real case (extension process spun up fresh,
-    // token already expired). See task-6-report.md for the full root cause (ported from Android
-    // SessionStore.refreshAccessToken(previous: String?), which receives an explicit
-    // caller-supplied "token I just tried" — a signal this actor's parameterless forceRefresh()
-    // cannot carry, so it is approximated here via the actor's own `cached`).
+    // Another process (e.g. the app) rotated the token past the one that just failed → use it, skip the network.
     if let previous, !session.token.accessToken.isEmpty, session.token.accessToken != previous {
       return session.token.accessToken
     }

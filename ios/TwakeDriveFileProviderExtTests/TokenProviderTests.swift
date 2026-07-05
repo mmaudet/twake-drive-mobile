@@ -31,7 +31,9 @@ final class TokenProviderTests: XCTestCase {
       return httpResponse(req.url!, 200, #"{"access_token":"at-new","refresh_token":"rt-new"}"#)
     }
     let tp = TokenProvider(store: store, client: http, lockURL: nil)
-    let token = try await tp.forceRefresh()
+    // previous = "at-old": the store's current access token — the server rejected it (401), so we
+    // refresh; nothing newer is stored, so this falls through to a real network refresh.
+    let token = try await tp.forceRefresh(previous: "at-old")
     XCTAssertEqual(token, "at-new")
     XCTAssertEqual(store.current?.token.accessToken, "at-new")     // write-back
     XCTAssertEqual(store.current?.token.refreshToken, "rt-new")    // rotated token persisted
@@ -45,7 +47,9 @@ final class TokenProviderTests: XCTestCase {
     }
     let tp = TokenProvider(store: store, client: http, lockURL: nil)
     let tokens = try await withThrowingTaskGroup(of: String.self) { group -> [String] in
-      for _ in 0..<5 { group.addTask { try await tp.forceRefresh() } }
+      // previous = "at-old": the store's default access token (see makeSession) — every concurrent
+      // caller observed the same failed 401 token, so they all race into the same single-flight refresh.
+      for _ in 0..<5 { group.addTask { try await tp.forceRefresh(previous: "at-old") } }
       var out: [String] = []
       for try await t in group { out.append(t) }
       return out
@@ -55,12 +59,15 @@ final class TokenProviderTests: XCTestCase {
   }
 
   func testForceRefreshShortCircuitsWhenAnotherProcessAlreadyRotated() async throws {
-    // Store already holds a token different from `previous` (rotated by the app) -> no network.
+    // Store already holds "at-fresh", written by another process (e.g. the app) that rotated the
+    // token. This process only ever knew "at-stale" — that's the token that just 401'd, so it's
+    // what gets passed as `previous`. Since the store's current token differs from `previous`,
+    // forceRefresh(previous:) short-circuits to the fresher stored token without touching the network.
     let store = FakeSessionStore(makeSession(access: "at-fresh"))
     let http = FakeHTTPClient { _ in XCTFail("should not hit network"); return httpResponse(URL(string: "https://x")!, 200, "{}") }
     let tp = TokenProvider(store: store, client: http, lockURL: nil)
-    // seed the actor's `previous` as empty, so the re-read finds a non-empty, different token
-    let token = try await tp.forceRefresh()
+    // previous = "at-stale": the stale token THIS process used and that 401'd.
+    let token = try await tp.forceRefresh(previous: "at-stale")
     XCTAssertEqual(token, "at-fresh")
     XCTAssertEqual(http.callCount, 0)
   }
