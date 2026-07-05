@@ -26,7 +26,10 @@ const rawKeys = (o: unknown) => new Set(entries(o).map(([k]) => k))
 
 const enLogical = logicalKeys(en)
 const pluralBases = new Set(
-  entries(en).map(([k]) => k).filter(k => k !== stripPlural(k)).map(stripPlural)
+  entries(en)
+    .map(([k]) => k)
+    .filter(k => k !== stripPlural(k))
+    .map(stripPlural)
 )
 
 describe('locale parity', () => {
@@ -45,7 +48,11 @@ describe('locale parity', () => {
         }
       })
       it('has no empty values', () => {
-        expect(entries(bundles[code]).filter(([, v]) => v.trim() === '').map(([k]) => k)).toEqual([])
+        expect(
+          entries(bundles[code])
+            .filter(([, v]) => v.trim() === '')
+            .map(([k]) => k)
+        ).toEqual([])
       })
     })
   }

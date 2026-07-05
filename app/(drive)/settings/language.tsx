@@ -19,7 +19,12 @@ export default function LanguageSettings() {
             testID="lang-system"
           />
           {SUPPORTED_LANGUAGES.map(l => (
-            <RadioButton.Item key={l.code} label={l.label} value={l.code} testID={`lang-${l.code}`} />
+            <RadioButton.Item
+              key={l.code}
+              label={l.label}
+              value={l.code}
+              testID={`lang-${l.code}`}
+            />
           ))}
         </RadioButton.Group>
       </ScrollView>
