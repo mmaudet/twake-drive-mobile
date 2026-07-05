@@ -98,6 +98,57 @@ struct CozyFilesApi {
   }
 }
 
+extension CozyFilesApi {
+  // MARK: write
+
+  func createDirectory(parentId: String, name: String) async throws -> CozyFile {
+    let data = try await send("/files/\(parentId)?Type=directory&Name=\(Self.encode(name))",
+                              method: .post)
+    return try parseData(data)
+  }
+
+  func createFile(parentId: String, name: String, mime: String) async throws -> CozyFile {
+    let data = try await send("/files/\(parentId)?Type=file&Name=\(Self.encode(name))",
+                              method: .post, contentType: mime, body: Data())
+    return try parseData(data)
+  }
+
+  func upload(id: String, from src: URL, mime: String) async throws -> CozyFile {
+    let bytes = try Data(contentsOf: src)
+    let data = try await send("/files/\(id)", method: .put, accept: true, contentType: mime, body: bytes)
+    return try parseData(data)
+  }
+
+  private func patch(_ id: String, attributes: [String: Any]) async throws -> CozyFile {
+    let payload: [String: Any] = ["data": ["type": "io.cozy.files", "id": id, "attributes": attributes]]
+    let body = try JSONSerialization.data(withJSONObject: payload)
+    let data = try await send("/files/\(id)", method: .patch, contentType: "application/vnd.api+json", body: body)
+    return try parseData(data)
+  }
+
+  func rename(id: String, name: String) async throws -> CozyFile {
+    try await patch(id, attributes: ["name": name])
+  }
+
+  /// Plain reparent PATCH. A 409 surfaces as CozyError.filenameCollision; ConflictResolver (Task 9) resolves it.
+  func move(id: String, toParent parentId: String) async throws -> CozyFile {
+    try await patch(id, attributes: ["dir_id": parentId])
+  }
+
+  func trash(id: String) async throws {
+    _ = try await send("/files/\(id)", method: .delete)
+  }
+
+  func statByPath(_ path: String) async throws -> CozyFile? {
+    do {
+      let data = try await send("/files/metadata?Path=\(Self.encode(path))", method: .get)
+      return try parseData(data)
+    } catch CozyError.noSuchItem {
+      return nil
+    }
+  }
+}
+
 extension CharacterSet {
   /// Query-value safe set (encodes `&`, `=`, `/`, `?`, space) for Name=/Path= params.
   static let urlQueryValueAllowed: CharacterSet = {

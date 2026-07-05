@@ -41,6 +41,7 @@
 		48E1DCC5CCFF4F0A834314BD /* CozyFilesApiReadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0DEF53EED3C47CAA43752F0 /* CozyFilesApiReadTests.swift */; };
 		A3E275F08CCE4327B06FA95E /* CozyFilesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C4845487E245F780E1F34C /* CozyFilesApi.swift */; };
 		E3C5870010564AECBF5A6F2C /* CozyFilesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C4845487E245F780E1F34C /* CozyFilesApi.swift */; };
+		97FC01E93A4A4599BD18F80E /* CozyFilesApiWriteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E853BEADAA1B47458F8E3B13 /* CozyFilesApiWriteTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,6 +125,7 @@
 		8E9B8F4154114F8EB323712F /* TokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenProvider.swift; sourceTree = "<group>"; };
 		E0DEF53EED3C47CAA43752F0 /* CozyFilesApiReadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApiReadTests.swift; sourceTree = "<group>"; };
 		45C4845487E245F780E1F34C /* CozyFilesApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApi.swift; sourceTree = "<group>"; };
+		E853BEADAA1B47458F8E3B13 /* CozyFilesApiWriteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApiWriteTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -230,6 +232,7 @@
 				2761C76F42914415BB545ABC /* TokenProviderTests.swift */,
 				1CB4E4A46EFD412493A65896 /* Fakes.swift */,
 				E0DEF53EED3C47CAA43752F0 /* CozyFilesApiReadTests.swift */,
+				E853BEADAA1B47458F8E3B13 /* CozyFilesApiWriteTests.swift */,
 			);
 			name = TwakeDriveFileProviderExtTests;
 			path = TwakeDriveFileProviderExtTests;
@@ -646,6 +649,7 @@
 				17DD79D02D5E4A008F4E10EB /* TokenProvider.swift in Sources */,
 				48E1DCC5CCFF4F0A834314BD /* CozyFilesApiReadTests.swift in Sources */,
 				E3C5870010564AECBF5A6F2C /* CozyFilesApi.swift in Sources */,
+				97FC01E93A4A4599BD18F80E /* CozyFilesApiWriteTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

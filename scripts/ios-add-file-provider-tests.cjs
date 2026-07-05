@@ -44,6 +44,7 @@ const TEST_ONLY_SOURCES = [
   'TokenProviderTests.swift',
   'Fakes.swift',
   'CozyFilesApiReadTests.swift',
+  'CozyFilesApiWriteTests.swift',
   // per-task: '<Name>Tests.swift'
 ];
 
