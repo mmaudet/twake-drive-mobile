@@ -12,12 +12,17 @@ jest.mock('react-native-safe-area-context', () => ({
 }))
 
 describe('LanguageScreen', () => {
+  beforeEach(() => jest.useFakeTimers())
+  afterEach(() => jest.useRealTimers())
+
   it('lists a System row plus one row per bundled locale, and switches on tap', () => {
     const changeSpy = jest.spyOn(i18n, 'changeLanguage')
     const { getByText } = render(<LanguageScreen />)
     getByText('Français')
     getByText('English')
     fireEvent.press(getByText('English'))
+    // changeLanguage is deferred to the next tick (after the back navigation).
+    jest.runOnlyPendingTimers()
     expect(changeSpy).toHaveBeenCalledWith('en')
   })
 })

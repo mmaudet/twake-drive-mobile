@@ -24,8 +24,18 @@ export default function LanguageScreen(): React.ReactElement {
   const choose = (pref: string): void => {
     setLocalePreference(pref)
     const device = getLocales()[0]?.languageCode ?? undefined
-    void i18n.changeLanguage(resolveLanguage(pref, device, available))
+    const resolved = resolveLanguage(pref, device, available)
+    // Navigate back FIRST, then switch the language on the next tick.
+    // i18n.changeLanguage() synchronously re-renders every useTranslation consumer
+    // (including the navigators' screen titles); doing that before/around
+    // router.back() corrupts the in-flight pop and ejects the user out to the OS
+    // launcher. Deferring the language change until after the back navigation
+    // avoids that race — the (already-active) settings screen simply re-renders in
+    // the new language.
     router.back()
+    setTimeout(() => {
+      void i18n.changeLanguage(resolved)
+    }, 0)
   }
 
   return (
