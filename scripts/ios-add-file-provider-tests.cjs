@@ -212,6 +212,9 @@ if (!project.pbxTargetByName(TEST_TARGET)) {
     bs.DEVELOPMENT_TEAM = DEVELOPMENT_TEAM;
     bs.TARGETED_DEVICE_FAMILY = '"1,2"';
     bs.GENERATE_INFOPLIST_FILE = 'YES';       // logic bundle: no hand-written Info.plist needed
+    delete bs.INFOPLIST_FILE;                 // addTarget('unit_test_bundle') defaults this to a
+                                               // file that doesn't exist on disk; drop it so the
+                                               // auto-generated Info.plist above is actually used
     bs.CODE_SIGNING_ALLOWED = 'NO';           // pure logic bundle runs unsigned on the Simulator
     bs.SWIFT_EMIT_LOC_STRINGS = 'NO';
     delete bs.TEST_HOST;                       // NO host app
@@ -225,6 +228,27 @@ if (!project.pbxTargetByName(TEST_TARGET)) {
   // silently key the attribute under the literal string "undefined" instead of this target's
   // real uuid, leaving stray cruft in the pbxproj and never actually tagging this target.
   project.addTargetAttribute('DevelopmentTeam', DEVELOPMENT_TEAM, target);
+}
+
+// ---- 1b. heal already-materialized projects (always runs, unlike block 1 above) ----
+// Block 1 only fires once (guarded by "target doesn't exist yet"), so a project.pbxproj
+// that was already committed with the dangling INFOPLIST_FILE (from a run predating the
+// `delete bs.INFOPLIST_FILE` fix above) would never get patched just by re-running this
+// script — the guard would skip right over it. Do the deletion unconditionally too, on
+// every run, so this script can self-heal a project committed with the defect.
+// NOTE: walk buildConfigurationList off the target object (uuid-keyed), not a PRODUCT_NAME
+// string match like block 1 uses — PRODUCT_NAME only carries the embedded-quote form
+// `"TwakeDriveFileProviderExtTests"` in the same process that just called addTarget();
+// once written to disk and re-parsed (i.e. every run against an already-materialized
+// project, this one included), it comes back bare (no embedded quotes), so a
+// quoted-string match here would silently match nothing.
+{
+  const testTarget = project.pbxTargetByName(TEST_TARGET);
+  const configList = objects.XCConfigurationList[testTarget.buildConfigurationList];
+  for (const entry of (configList.buildConfigurations || [])) {
+    const cfg = objects.XCBuildConfiguration[entry.value];
+    if (cfg && cfg.buildSettings) delete cfg.buildSettings.INFOPLIST_FILE;
+  }
 }
 
 // ---- 2. sync membership ----------------------------------------------------

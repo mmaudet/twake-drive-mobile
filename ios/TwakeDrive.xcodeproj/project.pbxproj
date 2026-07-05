@@ -746,7 +746,6 @@
 					"$(inherited)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "TwakeDriveFileProviderExtTests/TwakeDriveFileProviderExtTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -887,7 +886,6 @@
 				CODE_SIGNING_ALLOWED = NO;
 				DEVELOPMENT_TEAM = KUT463DS29;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "TwakeDriveFileProviderExtTests/TwakeDriveFileProviderExtTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
