@@ -50,7 +50,7 @@ jest.mock('cozy-client', () => {
   }
 })
 
-import { favoritesQuery, favoritesQueryAs } from './queries'
+import { favoritesQuery, favoritesQueryAs, recentQuery } from './queries'
 
 describe('favoritesQuery', () => {
   beforeEach(() => {
@@ -84,5 +84,31 @@ describe('favoritesQueryAs', () => {
   it('is a non-empty string constant', () => {
     expect(typeof favoritesQueryAs).toBe('string')
     expect(favoritesQueryAs.length).toBeGreaterThan(0)
+  })
+})
+
+describe('recentQuery', () => {
+  beforeEach(() => {
+    Object.keys(captured).forEach(k => delete (captured as Record<string, unknown>)[k])
+    recentQuery()
+  })
+
+  it('targets io.cozy.files', () => {
+    expect(captured.doctype).toBe('io.cozy.files')
+  })
+
+  // Perf fix: NO partialIndex, so the requested index name matches the
+  // replication warmup (`by_updated_at`) and pouch never rebuilds it over the
+  // whole replica on first open (the ~1-minute freeze).
+  it('does not use a partialIndex', () => {
+    expect(captured.partialIndexArg).toBeUndefined()
+  })
+
+  it('sorts by updated_at descending', () => {
+    expect(captured.sortByArg).toEqual([{ updated_at: 'desc' }])
+  })
+
+  it('over-fetches (limit 200) so the screen can filter client-side', () => {
+    expect(captured.limitByArg).toBe(200)
   })
 })

@@ -15,7 +15,7 @@ import { ConfirmDeleteDialog } from '@/ui/ConfirmDeleteDialog'
 import { RenameDialog } from '@/ui/RenameDialog'
 import { useAuth } from '@/auth/useAuth'
 import { getErrorMessageKey } from '@/utils/errorMessages'
-import { recentQuery, recentQueryAs, FileQueryResult } from '@/client/queries'
+import { recentQuery, recentQueryAs, FileQueryResult, HIDDEN_ROOT_DIR_IDS } from '@/client/queries'
 import { softDeleteEntry } from '@/files/deleteFile'
 import { renameEntry } from '@/files/renameEntry'
 import { openFileFromList } from '@/files/openFromList'
@@ -105,7 +105,12 @@ export default function RecentScreen() {
     />
   )
 
-  const data = (query.data as FileQueryResult[] | null | undefined) ?? []
+  // recentQuery is index-backed on updated_at only (no partial index — see its
+  // definition); apply the file / not-trashed / not-hidden-dir filter here, then
+  // cap at 50 for display.
+  const data = ((query.data as FileQueryResult[] | null | undefined) ?? [])
+    .filter(d => d.type === 'file' && !d.trashed && !HIDDEN_ROOT_DIR_IDS.includes(d.dir_id ?? ''))
+    .slice(0, 50)
 
   return (
     <ScreenContainer>
