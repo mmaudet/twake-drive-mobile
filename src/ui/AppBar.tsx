@@ -114,7 +114,7 @@ export const AppBar = ({ title, onBack, onLogout, showSearch, selection }: Props
           <Menu.Item
             onPress={() => {
               setMenuVisible(false)
-              router.push('/(drive)/settings')
+              router.push('/settings')
             }}
             title={t('settings.title')}
             leadingIcon={() => <CozyIcon name="cog" size={24} color={theme.colors.onSurface} />}

@@ -10,7 +10,8 @@
     "help": "Aide"
   },
   "settings": {
-    "title": "Paramètres"
+    "title": "Paramètres",
+    "language": "Langue"
   },
   "auth": {
     "welcomeTitle": "Bienvenue sur Twake Drive",

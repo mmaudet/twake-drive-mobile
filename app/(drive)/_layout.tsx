@@ -68,7 +68,6 @@ export default function DriveLayout() {
           }}
         />
         <Tabs.Screen name="shareddrives" options={{ href: null }} />
-        <Tabs.Screen name="settings" options={{ href: null }} />
         <Tabs.Screen name="search" options={{ href: null }} />
       </Tabs>
     </>

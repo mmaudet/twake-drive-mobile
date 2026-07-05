@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import { ScreenContainer } from '@/ui/ScreenContainer'
 
-export default function SettingsIndex() {
+export default function SettingsIndex(): React.ReactElement {
   const { t } = useTranslation()
   const router = useRouter()
   return (
@@ -16,7 +16,7 @@ export default function SettingsIndex() {
           title={t('drive.offline.storageTitle')}
           left={p => <List.Icon {...p} icon="cloud-download-outline" />}
           right={p => <List.Icon {...p} icon="chevron-right" />}
-          onPress={() => router.push('/(drive)/settings/offline-storage')}
+          onPress={() => router.push('/settings/offline-storage')}
         />
       </ScrollView>
     </ScreenContainer>
