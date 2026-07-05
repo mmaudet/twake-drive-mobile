@@ -1,20 +1,35 @@
 appId: com.linagora.twakedrive
 tags:
   - inapp
+env:
+  FOLDER_NAME: 'E2E-smoke'
 ---
-# Teste le PARCOURS de création (FAB → « Nouveau dossier » → dialog) SANS muter
-# le drive → idempotent, pas de faux positif. Cross-platform (testIDs).
-# On s'arrête au dialog ouvert (champ nom visible) ; le launchApp du flow suivant
-# réinitialise. Le bouton submit est masqué par le clavier sur Android donc non
-# asserté ici.
+# Real CREATE + DELETE round-trip, scoped STRICTLY to a throwaway folder.
 #
-# ⚠️ Round-trip create+delete RÉEL reporté : la CRÉATION marche (dossier créé),
-# mais la SUPPRESSION ne se déclenche PAS via tap synthétique (maestro/adb/point)
-# alors qu'elle marche À LA MAIN — l'onPress du bouton du dialog Paper n'est pas
-# activé. Cross-platform. cf. DEVICE-NOTES pour l'investigation.
+# ⚠️ SAFETY: the target is selected with a long-press on its EXACT name, NEVER a
+# `rightOf` menu selector. `rightOf` can resolve to the WRONG row and delete a
+# real folder (it did, during bring-up). Long-press on the exact ${FOLDER_NAME}
+# selects only that folder; bulk-delete then acts on the selection only. The
+# confirm button is targeted by testID (confirm-delete-submit), not the ambiguous
+# "Supprimer" text (shared with the app-bar action + row menu).
 - runFlow: ../../subflows/openDrive.yaml
+# create
 - tapOn:
     id: 'drive-fab'
 - tapOn: 'Nouveau dossier'
-- assertVisible:
-    id: 'create-folder-name-input'
+- inputText: '${FOLDER_NAME}'
+- pressKey: Enter
+- extendedWaitUntil:
+    visible: '${FOLDER_NAME}'
+    timeout: 12000
+# delete via selection mode (long-press selects ONLY this exact folder)
+- longPressOn:
+    text: '${FOLDER_NAME}'
+- tapOn:
+    id: 'selection-delete'
+- waitForAnimationToEnd
+- tapOn:
+    id: 'confirm-delete-submit'
+- extendedWaitUntil:
+    notVisible: '${FOLDER_NAME}'
+    timeout: 12000
