@@ -25,7 +25,6 @@ import { attachRevocationListener } from '@/auth/revocationListener'
 import { ErrorBoundary } from '@/ui/ErrorBoundary'
 import { PiPSessionProvider } from '@/preview/PiPSession'
 import { SharingProvider } from '@/sharing/SharingProvider'
-import { FlagshipAuthModal } from '@/auth/FlagshipAuthModal'
 import { useThemePreference } from '@/preferences/themePreference'
 import { AppProviderTree } from './_AppProviderTree'
 
@@ -58,9 +57,6 @@ const InnerLayout = () => {
           without this the default light icons were invisible on the white app
           background under edge-to-edge. Applies to Android and iOS. */}
       <StatusBar style="auto" />
-      {/* In-app WebView used by certifyFlagship to capture the cozy:// redirect
-          without triggering the Android "Open Twake Drive?" intent dialog. */}
-      <FlagshipAuthModal />
       <GestureHandlerRootView style={{ flex: 1 }}>
         <PaperProvider theme={withInterFonts(theme)}>
           <I18nextProvider i18n={i18n}>

@@ -49,7 +49,6 @@ export default function OnlyOfficeScreen() {
         const stackUri = client.getStackClient().uri as string
         const sessionCode = await fetchSessionCode()
         const url = buildDriveOnlyOfficeUrl(stackUri, fileId, sessionCode)
-        console.log('[OnlyOfficeScreen] editorUrl', url)
         if (!cancelled) setEditorUrl(url)
       } catch (e) {
         console.error('[OnlyOfficeScreen] failed', e)
@@ -82,7 +81,6 @@ export default function OnlyOfficeScreen() {
           javaScriptEnabled
           domStorageEnabled
           allowsInlineMediaPlayback
-          sharedCookiesEnabled
           source={{ uri: editorUrl }}
           style={styles.webview}
           onMessage={event => {

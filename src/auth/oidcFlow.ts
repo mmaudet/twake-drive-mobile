@@ -1,5 +1,5 @@
-import { openAuthorizeInWebView } from './FlagshipAuthModal'
-import { OidcCallback, UserCancelledError } from './types'
+import { openAuthorizeUrl } from './pkce'
+import { OidcCallback } from './types'
 
 export const parseCallbackUrl = (callbackUrl: string): OidcCallback => {
   const url = new URL(callbackUrl)
@@ -14,25 +14,6 @@ export const parseCallbackUrl = (callbackUrl: string): OidcCallback => {
 }
 
 export const startOidcFlow = async (loginUri: URL): Promise<OidcCallback> => {
-  // Run the OIDC login inside the in-app WebView (not the system browser) so the
-  // LemonLDAP session cookie lands in the shared WebView cookie jar. The editors
-  // (Docs, OnlyOffice, Notes) render in react-native-webview with that same shared
-  // jar, so a later Twake Docs open finds the SSO cookie already present instead of
-  // prompting a second LemonLDAP login. The manager's `redirect_after_oidc=cozy://`
-  // is captured by the modal's onShouldStartLoadWithRequest (no Android intent
-  // dialog). The flagship email-code certification that follows in registerSession
-  // still runs in the system browser (openAuthorizeUrl) — it is session_code-based
-  // and needs no LemonLDAP cookie.
-  console.log('[oidcFlow] opening login in WebView', loginUri.toString())
-  let redirectUrl: string
-  try {
-    redirectUrl = await openAuthorizeInWebView(loginUri.toString())
-  } catch (e) {
-    // The modal only rejects when the user closes it before a cozy:// redirect is
-    // captured → treat as a cancel so the login screen suppresses the error toast.
-    console.log('[oidcFlow] login webview closed', (e as Error).message)
-    throw new UserCancelledError()
-  }
-  console.log('[oidcFlow] login redirect captured')
+  const redirectUrl = await openAuthorizeUrl(loginUri.toString())
   return parseCallbackUrl(redirectUrl)
 }

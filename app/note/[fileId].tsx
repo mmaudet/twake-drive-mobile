@@ -33,7 +33,6 @@ export default function CozyNoteScreen() {
         const stackUri = client.getStackClient().uri as string
         const sessionCode = await fetchSessionCode()
         const url = buildCozyAppUrl(stackUri, 'notes', sessionCode, `/n/${fileId}`)
-        console.log('[CozyNoteScreen] editorUrl', url)
         if (!cancelled) setEditorUrl(url)
       } catch (e) {
         console.error('[CozyNoteScreen] failed', e)
@@ -66,7 +65,6 @@ export default function CozyNoteScreen() {
           javaScriptEnabled
           domStorageEnabled
           allowsInlineMediaPlayback
-          sharedCookiesEnabled
           source={{ uri: editorUrl }}
           style={styles.webview}
           onMessage={event => {

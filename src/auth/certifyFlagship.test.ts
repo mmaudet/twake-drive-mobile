@@ -17,12 +17,8 @@ jest.mock('@/auth/pkce', () => ({
     codeVerifier: 'test-verifier',
     codeChallenge: 'test-challenge'
   }),
-  normalizeRedirectUrl: jest.fn((url: string) => url)
-}))
-
-jest.mock('@/auth/FlagshipAuthModal', () => ({
-  openAuthorizeInWebView: jest.fn().mockResolvedValue('cozy://oauth?code=AUTHCODE&state=STATE'),
-  FlagshipAuthModal: () => null
+  normalizeRedirectUrl: jest.fn((url: string) => url),
+  openAuthorizeUrl: jest.fn().mockResolvedValue('cozy://oauth?code=AUTHCODE&state=STATE')
 }))
 
 const mockSetUri = jest.fn()

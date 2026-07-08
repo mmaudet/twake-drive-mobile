@@ -53,13 +53,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   const login = useCallback(async (email: string): Promise<void> => {
-    console.log('[useAuth] login start', email)
+    console.log('[useAuth] login start')
     const loginUri = await getLoginUri(email)
-    console.log('[useAuth] loginUri', loginUri?.toString() ?? 'null')
     if (!loginUri) throw new Error('DOMAIN_UNSUPPORTED')
 
     const callback = await startOidcFlow(loginUri)
-    console.log('[useAuth] oidc callback', JSON.stringify(callback))
+    console.log('[useAuth] oidc callback received for', callback.fqdn)
     // Pass existing oauthOptions so registerSession reuses the stored client_id
     // instead of calling register() (which would create a new client_id and
     // lose any flagship certification on the previous one).

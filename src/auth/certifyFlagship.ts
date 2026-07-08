@@ -1,14 +1,15 @@
 /**
  * Flagship certification via cozy's email-code flow.
  *
- * The flow (all WebView-driven — no native UI for code entry):
+ * The flow (all in the system in-app browser — no native UI for code entry):
  * 1. We call client.certifyFlagship() — attempts store attestation, silently
  *    fails (expected: no Play Integrity / AppAttest module available).
- * 2. We call client.authorize() which opens the authorize URL in a WebView via
- *    openAuthorizeUrl (expo-web-browser). Because the client is not yet certified
- *    flagship, the cozy-stack:
+ * 2. We call client.authorize() which opens the authorize URL in the system
+ *    in-app browser via openAuthorizeUrl (expo-web-browser: SFSafariViewController
+ *    / Chrome Custom Tab). Because the client is not yet certified flagship, the
+ *    cozy-stack:
  *      a. Emails a 6-digit TOTP code to the instance owner.
- *      b. Renders an HTML code-entry form inside the WebView (the `token` HMAC
+ *      b. Renders an HTML code-entry form in that browser (the `token` HMAC
  *         blob is embedded as a hidden field — we never touch it natively).
  *      c. On correct code entry: POSTs /auth/clients/:id/flagship (WebView form),
  *         sets flagship:true in CouchDB, redirects back to the authorize page.
@@ -30,8 +31,7 @@ import CozyClient from 'cozy-client'
 
 import { FLAGSHIP_SCOPES } from './scopes'
 import { Session, OAuthToken } from './types'
-import { generatePkce } from './pkce'
-import { openAuthorizeInWebView } from './FlagshipAuthModal'
+import { generatePkce, openAuthorizeUrl } from './pkce'
 
 export const certifyFlagship = async (session: Session): Promise<Session> => {
   const client = new CozyClient({
@@ -58,7 +58,7 @@ export const certifyFlagship = async (session: Session): Promise<Session> => {
 
   const pkceCodes = await generatePkce()
   const authorizeResult = (await client.authorize({
-    openURLCallback: openAuthorizeInWebView,
+    openURLCallback: openAuthorizeUrl,
     pkceCodes
   })) as { token: OAuthToken & { tokenType?: string } }
 
