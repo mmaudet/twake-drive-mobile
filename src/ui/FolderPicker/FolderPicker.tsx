@@ -112,7 +112,15 @@ export const FolderPicker = ({
             doubles up the spacing. */}
         <Appbar.Header statusBarHeight={0}>
           {isAtRoot ? null : (
-            <Appbar.BackAction onPress={onBack} accessibilityLabel={t('common.back')} />
+            <Appbar.Action
+              isLeading
+              animated={false}
+              icon={p => (
+                <CozyIcon name="previous" size={p?.size ?? 24} color={theme.colors.onSurface} />
+              )}
+              onPress={onBack}
+              accessibilityLabel={t('common.back')}
+            />
           )}
           <Appbar.Content title={title} />
           <Appbar.Action

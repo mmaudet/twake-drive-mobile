@@ -80,7 +80,18 @@ export const AppBar = ({ title, onBack, onLogout, showSearch, selection }: Props
 
   return (
     <Appbar.Header>
-      {onBack ? <Appbar.BackAction onPress={onBack} testID="appbar-back-button" /> : null}
+      {onBack ? (
+        <Appbar.Action
+          isLeading
+          animated={false}
+          icon={p => (
+            <CozyIcon name="previous" size={p?.size ?? 24} color={theme.colors.onSurface} />
+          )}
+          onPress={onBack}
+          accessibilityLabel={t('common.back')}
+          testID="appbar-back-button"
+        />
+      ) : null}
       <View style={styles.logo}>
         <TwakeLogo size={28} />
       </View>
