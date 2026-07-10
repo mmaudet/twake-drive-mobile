@@ -11,7 +11,7 @@ export const SESSION_KEY = 'twake-drive-session'
 // the device is locked (the default WHEN_UNLOCKED would return nothing). On
 // Android these options are ignored by expo-secure-store.
 const SHARED_KEYCHAIN: SecureStore.SecureStoreOptions = {
-  accessGroup: 'com.linagora.twakedrive.shared',
+  accessGroup: 'KUT463DS29.com.linagora.twakedrive.shared',
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK
 }
 

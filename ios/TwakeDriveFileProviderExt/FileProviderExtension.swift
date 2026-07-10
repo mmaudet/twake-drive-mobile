@@ -13,8 +13,10 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
 
   // MARK: core
 
+  private static let keychainAccessGroup = "KUT463DS29.com.linagora.twakedrive.shared"
+
   private func makeApi() throws -> CozyFilesApi {
-    let store = KeychainSessionStore(access: RealKeychainAccess())
+    let store = KeychainSessionStore(access: RealKeychainAccess(), accessGroup: Self.keychainAccessGroup)
     guard let session = try store.load() else { throw CozyError.notAuthenticated }
     let client = URLSessionHTTPClient()
     let lockURL = FileManager.default
