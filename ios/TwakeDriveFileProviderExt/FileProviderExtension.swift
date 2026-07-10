@@ -178,11 +178,15 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
     if containerItemIdentifier == .trashContainer {
       throw Self.nsError(CozyError.noSuchItem)
     }
-    let api = try makeApi()
-    if containerItemIdentifier == .workingSet {
-      return FileProviderEnumerator(api: api, containerDirId: nil)
+    do {
+      let api = try makeApi()
+      if containerItemIdentifier == .workingSet {
+        return FileProviderEnumerator(api: api, containerDirId: nil)
+      }
+      return FileProviderEnumerator(api: api, containerDirId: dirId(for: containerItemIdentifier))
+    } catch {
+      throw Self.nsError(error)
     }
-    return FileProviderEnumerator(api: api, containerDirId: dirId(for: containerItemIdentifier))
   }
 }
 
