@@ -2,6 +2,7 @@ import * as SecureStore from 'expo-secure-store'
 
 import { Session } from './types'
 import { mirrorSessionToNative, clearNativeSession } from '@/native/twakeAuthBridge'
+import { SHARED_KEYCHAIN_ACCESS_GROUP } from '@/config/appIdentifiers'
 
 export const SESSION_KEY = 'twake-drive-session'
 
@@ -11,7 +12,7 @@ export const SESSION_KEY = 'twake-drive-session'
 // the device is locked (the default WHEN_UNLOCKED would return nothing). On
 // Android these options are ignored by expo-secure-store.
 const SHARED_KEYCHAIN: SecureStore.SecureStoreOptions = {
-  accessGroup: 'KUT463DS29.com.linagora.twakedrive.shared',
+  accessGroup: SHARED_KEYCHAIN_ACCESS_GROUP,
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK
 }
 

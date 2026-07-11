@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useShareIntent } from 'expo-share-intent'
 import type { SharedItem } from '@/files/uploadSharedFile'
+import { SHARE_SCHEME } from '@/config/appIdentifiers'
 
 export interface IncomingShare {
   items: SharedItem[]
@@ -20,7 +21,7 @@ interface RawFile {
 // reserved for the OAuth deep-link). Force the dedicated "twakedrive" scheme so
 // the JS listener (twakedrive://dataUrl=) and the reset key ("twakedriveShareKey")
 // match exactly what the iOS Share Extension redirects to.
-const SHARE_INTENT_OPTIONS = { scheme: 'twakedrive' } as const
+const SHARE_INTENT_OPTIONS = { scheme: SHARE_SCHEME } as const
 
 const normalizeUri = (path: string): string =>
   path.startsWith('file://') || path.startsWith('content://') ? path : `file://${path}`
