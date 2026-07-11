@@ -336,6 +336,7 @@ export default function FilesScreen() {
   }
 
   const renderGridItem = ({ item }: { item: FileQueryResult }) => {
+    if (item._id.startsWith('__ph_')) return <View style={styles.gridPlaceholder} />
     const isSelected = selection.isSelected(item._id)
     return (
       <FileGridItem
@@ -374,6 +375,20 @@ export default function FilesScreen() {
       )
     return [...sorted(folderDocs), ...sorted(fileDocs)]
   }, [folderDocs, fileDocs, sort.dir])
+
+  // In grid mode, pad the last row to a full 3 columns with invisible
+  // placeholders so a lone item stays left-aligned (flex:1 would otherwise
+  // stretch it across the whole row).
+  const gridData = useMemo<FileQueryResult[]>(() => {
+    if (mode !== 'grid') return data
+    const remainder = data.length % 3
+    if (remainder === 0) return data
+    const pad = Array.from(
+      { length: 3 - remainder },
+      (_, i) => ({ _id: `__ph_${i}` }) as FileQueryResult
+    )
+    return [...data, ...pad]
+  }, [data, mode])
 
   const fabActions = [
     {
@@ -487,7 +502,7 @@ export default function FilesScreen() {
         ) : (
           <FlatList
             key={mode}
-            data={data}
+            data={mode === 'grid' ? gridData : data}
             keyExtractor={item => item._id}
             numColumns={mode === 'grid' ? 3 : undefined}
             renderItem={mode === 'grid' ? renderGridItem : renderItem}
@@ -562,6 +577,7 @@ export default function FilesScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { flex: 1 },
+  gridPlaceholder: { flex: 1, margin: 4 },
   toolbar: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
