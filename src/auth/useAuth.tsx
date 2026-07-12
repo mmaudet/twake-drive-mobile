@@ -6,7 +6,7 @@ import { mirrorSessionToNative } from '@/native/twakeAuthBridge'
 import { clearSession, getSession, saveSession } from './tokenStorage'
 import { startOidcFlow } from './oidcFlow'
 import { registerSession } from './registerSession'
-import { getLoginUri } from './autodiscovery'
+import { getLoginUri, getTwakeWorkplaceLoginUri } from './autodiscovery'
 import { certifyFlagship as certifyFlagshipModule } from './certifyFlagship'
 
 interface AuthState {
@@ -16,6 +16,7 @@ interface AuthState {
 
 interface AuthContextValue extends AuthState {
   login: (email: string) => Promise<void>
+  loginWithTwakeWorkplace: (mode: 'signin' | 'signup') => Promise<void>
   logout: () => Promise<void>
   certifyFlagship: () => Promise<CozyClient>
 }
@@ -52,11 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     void bootstrap()
   }, [])
 
-  const login = useCallback(async (email: string): Promise<void> => {
-    console.log('[useAuth] login start')
-    const loginUri = await getLoginUri(email)
-    if (!loginUri) throw new Error('DOMAIN_UNSUPPORTED')
-
+  const completeOidc = useCallback(async (loginUri: URL): Promise<void> => {
     const callback = await startOidcFlow(loginUri)
     console.log('[useAuth] oidc callback received for', callback.fqdn)
     // Pass existing oauthOptions so registerSession reuses the stored client_id
@@ -64,13 +61,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // lose any flagship certification on the previous one).
     const existing = (await getSession())?.oauthOptions
     const session = await registerSession(callback, existing)
-    console.log('[useAuth] session built for', session.uri)
     await saveSession(session)
-    console.log('[useAuth] session saved, transitioning to authenticated')
-
     const client = await createClient(session)
     setState({ status: 'authenticated', client })
   }, [])
+
+  const login = useCallback(
+    async (email: string): Promise<void> => {
+      const loginUri = await getLoginUri(email)
+      if (!loginUri) throw new Error('DOMAIN_UNSUPPORTED')
+      await completeOidc(loginUri)
+    },
+    [completeOidc]
+  )
+
+  const loginWithTwakeWorkplace = useCallback(
+    async (mode: 'signin' | 'signup'): Promise<void> => {
+      const loginUri = await getTwakeWorkplaceLoginUri(mode)
+      if (!loginUri) throw new Error('DOMAIN_UNSUPPORTED')
+      await completeOidc(loginUri)
+    },
+    [completeOidc]
+  )
 
   const logout = useCallback(async (): Promise<void> => {
     setState(prev => {
@@ -96,8 +108,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   const value = useMemo<AuthContextValue>(
-    () => ({ ...state, login, logout, certifyFlagship }),
-    [state, login, logout, certifyFlagship]
+    () => ({ ...state, login, loginWithTwakeWorkplace, logout, certifyFlagship }),
+    [state, login, loginWithTwakeWorkplace, logout, certifyFlagship]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
