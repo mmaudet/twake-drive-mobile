@@ -7,44 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		091507EBD5FF446C839A1FE1 /* ConflictResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8506E4A34DC647209AC14C6D /* ConflictResolver.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		17DD79D02D5E4A008F4E10EB /* TokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9B8F4154114F8EB323712F /* TokenProvider.swift */; };
+		1A4D7ADCCDF4409FB895AF57 /* KeychainSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F9A548E161441483ADF31A /* KeychainSessionStore.swift */; };
+		2134B4C02DE8465FA359252D /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824B10A2FE1848BCA4609F6A /* Session.swift */; };
 		2A7F90B4FBE3FD04808B87DC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1CBCD6ABF2834EBF23963C26 /* PrivacyInfo.xcprivacy */; };
+		3354FE071D8542E4A92CD122 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B7E70C56214155A5A23095 /* HTTPClient.swift */; };
+		342779C8DE3248AFA89A608F /* ItemMapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4BD51BF3E24F99A4275732 /* ItemMapperTests.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		48E1DCC5CCFF4F0A834314BD /* CozyFilesApiReadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0DEF53EED3C47CAA43752F0 /* CozyFilesApiReadTests.swift */; };
 		501A6B5C026D442E9E7BC4BC /* TwakeDriveShareExt.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 98B7465658BA4AAFB60CE43E /* TwakeDriveShareExt.appex */; };
 		5B2A78C6EE0C4C14BF599D0D /* FileProviderExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842CA699CB31465EBB77C5E5 /* FileProviderExtension.swift */; };
+		616E28E111C44848B7113A7D /* CozyFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEF6503DB364E439B553C79 /* CozyFileTests.swift */; };
 		6229EE32FAEB48A2B1E5A67F /* SmokeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF70364A958432A838C4A87 /* SmokeTest.swift */; };
+		674B23ABE6E64E429818D9BB /* ConflictResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492FC4836432405683389C2C /* ConflictResolverTests.swift */; };
 		709E49B0B9D174F0F10578B0 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6394AC0062737DC88CAB25 /* ExpoModulesProvider.swift */; };
+		78DC680BFDC749B5B20D0074 /* KeychainSessionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA39DC3A43242919CD80A54 /* KeychainSessionStoreTests.swift */; };
 		8327C204B5644633AE99AC4F /* TwakeDriveFileProviderExt.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = FCA38D6E763341A0BE4A1F91 /* TwakeDriveFileProviderExt.appex */; };
+		8D6B57D7481941EC9799FEA6 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B7E70C56214155A5A23095 /* HTTPClient.swift */; };
+		93C04082703449A5896923B9 /* Fakes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB4E4A46EFD412493A65896 /* Fakes.swift */; };
+		97FC01E93A4A4599BD18F80E /* CozyFilesApiWriteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E853BEADAA1B47458F8E3B13 /* CozyFilesApiWriteTests.swift */; };
+		A3E275F08CCE4327B06FA95E /* CozyFilesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C4845487E245F780E1F34C /* CozyFilesApi.swift */; };
+		A5875E424926424E91215743 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42876A95517A4AA18193F6BD /* MockURLProtocol.swift */; };
+		A59EDE1D90FE4CB79A04219F /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088AA070B914550BC2AB533 /* SessionTests.swift */; };
+		AD001E26D70A44B5A62732AA /* ItemMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4643DCA0AA95481784AD3902 /* ItemMapper.swift */; };
+		BA115FCDF458411F966CFBAB /* TokenProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2761C76F42914415BB545ABC /* TokenProviderTests.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		C330B9343B7D4474AB8CB174 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824B10A2FE1848BCA4609F6A /* Session.swift */; };
+		C5EF3192A5EE4B11BA98ACC3 /* TokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9B8F4154114F8EB323712F /* TokenProvider.swift */; };
+		C728C2AD68154318ADCCB03E /* CozyFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5D1D5E6C1B4D8EAF119CA8 /* CozyFile.swift */; };
+		CC71358F217048C5A6E7EFC4 /* KeychainSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F9A548E161441483ADF31A /* KeychainSessionStore.swift */; };
+		CCBC7C663E3D4AD38D5F2F86 /* ConflictResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8506E4A34DC647209AC14C6D /* ConflictResolver.swift */; };
 		D239315EC78F41EE476DF3E2 /* libPods-TwakeDrive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FECC114309FD433CB51D581B /* libPods-TwakeDrive.a */; };
+		D9667730EDA746E78E76BD72 /* CozyFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5D1D5E6C1B4D8EAF119CA8 /* CozyFile.swift */; };
+		E3C5870010564AECBF5A6F2C /* CozyFilesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C4845487E245F780E1F34C /* CozyFilesApi.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 		F1E1BF243138470285BA718F /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE3437028BA4902966362A6 /* ShareViewController.swift */; };
-		A59EDE1D90FE4CB79A04219F /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088AA070B914550BC2AB533 /* SessionTests.swift */; };
-		2134B4C02DE8465FA359252D /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824B10A2FE1848BCA4609F6A /* Session.swift */; };
-		C330B9343B7D4474AB8CB174 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824B10A2FE1848BCA4609F6A /* Session.swift */; };
-		78DC680BFDC749B5B20D0074 /* KeychainSessionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA39DC3A43242919CD80A54 /* KeychainSessionStoreTests.swift */; };
-		CC71358F217048C5A6E7EFC4 /* KeychainSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F9A548E161441483ADF31A /* KeychainSessionStore.swift */; };
-		1A4D7ADCCDF4409FB895AF57 /* KeychainSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F9A548E161441483ADF31A /* KeychainSessionStore.swift */; };
-		A5875E424926424E91215743 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42876A95517A4AA18193F6BD /* MockURLProtocol.swift */; };
-		616E28E111C44848B7113A7D /* CozyFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEF6503DB364E439B553C79 /* CozyFileTests.swift */; };
-		342779C8DE3248AFA89A608F /* ItemMapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4BD51BF3E24F99A4275732 /* ItemMapperTests.swift */; };
-		3354FE071D8542E4A92CD122 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B7E70C56214155A5A23095 /* HTTPClient.swift */; };
-		8D6B57D7481941EC9799FEA6 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B7E70C56214155A5A23095 /* HTTPClient.swift */; };
-		D9667730EDA746E78E76BD72 /* CozyFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5D1D5E6C1B4D8EAF119CA8 /* CozyFile.swift */; };
-		C728C2AD68154318ADCCB03E /* CozyFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5D1D5E6C1B4D8EAF119CA8 /* CozyFile.swift */; };
-		AD001E26D70A44B5A62732AA /* ItemMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4643DCA0AA95481784AD3902 /* ItemMapper.swift */; };
 		F98382C3F29B4FAEABBDE66D /* ItemMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4643DCA0AA95481784AD3902 /* ItemMapper.swift */; };
-		BA115FCDF458411F966CFBAB /* TokenProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2761C76F42914415BB545ABC /* TokenProviderTests.swift */; };
-		93C04082703449A5896923B9 /* Fakes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB4E4A46EFD412493A65896 /* Fakes.swift */; };
-		C5EF3192A5EE4B11BA98ACC3 /* TokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9B8F4154114F8EB323712F /* TokenProvider.swift */; };
-		17DD79D02D5E4A008F4E10EB /* TokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9B8F4154114F8EB323712F /* TokenProvider.swift */; };
-		48E1DCC5CCFF4F0A834314BD /* CozyFilesApiReadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0DEF53EED3C47CAA43752F0 /* CozyFilesApiReadTests.swift */; };
-		A3E275F08CCE4327B06FA95E /* CozyFilesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C4845487E245F780E1F34C /* CozyFilesApi.swift */; };
-		E3C5870010564AECBF5A6F2C /* CozyFilesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C4845487E245F780E1F34C /* CozyFilesApi.swift */; };
-		97FC01E93A4A4599BD18F80E /* CozyFilesApiWriteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E853BEADAA1B47458F8E3B13 /* CozyFilesApiWriteTests.swift */; };
-		674B23ABE6E64E429818D9BB /* ConflictResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492FC4836432405683389C2C /* ConflictResolverTests.swift */; };
-		CCBC7C663E3D4AD38D5F2F86 /* ConflictResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8506E4A34DC647209AC14C6D /* ConflictResolver.swift */; };
-		091507EBD5FF446C839A1FE1 /* ConflictResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8506E4A34DC647209AC14C6D /* ConflictResolver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,47 +90,47 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		047FACE0D3584A0A83EFA654 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
+		047FACE0D3584A0A83EFA654 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0F4BD51BF3E24F99A4275732 /* ItemMapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemMapperTests.swift; sourceTree = "<group>"; };
+		11B7E70C56214155A5A23095 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* TwakeDrive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwakeDrive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TwakeDrive/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TwakeDrive/Info.plist; sourceTree = "<group>"; };
-		1CBCD6ABF2834EBF23963C26 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = TwakeDrive/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1CB4E4A46EFD412493A65896 /* Fakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fakes.swift; sourceTree = "<group>"; };
+		1CBCD6ABF2834EBF23963C26 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = TwakeDrive/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		21CEE0633495A490998A1B2A /* Pods-TwakeDrive.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TwakeDrive.release.xcconfig"; path = "Target Support Files/Pods-TwakeDrive/Pods-TwakeDrive.release.xcconfig"; sourceTree = "<group>"; };
-		368346251698498F9341E1E6 /* TwakeDriveFileProviderExtTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = TwakeDriveFileProviderExtTests.xctest; path = TwakeDriveFileProviderExtTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2761C76F42914415BB545ABC /* TokenProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenProviderTests.swift; sourceTree = "<group>"; };
+		368346251698498F9341E1E6 /* TwakeDriveFileProviderExtTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TwakeDriveFileProviderExtTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		42876A95517A4AA18193F6BD /* MockURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLProtocol.swift; sourceTree = "<group>"; };
+		45C4845487E245F780E1F34C /* CozyFilesApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApi.swift; sourceTree = "<group>"; };
+		4643DCA0AA95481784AD3902 /* ItemMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemMapper.swift; sourceTree = "<group>"; };
+		492FC4836432405683389C2C /* ConflictResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictResolverTests.swift; sourceTree = "<group>"; };
+		6088AA070B914550BC2AB533 /* SessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
+		6DEF6503DB364E439B553C79 /* CozyFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFileTests.swift; sourceTree = "<group>"; };
 		7BE0007FF2C4921CE9FE4199 /* Pods-TwakeDrive.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TwakeDrive.debug.xcconfig"; path = "Target Support Files/Pods-TwakeDrive/Pods-TwakeDrive.debug.xcconfig"; sourceTree = "<group>"; };
-		842CA699CB31465EBB77C5E5 /* FileProviderExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = FileProviderExtension.swift; path = FileProviderExtension.swift; sourceTree = "<group>"; };
-		845E0D73487342379615CDAF /* TwakeDriveFileProviderExt.entitlements */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = unknown; name = TwakeDriveFileProviderExt.entitlements; path = TwakeDriveFileProviderExt.entitlements; sourceTree = "<group>"; };
-		92732EBD72374A14A08CB32F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
-		98B7465658BA4AAFB60CE43E /* TwakeDriveShareExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; name = TwakeDriveShareExt.appex; path = TwakeDriveShareExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		824B10A2FE1848BCA4609F6A /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		842CA699CB31465EBB77C5E5 /* FileProviderExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; path = FileProviderExtension.swift; sourceTree = "<group>"; };
+		845E0D73487342379615CDAF /* TwakeDriveFileProviderExt.entitlements */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = unknown; path = TwakeDriveFileProviderExt.entitlements; sourceTree = "<group>"; };
+		8506E4A34DC647209AC14C6D /* ConflictResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictResolver.swift; sourceTree = "<group>"; };
+		8E9B8F4154114F8EB323712F /* TokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenProvider.swift; sourceTree = "<group>"; };
+		92732EBD72374A14A08CB32F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		98B7465658BA4AAFB60CE43E /* TwakeDriveShareExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TwakeDriveShareExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		99F9A548E161441483ADF31A /* KeychainSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainSessionStore.swift; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = TwakeDrive/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		BFA39DC3A43242919CD80A54 /* KeychainSessionStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainSessionStoreTests.swift; sourceTree = "<group>"; };
 		CE6394AC0062737DC88CAB25 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-TwakeDrive/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		D8579A94632247BFAD1E12AC /* TwakeDriveShareExt.entitlements */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = unknown; name = TwakeDriveShareExt.entitlements; path = TwakeDriveShareExt.entitlements; sourceTree = "<group>"; };
+		D8579A94632247BFAD1E12AC /* TwakeDriveShareExt.entitlements */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = unknown; path = TwakeDriveShareExt.entitlements; sourceTree = "<group>"; };
+		E0DEF53EED3C47CAA43752F0 /* CozyFilesApiReadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApiReadTests.swift; sourceTree = "<group>"; };
+		E853BEADAA1B47458F8E3B13 /* CozyFilesApiWriteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApiWriteTests.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		EE5D1D5E6C1B4D8EAF119CA8 /* CozyFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFile.swift; sourceTree = "<group>"; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = TwakeDrive/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* TwakeDrive-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "TwakeDrive-Bridging-Header.h"; path = "TwakeDrive/TwakeDrive-Bridging-Header.h"; sourceTree = "<group>"; };
 		FAF70364A958432A838C4A87 /* SmokeTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTest.swift; sourceTree = "<group>"; };
-		FCA38D6E763341A0BE4A1F91 /* TwakeDriveFileProviderExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; name = TwakeDriveFileProviderExt.appex; path = TwakeDriveFileProviderExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		FDE3437028BA4902966362A6 /* ShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShareViewController.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		FCA38D6E763341A0BE4A1F91 /* TwakeDriveFileProviderExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TwakeDriveFileProviderExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDE3437028BA4902966362A6 /* ShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		FECC114309FD433CB51D581B /* libPods-TwakeDrive.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TwakeDrive.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6088AA070B914550BC2AB533 /* SessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
-		824B10A2FE1848BCA4609F6A /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
-		BFA39DC3A43242919CD80A54 /* KeychainSessionStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainSessionStoreTests.swift; sourceTree = "<group>"; };
-		99F9A548E161441483ADF31A /* KeychainSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainSessionStore.swift; sourceTree = "<group>"; };
-		42876A95517A4AA18193F6BD /* MockURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLProtocol.swift; sourceTree = "<group>"; };
-		6DEF6503DB364E439B553C79 /* CozyFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFileTests.swift; sourceTree = "<group>"; };
-		0F4BD51BF3E24F99A4275732 /* ItemMapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemMapperTests.swift; sourceTree = "<group>"; };
-		11B7E70C56214155A5A23095 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
-		EE5D1D5E6C1B4D8EAF119CA8 /* CozyFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFile.swift; sourceTree = "<group>"; };
-		4643DCA0AA95481784AD3902 /* ItemMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemMapper.swift; sourceTree = "<group>"; };
-		2761C76F42914415BB545ABC /* TokenProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenProviderTests.swift; sourceTree = "<group>"; };
-		1CB4E4A46EFD412493A65896 /* Fakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fakes.swift; sourceTree = "<group>"; };
-		8E9B8F4154114F8EB323712F /* TokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenProvider.swift; sourceTree = "<group>"; };
-		E0DEF53EED3C47CAA43752F0 /* CozyFilesApiReadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApiReadTests.swift; sourceTree = "<group>"; };
-		45C4845487E245F780E1F34C /* CozyFilesApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApi.swift; sourceTree = "<group>"; };
-		E853BEADAA1B47458F8E3B13 /* CozyFilesApiWriteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CozyFilesApiWriteTests.swift; sourceTree = "<group>"; };
-		492FC4836432405683389C2C /* ConflictResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictResolverTests.swift; sourceTree = "<group>"; };
-		8506E4A34DC647209AC14C6D /* ConflictResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictResolver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,7 +194,6 @@
 				7BE0007FF2C4921CE9FE4199 /* Pods-TwakeDrive.debug.xcconfig */,
 				21CEE0633495A490998A1B2A /* Pods-TwakeDrive.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -213,7 +212,6 @@
 				45C4845487E245F780E1F34C /* CozyFilesApi.swift */,
 				8506E4A34DC647209AC14C6D /* ConflictResolver.swift */,
 			);
-			name = TwakeDriveFileProviderExt;
 			path = TwakeDriveFileProviderExt;
 			sourceTree = "<group>";
 		};
@@ -241,7 +239,6 @@
 				E853BEADAA1B47458F8E3B13 /* CozyFilesApiWriteTests.swift */,
 				492FC4836432405683389C2C /* ConflictResolverTests.swift */,
 			);
-			name = TwakeDriveFileProviderExtTests;
 			path = TwakeDriveFileProviderExtTests;
 			sourceTree = "<group>";
 		};
@@ -297,7 +294,6 @@
 				92732EBD72374A14A08CB32F /* Info.plist */,
 				D8579A94632247BFAD1E12AC /* TwakeDriveShareExt.entitlements */,
 			);
-			name = TwakeDriveShareExt;
 			path = TwakeDriveShareExt;
 			sourceTree = "<group>";
 		};
@@ -395,9 +391,7 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = KUT463DS29;
 						LastSwiftMigration = 1250;
-						ProvisioningStyle = Automatic;
 					};
 					9A30F11EAB1B4A0EB8E489D3 = {
 						DevelopmentTeam = KUT463DS29;
@@ -538,6 +532,8 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage/SDWebImage.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-launcher/EXDevLauncher.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-menu/EXDevMenu.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/react-native-blob-util/ReactNativeBlobUtilPrivacyInfo.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
@@ -570,6 +566,8 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SDWebImage.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXDevLauncher.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXDevMenu.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ReactNativeBlobUtilPrivacyInfo.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -684,7 +682,8 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TwakeDriveFileProviderExt/TwakeDriveFileProviderExt.entitlements;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KUT463DS29;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -703,12 +702,11 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.linagora.twakedrive.FileProvider;
 				PRODUCT_NAME = TwakeDriveFileProviderExt;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive.FileProvider";
 			};
 			name = Debug;
 		};
@@ -717,6 +715,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TwakeDriveFileProviderExt/TwakeDriveFileProviderExt.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KUT463DS29;
@@ -732,12 +731,11 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.linagora.twakedrive.FileProvider;
 				PRODUCT_NAME = TwakeDriveFileProviderExt;
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive.FileProvider";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive.FileProvider";
 			};
 			name = Release;
 		};
@@ -748,8 +746,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TwakeDrive/TwakeDrive.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KUT463DS29;
 				ENABLE_BITCODE = NO;
@@ -772,7 +770,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.linagora.twakedrive;
 				PRODUCT_NAME = TwakeDrive;
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "TwakeDrive/TwakeDrive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -789,9 +787,11 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TwakeDrive/TwakeDrive.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KUT463DS29;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = KUT463DS29;
 				INFOPLIST_FILE = TwakeDrive/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -808,6 +808,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.linagora.twakedrive;
 				PRODUCT_NAME = TwakeDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.linagora.twakedrive";
 				SWIFT_OBJC_BRIDGING_HEADER = "TwakeDrive/TwakeDrive-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -986,8 +987,8 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TwakeDriveShareExt/TwakeDriveShareExt.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KUT463DS29;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1006,7 +1007,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.linagora.twakedrive.ShareExt;
 				PRODUCT_NAME = TwakeDriveShareExt;
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.linagora.twakedrive.ShareExt";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

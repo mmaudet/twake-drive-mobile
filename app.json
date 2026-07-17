@@ -35,6 +35,7 @@
       "package": "com.linagora.twakedrive"
     },
     "plugins": [
+      "expo-dev-client",
       "expo-router",
       "expo-secure-store",
       "expo-web-browser",
