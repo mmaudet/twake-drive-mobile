@@ -1,6 +1,11 @@
 import nock from 'nock'
 
-import { extractDomain, fetchTwakeConfiguration, getLoginUri } from './autodiscovery'
+import {
+  extractDomain,
+  fetchTwakeConfiguration,
+  getLoginUri,
+  getTwakeWorkplaceLoginUri
+} from './autodiscovery'
 
 describe('extractDomain', () => {
   it('returns the domain part of a valid email', () => {
@@ -85,5 +90,22 @@ describe('getLoginUri', () => {
     const result = await getLoginUri('user@example.com')
     expect(result?.searchParams.get('client_id')).toBe('foo')
     expect(result?.searchParams.get('redirect_after_oidc')).toBe('cozy://')
+  })
+})
+
+describe('getTwakeWorkplaceLoginUri', () => {
+  // The Twake Workplace consumer sign-up / sign-in host is sign-up.twake.app
+  // (hyphenated) — NOT signup.twake.app.
+  it('targets the sign-up.twake.app host with the cozy redirect (sign-in)', () => {
+    const uri = getTwakeWorkplaceLoginUri('signin')
+    expect(uri.host).toBe('sign-up.twake.app')
+    expect(uri.searchParams.get('redirect_after_oidc')).toBe('cozy://')
+    expect(uri.searchParams.get('signup')).toBeNull()
+  })
+
+  it('adds signup=true in sign-up mode (same host)', () => {
+    const uri = getTwakeWorkplaceLoginUri('signup')
+    expect(uri.host).toBe('sign-up.twake.app')
+    expect(uri.searchParams.get('signup')).toBe('true')
   })
 })

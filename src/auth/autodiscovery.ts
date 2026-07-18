@@ -30,7 +30,7 @@ const REDIRECT_SCHEME = 'cozy://'
 // Twake Workplace sign-up / sign-in (the consumer flow) goes straight to this
 // fixed URL — no .well-known/twake-configuration lookup (that's only for an
 // organization's own server, discovered from the email domain).
-export const TWAKE_WORKPLACE_LOGIN_URL = 'https://signup.twake.app'
+export const TWAKE_WORKPLACE_LOGIN_URL = 'https://sign-up.twake.app'
 
 const buildLoginUri = (flagshipUri: string, extra?: Record<string, string>): URL | null => {
   try {
