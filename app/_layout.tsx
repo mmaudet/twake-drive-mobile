@@ -23,6 +23,7 @@ import { darkTheme, lightTheme } from '@/ui/theme'
 import { withInterFonts } from '@/ui/fonts'
 import { attachRevocationListener } from '@/auth/revocationListener'
 import { ErrorBoundary } from '@/ui/ErrorBoundary'
+import { AuthTransitionOverlay } from '@/ui/AuthTransitionOverlay'
 import { PiPSessionProvider } from '@/preview/PiPSession'
 import { SharingProvider } from '@/sharing/SharingProvider'
 import { useThemePreference } from '@/preferences/themePreference'
@@ -33,7 +34,7 @@ const InnerLayout = () => {
   const { pref: themePref } = useThemePreference()
   const activeScheme = themePref === 'system' ? colorScheme : themePref
   const theme = activeScheme === 'dark' ? darkTheme : lightTheme
-  const { client, logout } = useAuth()
+  const { client, logout, authenticating } = useAuth()
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
@@ -116,6 +117,7 @@ const InnerLayout = () => {
                     />
                     <Stack.Screen name="search" options={{ animation: 'slide_from_bottom' }} />
                   </Stack>
+                  {authenticating && <AuthTransitionOverlay />}
                 </ErrorBoundary>
               </SharingProvider>
             </PiPSessionProvider>

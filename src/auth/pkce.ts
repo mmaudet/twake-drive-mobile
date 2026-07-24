@@ -34,6 +34,8 @@ export const normalizeRedirectUrl = (raw: string): string => {
 const CANCEL_GRACE_MS = 400
 const REDIRECT_RACE_GRACE_MS = 4000
 
+let abortActiveBrowserFlow: (() => void) | null = null
+
 // Open `url` in the system browser (an external Custom Tab — an RFC 8252
 // user-agent with no access to the page's cookies or credentials) and resolve
 // with the twakedrive:// redirect captured as an OS deep link.
@@ -47,12 +49,19 @@ const REDIRECT_RACE_GRACE_MS = 4000
 // deep-link listener catches the final twakedrive:// redirect at the OS level.
 const openViaSystemBrowser = (url: string): Promise<string> =>
   new Promise<string>((resolve, reject) => {
+    // A new attempt tears down any flow still in flight first, so its lingering
+    // deep-link listener, grace timer, or dismissBrowser() can't fire against
+    // this attempt's browser — closing it and hanging the retry.
+    abortActiveBrowserFlow?.()
+
     let settled = false
     let sub: ReturnType<typeof Linking.addEventListener> | undefined
     let timer: ReturnType<typeof setTimeout> | undefined
+    let abort: () => void
     const finish = (run: () => void): void => {
       if (settled) return
       settled = true
+      if (abortActiveBrowserFlow === abort) abortActiveBrowserFlow = null
       sub?.remove()
       if (timer) clearTimeout(timer)
       try {
@@ -62,6 +71,9 @@ const openViaSystemBrowser = (url: string): Promise<string> =>
       }
       run()
     }
+    abort = (): void => finish(() => reject(new UserCancelledError()))
+    abortActiveBrowserFlow = abort
+
     sub = Linking.addEventListener('url', ({ url: incoming }) => {
       if (incoming?.startsWith('twakedrive:')) {
         console.log('[auth] captured twakedrive:// redirect via deep link')

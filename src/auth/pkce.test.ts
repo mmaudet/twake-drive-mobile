@@ -38,7 +38,7 @@ describe('openLoginUrl (shared-jar Custom Tab)', () => {
 
   it('opens openBrowserAsync (SFVC jar), never an auth session', () => {
     wb.openBrowserAsync.mockReturnValue(new Promise(() => undefined))
-    void openLoginUrl('https://login.example.com/oauth')
+    openLoginUrl('https://login.example.com/oauth').catch(() => undefined)
     expect(wb.openBrowserAsync).toHaveBeenCalledWith('https://login.example.com/oauth', {
       showInRecents: true
     })
@@ -70,6 +70,20 @@ describe('openLoginUrl (shared-jar Custom Tab)', () => {
     jest.advanceTimersByTime(500)
     await assertion
     jest.useRealTimers()
+  })
+
+  it('aborts a previous in-flight flow when a new attempt starts', async () => {
+    // Flow 1 never settles on its own (browser stays open, no redirect): only
+    // starting a new attempt may resolve it — by aborting it.
+    wb.openBrowserAsync.mockReturnValue(new Promise(() => undefined))
+    const p1 = openLoginUrl('https://x/oauth1')
+    const flow1Aborted = expect(p1).rejects.toBeInstanceOf(UserCancelledError)
+
+    const p2 = openLoginUrl('https://x/oauth2')
+    await flow1Aborted
+
+    urlHandler({ url: 'twakedrive://?code=flow2' })
+    await expect(p2).resolves.toBe('twakedrive://?code=flow2')
   })
 
   it('keeps the long grace on a non-cancel close (dismiss refocus race)', async () => {

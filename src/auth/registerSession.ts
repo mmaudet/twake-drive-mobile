@@ -23,9 +23,15 @@ const buildOauthOptions = (): Omit<OAuthOptions, 'clientID' | 'clientSecret'> =>
   scopes: [...APP_SCOPES]
 })
 
+interface RegisterSessionHooks {
+  onAuthorizeBrowserOpen?: () => void
+  onAuthorizeRedirect?: () => void
+}
+
 export const registerSession = async (
   callback: OidcCallback,
-  existing?: OAuthOptions
+  existing?: OAuthOptions,
+  hooks?: RegisterSessionHooks
 ): Promise<Session> => {
   const uri = `https://${callback.fqdn}`
   console.log(
@@ -107,7 +113,12 @@ export const registerSession = async (
     const authorizeResult = (await client.authorize({
       sessionCode: oidcResponse.session_code,
       pkceCodes,
-      openURLCallback: openAuthorizeUrl
+      openURLCallback: async (url: string) => {
+        hooks?.onAuthorizeBrowserOpen?.()
+        const redirect = await openAuthorizeUrl(url)
+        hooks?.onAuthorizeRedirect?.()
+        return redirect
+      }
     })) as { token: OAuthToken & { tokenType?: string } }
     console.log(
       '[registerSession] authorize complete, tokenLen',

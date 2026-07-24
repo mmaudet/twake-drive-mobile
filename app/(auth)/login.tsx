@@ -82,6 +82,10 @@ export default function LoginScreen() {
           autoCapitalize="none"
           keyboardType="email-address"
           autoComplete="email"
+          returnKeyType="done"
+          onSubmitEditing={() => {
+            if (isValidEmail(email) && !loading) void onSubmit()
+          }}
           mode="outlined"
           style={styles.field}
         />

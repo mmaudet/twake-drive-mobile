@@ -44,6 +44,7 @@ const fakeCertifyFlagship = jest.fn()
 const makeAuthContext = () => ({
   status: 'authenticated' as const,
   client: fakeClient,
+  authenticating: false,
   login: jest.fn(),
   loginWithTwakeWorkplace: jest.fn(),
   logout: jest.fn(),

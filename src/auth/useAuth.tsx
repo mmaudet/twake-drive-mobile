@@ -16,6 +16,7 @@ interface AuthState {
 }
 
 interface AuthContextValue extends AuthState {
+  authenticating: boolean
   login: (email: string) => Promise<void>
   loginWithTwakeWorkplace: (mode: 'signin' | 'signup') => Promise<void>
   logout: () => Promise<void>
@@ -26,6 +27,7 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, setState] = useState<AuthState>({ status: 'loading', client: null })
+  const [authenticating, setAuthenticating] = useState(false)
 
   useEffect(() => {
     const bootstrap = async () => {
@@ -57,14 +59,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const completeOidc = useCallback(async (loginUri: URL): Promise<void> => {
     const callback = await startOidcFlow(loginUri)
     console.log('[useAuth] oidc callback received for', callback.fqdn)
-    // Pass existing oauthOptions so registerSession reuses the stored client_id
-    // instead of calling register() (which would create a new client_id and
-    // lose any flagship certification on the previous one).
-    const existing = (await getSession())?.oauthOptions
-    const session = await registerSession(callback, existing)
-    await saveSession(session)
-    const client = await createClient(session)
-    setState({ status: 'authenticated', client })
+    setAuthenticating(true)
+    try {
+      // Pass existing oauthOptions so registerSession reuses the stored client_id
+      // instead of calling register() (which would create a new client_id and
+      // lose any flagship certification on the previous one).
+      const existing = (await getSession())?.oauthOptions
+      const session = await registerSession(callback, existing, {
+        onAuthorizeBrowserOpen: () => setAuthenticating(false),
+        onAuthorizeRedirect: () => setAuthenticating(true)
+      })
+      await saveSession(session)
+      const client = await createClient(session)
+      setState({ status: 'authenticated', client })
+    } finally {
+      setAuthenticating(false)
+    }
   }, [])
 
   const login = useCallback(
@@ -110,8 +120,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   const value = useMemo<AuthContextValue>(
-    () => ({ ...state, login, loginWithTwakeWorkplace, logout, certifyFlagship }),
-    [state, login, loginWithTwakeWorkplace, logout, certifyFlagship]
+    () => ({ ...state, authenticating, login, loginWithTwakeWorkplace, logout, certifyFlagship }),
+    [state, authenticating, login, loginWithTwakeWorkplace, logout, certifyFlagship]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
