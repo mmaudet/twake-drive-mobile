@@ -21,6 +21,15 @@ interface Props {
 
 const SUPPORTED_PREVIEW_CLASSES = new Set(['image', 'pdf'])
 
+const LINK_TTL_MS = 9 * 60 * 1000
+const thumbnailLinkCache = new Map<string, { links: FileLike['links'] | null; at: number }>()
+
+interface StackFileClient {
+  collection: (doctype: string) => {
+    get: (id: string) => Promise<{ data?: { links?: FileLike['links'] } }>
+  }
+}
+
 const buildThumbnailUrl = (
   stackUri: string,
   links: FileLike['links'],
@@ -52,18 +61,27 @@ export const FileThumbnail = ({ file, size = 40 }: Props) => {
     file.class !== undefined &&
     SUPPORTED_PREVIEW_CLASSES.has(file.class)
 
-  // If we should show a thumbnail but the cached doc has no links, fetch them once.
   useEffect(() => {
     if (!showThumbnail || !client) return
     if (resolvedLinks?.tiny || resolvedLinks?.small) return
+    const cached = thumbnailLinkCache.get(file._id)
+    if (cached && Date.now() - cached.at < LINK_TTL_MS) {
+      if (cached.links) setResolvedLinks(cached.links)
+      else setErrored(true)
+      return
+    }
     let cancelled = false
     void (async () => {
       try {
-        const resp = (await client.collection('io.cozy.files').get(file._id)) as {
-          data?: { links?: FileLike['links'] }
-        }
-        if (!cancelled && resp?.data?.links) setResolvedLinks(resp.data.links)
+        const stack = client.getStackClient() as unknown as StackFileClient
+        const resp = await stack.collection('io.cozy.files').get(file._id)
+        const links = resp?.data?.links ?? null
+        thumbnailLinkCache.set(file._id, { links, at: Date.now() })
+        if (cancelled) return
+        if (links?.tiny || links?.small) setResolvedLinks(links)
+        else setErrored(true)
       } catch {
+        thumbnailLinkCache.set(file._id, { links: null, at: Date.now() })
         if (!cancelled) setErrored(true)
       }
     })()
