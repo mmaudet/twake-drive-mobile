@@ -89,9 +89,8 @@ export const fetchSharedDrives = async (client: CozyClient): Promise<SharedDrive
     Query('io.cozy.files')
       .where({ dir_id: SHARED_DRIVES_DIR_ID })
       .indexFields(['dir_id', 'type', 'name'])
-      .sortBy([{ dir_id: 'asc' }, { type: 'asc' }, { name: 'asc' }])
-      .limitBy(100) as never,
-    { as: `io.cozy.files/dir/${SHARED_DRIVES_DIR_ID}/drives` } as never
+      .sortBy([{ dir_id: 'asc' }, { type: 'asc' }, { name: 'asc' }]) as never,
+    { as: `io.cozy.files/shared-drives` } as never
   )) as { data?: RawShortcut[] }
   const shortcuts = result.data ?? []
   return shortcuts
