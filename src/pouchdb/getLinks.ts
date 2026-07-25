@@ -32,7 +32,7 @@ export const offlineDoctypes = ['io.cozy.files', 'io.cozy.contacts'] as const
 // A trivial gate to keep the local-vs-stack decision triggered. The
 // definition shape doesn't matter for the gating itself.
 const buildGateWarmupQuery = (doctype: string): unknown => ({
-  definition: () => Q(doctype).limitBy(1),
+  definition: () => Q(doctype).getById(`__warmup_gate_${doctype}__`),
   options: { as: `${doctype}/warmup` }
 })
 
