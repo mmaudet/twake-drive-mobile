@@ -5,13 +5,13 @@ env:
   PROVIDER_LABEL: 'Twake Drive'
   EXPECT_FOLDER: 'LINAGORA'
 ---
-# Cross-app File Provider (SAF / DocumentsProvider). DEVICE-VALIDÉ sur Pixel via
-# « Files by Google » : Accueil → « Autre espace de stockage » → « Twake Drive »
-# → le contenu RÉEL du drive s'affiche (dossiers listés cross-app).
+# Cross-app File Provider (SAF / DocumentsProvider). DEVICE-VALIDATED on Pixel via
+# « Files by Google »: Home → « Autre espace de stockage » → « Twake Drive »
+# → the REAL drive content is shown (folders listed cross-app).
 #
-# Pré-requis : app Twake CONNECTÉE — la racine du provider n'apparaît QUE si une
-# session est active (queryRoots renvoie 0 ligne sans creds, cf. natif).
-# ${EXPECT_FOLDER} doit être un dossier réel de la racine du drive.
+# Prerequisite: Twake app LOGGED IN — the provider root appears ONLY if a
+# session is active (queryRoots returns 0 rows without creds, cf. native).
+# ${EXPECT_FOLDER} must be a real folder at the drive root.
 - launchApp
 - tapOn: 'Autre espace de stockage'
 - tapOn: '${PROVIDER_LABEL}'

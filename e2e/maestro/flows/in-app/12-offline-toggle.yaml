@@ -5,9 +5,9 @@ env:
   FOLDER: 'E2Eoff'
   MENU_SUFFIX: ''
 ---
-# Hors-ligne : pin → le menu montre "Retirer du hors-ligne" (pinné) → unpin → le menu
-# remontre "Garder hors-ligne". (La PURGE locale des blobs au unpin est couverte par
-# le test unitaire OfflineFilesStore — l'E2E ne peut pas inspecter le filesystem.)
+# Offline: pin → the menu shows "Retirer du hors-ligne" (pinned) → unpin → the menu
+# shows "Garder hors-ligne" again. (The local PURGE of the blobs on unpin is covered by
+# the OfflineFilesStore unit test — the E2E cannot inspect the filesystem.)
 - runFlow: ../../subflows/openDrive.yaml
 - tapOn: { id: 'drive-fab' }
 - tapOn: 'Nouveau dossier'

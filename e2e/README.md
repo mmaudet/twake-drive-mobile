@@ -1,59 +1,59 @@
-# Suite E2E Maestro — Twake Drive
+# Maestro E2E suite — Twake Drive
 
-Smoke tests E2E **cross-platform** (Android device + simulateur iOS), lancés localement
-avant un build signé. Pilotés par [Maestro](https://maestro.mobile.dev/).
+**Cross-platform** E2E smoke tests (Android device + iOS simulator), run locally
+before a signed build. Driven by [Maestro](https://maestro.mobile.dev/).
 
 ## Installation
 ```bash
-curl -Ls "https://get.maestro.mobile.dev" | bash   # installe ~/.maestro/bin/maestro
+curl -Ls "https://get.maestro.mobile.dev" | bash   # installs ~/.maestro/bin/maestro
 export PATH="$PATH:$HOME/.maestro/bin"
 ```
-Android : `adb` + un device connecté. iOS : Xcode + un simulateur booté.
+Android: `adb` + a connected device. iOS: Xcode + a booted simulator.
 
-## Setup (une fois)
-Les flows assument une **session pré-authentifiée** (le login OIDC + code email n'est pas
-automatisé — cf. `flows/00-login.yaml`, exclu des runs).
-1. Lancer l'app et se connecter à la main (device / simulateur).
-2. iOS simulateur : installer un build **avec le fix keychain fallback** (sinon SecureStore
-   échoue sur build non-signé — voir DEVICE-NOTES). Build : `gh workflow run build-ios.yml`.
-3. Le compte doit avoir ≥1 dossier à la racine (les flows 01/03 en dépendent).
+## Setup (once)
+The flows assume a **pre-authenticated session** (the OIDC login + email code is not
+automated — see `flows/00-login.yaml`, excluded from runs).
+1. Launch the app and log in by hand (device / simulator).
+2. iOS simulator: install a build **with the keychain fallback fix** (otherwise SecureStore
+   fails on an unsigned build — see DEVICE-NOTES). Build: `gh workflow run build-ios.yml`.
+3. The account must have ≥1 folder at the root (flows 01/03 depend on it).
 
-## Lancer
+## Run
 ```bash
-npm run e2e:ios       # simulateur iOS (flows in-app)
-npm run e2e:android   # device Android (in-app + cross-app File Provider/Share)
-# un flow ciblé (toujours cibler la plateforme si 2 devices connectés) :
+npm run e2e:ios       # iOS simulator (in-app flows)
+npm run e2e:android   # Android device (in-app + cross-app File Provider/Share)
+# a targeted flow (always target the platform if 2 devices are connected):
 maestro --platform ios test e2e/maestro/flows/in-app/02-tabs.yaml
 ```
 
-## Sélection du device (piège)
-Avec **deux devices connectés**, `maestro test` en auto-sélectionne un (souvent l'Android).
-**Toujours** `--platform ios|android` ou `--udid <UDID>`. Les run-scripts le font.
+## Device selection (gotcha)
+With **two devices connected**, `maestro test` auto-selects one (often the Android one).
+**Always** `--platform ios|android` or `--udid <UDID>`. The run-scripts do this.
 
-## Sélecteurs cross-platform
-Les labels/accessibilité diffèrent iOS↔Android. Règles (détail dans `DEVICE-NOTES.md`) :
-- Onglets / dossiers : regex texte `{ text: 'Récents.*' }`, `{ text: 'nom.*' }`.
-- Boutons / champs : **testIDs** (`appbar-search-button`, `drive-fab`, `search-input`…).
-- Retour : `{ id: 'appbar-back-button' }` (pas de `pressKey: Back` — iOS n'a pas de retour matériel).
+## Cross-platform selectors
+Labels/accessibility differ iOS↔Android. Rules (details in `DEVICE-NOTES.md`):
+- Tabs / folders: text regex `{ text: 'Récents.*' }`, `{ text: 'name.*' }`.
+- Buttons / fields: **testIDs** (`appbar-search-button`, `drive-fab`, `search-input`…).
+- Back: `{ id: 'appbar-back-button' }` (no `pressKey: Back` — iOS has no hardware back).
 
 ## Structure
 ```
 e2e/
   maestro/
-    config.yaml           # exclut le login des runs
+    config.yaml           # excludes login from runs
     subflows/             # assertLoggedIn, openDrive, cleanup
     flows/
-      00-login.yaml       # tag login (semi-manuel, exclu)
-      00-welcome.yaml     # tag preauth (app boot + login form)
-      in-app/             # tags inapp (iOS + Android) : 01-07
-      android/            # tags android : 10 File Provider, 11 Share
+      00-login.yaml       # login tag (semi-manual, excluded)
+      00-welcome.yaml     # preauth tag (app boot + login form)
+      in-app/             # inapp tags (iOS + Android): 01-07
+      android/            # android tags: 10 File Provider, 11 Share
   scripts/                # run-android.sh, run-ios.sh
   fixtures/               # sample.jpg (share)
-  DEVICE-NOTES.md         # resultats device + recette + quirks
+  DEVICE-NOTES.md         # device results + recipe + quirks
 ```
 
-## Statut & périmètre
-Voir `DEVICE-NOTES.md`. En bref : 01-04 + 00-welcome **verts cross-platform** ; 10 File
-Provider **vert Android** ; 05/06 (preview/éditeur) et 07 (offline-pin iOS) + 11 (Share auto)
-= à finaliser (fixtures / sélecteurs). Le fix keychain fallback débloque l'**auth iOS sur
-simulateur sans device réel**.
+## Status & scope
+See `DEVICE-NOTES.md`. In short: 01-04 + 00-welcome **green cross-platform**; 10 File
+Provider **green on Android**; 05/06 (preview/editor) and 07 (offline-pin iOS) + 11 (Share auto)
+= to be finalized (fixtures / selectors). The keychain fallback fix unblocks **iOS auth on
+the simulator without a real device**.

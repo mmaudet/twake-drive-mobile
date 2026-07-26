@@ -1,68 +1,68 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# Installe l'outillage pour piloter l'app automatiquement sur le simulateur iOS
-# (Maestro). Utile pour les runs E2E ET pour l'itération perf sans reload/nav
-# manuel. Idempotent : ce qui est déjà présent est laissé tel quel.
+# Installs the tooling to drive the app automatically on the iOS simulator
+# (Maestro). Useful for E2E runs AND for perf iteration without manual reload/nav.
+# Idempotent: whatever is already present is left as-is.
 #
-# Après ce script :
-#   npm run ios                       # build + install + lance sur le simulateur
-#   ./e2e/scripts/maestro.sh test ... # pilote l'app (le wrapper injecte le JDK 17)
+# After this script:
+#   npm run ios                       # build + install + launch on the simulator
+#   ./e2e/scripts/maestro.sh test ... # drives the app (the wrapper injects JDK 17)
 #
-# Voir e2e/maestro/README.md pour le workflow complet.
+# See e2e/maestro/README.md for the full workflow.
 
 info()  { printf '\033[36m›\033[0m %s\n' "$*"; }
 ok()    { printf '\033[32m✓\033[0m %s\n' "$*"; }
 warn()  { printf '\033[33m!\033[0m %s\n' "$*"; }
 die()   { printf '\033[31m✗\033[0m %s\n' "$*" >&2; exit 1; }
 
-[ "$(uname)" = "Darwin" ] || die "macOS requis (simulateur iOS)."
+[ "$(uname)" = "Darwin" ] || die "macOS required (iOS simulator)."
 
-# --- Xcode / simulateurs ---------------------------------------------------
-command -v xcrun >/dev/null 2>&1 || die "Xcode command line tools manquants : xcode-select --install"
-xcrun simctl help >/dev/null 2>&1 || die "simctl indisponible : installe Xcode depuis l'App Store."
-ok "Xcode / simulateurs disponibles"
+# --- Xcode / simulators ----------------------------------------------------
+command -v xcrun >/dev/null 2>&1 || die "Xcode command line tools missing: xcode-select --install"
+xcrun simctl help >/dev/null 2>&1 || die "simctl unavailable: install Xcode from the App Store."
+ok "Xcode / simulators available"
 
 # --- Homebrew --------------------------------------------------------------
-command -v brew >/dev/null 2>&1 || die "Homebrew requis : https://brew.sh"
+command -v brew >/dev/null 2>&1 || die "Homebrew required: https://brew.sh"
 
-# --- JDK 17 (Maestro l'exige ; le Java système est souvent en 11) ----------
+# --- JDK 17 (Maestro requires it; the system Java is often 11) --------------
 JDK17_HOME="$(/usr/libexec/java_home -v 17 2>/dev/null || true)"
 if [ -z "$JDK17_HOME" ] && [ -x /opt/homebrew/opt/openjdk@17/bin/java ]; then
   JDK17_HOME=/opt/homebrew/opt/openjdk@17
 fi
 if [ -z "$JDK17_HOME" ]; then
-  info "Installation d'OpenJDK 17 (Homebrew)…"
+  info "Installing OpenJDK 17 (Homebrew)…"
   brew install openjdk@17
   JDK17_HOME=/opt/homebrew/opt/openjdk@17
 fi
-ok "JDK 17 : $JDK17_HOME"
+ok "JDK 17: $JDK17_HOME"
 
 # --- Maestro ---------------------------------------------------------------
 if [ -x "$HOME/.maestro/bin/maestro" ]; then
-  ok "Maestro déjà installé ($HOME/.maestro/bin)"
+  ok "Maestro already installed ($HOME/.maestro/bin)"
 else
-  info "Installation de Maestro…"
+  info "Installing Maestro…"
   curl -Ls "https://get.maestro.mobile.dev" | bash
-  [ -x "$HOME/.maestro/bin/maestro" ] || die "Installation Maestro échouée."
-  ok "Maestro installé"
+  [ -x "$HOME/.maestro/bin/maestro" ] || die "Maestro installation failed."
+  ok "Maestro installed"
 fi
 
-# --- Vérification ----------------------------------------------------------
+# --- Verification ----------------------------------------------------------
 if JAVA_HOME="$JDK17_HOME" PATH="$JDK17_HOME/bin:$HOME/.maestro/bin:$PATH" \
      MAESTRO_CLI_NO_ANALYTICS=1 maestro --version >/dev/null 2>&1; then
   VER="$(JAVA_HOME="$JDK17_HOME" PATH="$JDK17_HOME/bin:$HOME/.maestro/bin:$PATH" \
          MAESTRO_CLI_NO_ANALYTICS=1 maestro --version 2>/dev/null | tail -1)"
-  ok "Maestro opérationnel (JDK 17) — version ${VER:-?}"
+  ok "Maestro operational (JDK 17) — version ${VER:-?}"
 else
-  die "Maestro ne démarre pas avec le JDK 17. Vérifie $JDK17_HOME."
+  die "Maestro does not start with JDK 17. Check $JDK17_HOME."
 fi
 
 cat <<EOF
 
-$(ok "Outillage prêt.")
-Lance les flows via le wrapper (il injecte le JDK 17) :
+$(ok "Tooling ready.")
+Run the flows through the wrapper (it injects JDK 17):
     ./e2e/scripts/maestro.sh test e2e/maestro/flows
-Pour Maestro global dans ton shell, ajoute à ton profil :
+For a global Maestro in your shell, add to your profile:
     export JAVA_HOME="$JDK17_HOME"
     export PATH="\$JAVA_HOME/bin:\$HOME/.maestro/bin:\$PATH"
 EOF

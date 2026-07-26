@@ -5,10 +5,10 @@ env:
   FOLDER: 'E2Efav'
   MENU_SUFFIX: ''
 ---
-# Favori : ajout → présent dans Favoris → retrait → ABSENT de Favoris (valide le fix
-# refetch + retrait optimiste). Throwaway sans tiret (l'inputText iOS mange le '-').
-# waitForAnimationToEnd après chaque ouverture de menu (l'animation iOS sinon rate le
-# tap de l'item). MENU_SUFFIX = -container-outer-layer sur iOS (via run-ios.sh).
+# Favorite: add → present in Favoris → remove → ABSENT from Favoris (validates the
+# refetch + optimistic removal fix). Throwaway without a hyphen (iOS inputText eats the '-').
+# waitForAnimationToEnd after each menu opening (otherwise the iOS animation misses the
+# item tap). MENU_SUFFIX = -container-outer-layer on iOS (via run-ios.sh).
 - runFlow: ../../subflows/openDrive.yaml
 - tapOn: { id: 'drive-fab' }
 - tapOn: 'Nouveau dossier'

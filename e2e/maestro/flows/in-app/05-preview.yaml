@@ -4,11 +4,11 @@ tags:
 env:
   PREVIEW_FILE: 'sample.jpg'
 ---
-# ⚠️ NON validé sur le build actuel. Nécessite :
-#   (a) une fixture image ${PREVIEW_FILE} accessible (la racine du compte de test
-#       n'avait que des dossiers → déposer une image ou pointer un fichier connu) ;
-#   (b) un BUILD FRAIS avec le testID `preview-image` : l'écran preview est
-#       "chromeless" (image/vidéo/pdf) → aucun ancrage texte sur le build actuel.
+# ⚠️ NOT validated on the current build. Requires:
+#   (a) an accessible image fixture ${PREVIEW_FILE} (the test account root
+#       only had folders → drop in an image or point to a known file);
+#   (b) a FRESH BUILD with the testID `preview-image`: the preview screen is
+#       "chromeless" (image/video/pdf) → no text anchor on the current build.
 - runFlow: ../../subflows/openDrive.yaml
 - tapOn: '${PREVIEW_FILE}'
 - extendedWaitUntil:

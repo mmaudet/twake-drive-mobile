@@ -4,13 +4,13 @@ tags:
 env:
   EDITOR_FILE: 'sample.docx'
 ---
-# Les éditeurs FONCTIONNENT sur le build actuel (constaté : l'app était sur un
-# éditeur Docs au démarrage). ⚠️ Mais l'ancrage "éditeur chargé" nécessite un
-# BUILD FRAIS avec le testID `onlyoffice-webview` : l'EditorHeader a un titre
-# VIDE et le contenu est une WebView distante (DOM hors de portée de Maestro).
-# Nécessite aussi une fixture ${EDITOR_FILE} (fichier Office) accessible.
-# Smoke shallow : on vérifie que la WebView éditeur se monte (URL session_code
-# résolue) — dépend du backend + certification flagship.
+# The editors WORK on the current build (observed: the app was on a Docs editor
+# at startup). ⚠️ But the "editor loaded" anchor requires a FRESH BUILD with the
+# testID `onlyoffice-webview`: the EditorHeader has an EMPTY title and the
+# content is a remote WebView (DOM out of Maestro's reach). Also requires an
+# accessible ${EDITOR_FILE} fixture (Office file). Shallow smoke: we check that
+# the editor WebView mounts (session_code URL resolved) — depends on the backend
+# + flagship certification.
 - runFlow: ../../subflows/openDrive.yaml
 - tapOn: '${EDITOR_FILE}'
 - extendedWaitUntil:

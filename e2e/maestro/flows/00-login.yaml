@@ -4,20 +4,19 @@ tags:
 env:
   COZY_EMAIL: 'moi@example.com'
 ---
-# Semi-manuel. Tag `login` → EXCLU des runs auto. Sert à créer la session
-# pré-auth. Sélecteurs welcome/login confirmés depuis la source (FR).
+# Semi-manual. Tag `login` → EXCLUDED from auto runs. Used to create the
+# pre-auth session. Welcome/login selectors confirmed from the source (FR).
 #
-# Le flow pilote : welcome → « Se connecter » → saisie email → « Continuer »,
-# puis marque une PAUSE pendant la connexion OIDC (mot de passe + code email)
-# que tu réalises à la main dans le navigateur/webview, et attend l'arrivée
-# sur le drive.
+# The flow drives: welcome → « Se connecter » → email entry → « Continuer »,
+# then marks a PAUSE during the OIDC login (password + email code) that you
+# perform by hand in the browser/webview, and waits for arrival on the drive.
 - launchApp
-- assertVisible: 'Bienvenue sur Twake Drive'   # écran welcome (déconnecté)
+- assertVisible: 'Bienvenue sur Twake Drive'   # welcome screen (logged out)
 - tapOn: 'Se connecter'
-- tapOn: 'Adresse email'                         # focus le champ email
+- tapOn: 'Adresse email'                         # focus the email field
 - inputText: '${COZY_EMAIL}'
 - tapOn: 'Continuer'
-# --- PAUSE : connexion OIDC manuelle (mot de passe + code email) ---
+# --- PAUSE: manual OIDC login (password + email code) ---
 - extendedWaitUntil:
     visible: 'Mon Drive'
     timeout: 300000

@@ -4,8 +4,8 @@ tags:
 env:
   SEARCH_QUERY: 'Rapport'
 ---
-# Recherche joignable + saisie (testIDs cross-platform). Assertion sur résultat
-# serveur volontairement omise (paginé + .includes() → non déterministe).
+# Search reachable + input (cross-platform testIDs). Assertion on server result
+# intentionally omitted (paginated + .includes() → non-deterministic).
 - runFlow: ../../subflows/openDrive.yaml
 - tapOn:
     id: 'appbar-search-button'

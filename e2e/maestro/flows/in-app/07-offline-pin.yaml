@@ -4,22 +4,22 @@ tags:
 env:
   PIN_TARGET: 'Notes'
 ---
-# Sélecteurs : le bouton d'actions du dossier est ciblé par testID
-# (id: 'folder-actions', indépendant de la langue) ; "Garder hors-ligne" /
-# "Retirer du hors-ligne" restent des labels FR VALIDÉS sur device. Assertion
-# par changement d'état du menu (text-based), donc device-ready SANS build
-# frais (n'utilise pas le testID pinned-badge).
+# Selectors: the folder actions button is targeted by testID
+# (id: 'folder-actions', language-independent); "Garder hors-ligne" /
+# "Retirer du hors-ligne" remain FR labels VALIDATED on device. Assertion
+# by menu state change (text-based), so device-ready WITHOUT a fresh build
+# (does not use the pinned-badge testID).
 #
-# ⚠️ Épingler DÉCLENCHE UN TÉLÉCHARGEMENT du contenu : pointer PIN_TARGET sur un
-# PETIT dossier (ou un fichier). Le flow épingle puis désépingle aussitôt.
+# ⚠️ Pinning TRIGGERS A DOWNLOAD of the content: point PIN_TARGET at a
+# SMALL folder (or a file). The flow pins then immediately unpins.
 - runFlow: ../../subflows/openDrive.yaml
-# Épingler
+# Pin
 - tapOn:
     id: 'folder-actions'
     rightOf:
       text: '${PIN_TARGET}'
 - tapOn: 'Garder hors-ligne'
-# L'état a basculé : le menu propose désormais "Retirer du hors-ligne"
+# The state has toggled: the menu now offers "Retirer du hors-ligne"
 - tapOn:
     id: 'folder-actions'
     rightOf:
@@ -27,5 +27,5 @@ env:
 - extendedWaitUntil:
     visible: 'Retirer du hors-ligne'
     timeout: 10000
-# Restaurer (désépingler)
+# Restore (unpin)
 - tapOn: 'Retirer du hors-ligne'

@@ -2,15 +2,15 @@ appId: com.linagora.twakedrive
 env:
   FOLDER_NAME: 'E2E-smoke'
 ---
-# Supprime un dossier de test résiduel s'il existe (no-op sinon).
-# État device (bring-up) : l'ouverture du menu + le tap "Supprimer" (menu) sont
-# VALIDÉS ; le dialog de confirmation "Supprimer le dossier ?" s'ouvre bien.
-# ⚠️ Le TAP DE CONFIRMATION reste À FIABILISER : lors du bring-up les taps se
-# déclenchaient (COMPLETED) mais la suppression n'était pas committée (dossier
-# ni retiré de Mon Drive, ni présent en Corbeille). Pistes à explorer sur device :
-#   - bouton Paper Dialog (taper le conteneur cliquable, pas le noeud texte) ;
-#   - voie alternative : long-press → mode sélection → action Supprimer du bandeau ;
-#   - lag de réplication PouchDB (le delete serveur peut ne pas rafraîchir la liste).
+# Deletes a leftover test folder if it exists (no-op otherwise).
+# Device state (bring-up): opening the menu + the "Supprimer" tap (menu) are
+# VALIDATED; the "Supprimer le dossier ?" confirmation dialog opens fine.
+# ⚠️ The CONFIRMATION TAP still needs to be MADE RELIABLE: during bring-up the taps
+# fired (COMPLETED) but the deletion was not committed (folder neither removed from
+# Mon Drive, nor present in Corbeille). Leads to explore on device:
+#   - Paper Dialog button (tap the clickable container, not the text node);
+#   - alternative path: long-press → selection mode → Supprimer action from the banner;
+#   - PouchDB replication lag (the server delete may not refresh the list).
 - runFlow:
     when:
       visible: '${FOLDER_NAME}'

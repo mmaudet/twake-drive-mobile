@@ -1,113 +1,113 @@
-# Notes de bring-up E2E (devices réels)
+# E2E bring-up notes (real devices)
 
-Validé sur **Pixel 10 Pro Fold** (Android, adb) + **iPhone 17 Pro / iOS 26** (simulateur).
+Validated on **Pixel 10 Pro Fold** (Android, adb) + **iPhone 17 Pro / iOS 26** (simulator).
 
-## ⚠️ Sélection du device (piège majeur)
-Avec **deux devices connectés**, `maestro test` en auto-sélectionne un (souvent l'Android) !
-Toujours cibler explicitement : `maestro --platform ios test …` / `--platform android` /
-`--udid <UDID>`. Les run-scripts le font désormais.
+## ⚠️ Device selection (major gotcha)
+With **two devices connected**, `maestro test` auto-selects one (often the Android one)!
+Always target explicitly: `maestro --platform ios test …` / `--platform android` /
+`--udid <UDID>`. The run-scripts now do this.
 
-## Recette de sélecteurs CROSS-PLATFORM (marche iOS ET Android)
-Les labels/accessibilité diffèrent entre plateformes → règles :
-- **Onglets** : `{ text: 'Récents.*' }` (iOS = « Récents, tab, 3 of 7 » ; Android = « Récents »).
-- **Dossiers/fichiers** : `{ text: 'nom.*' }` (iOS = « nom, <libellé actions
-  localisé> », ex. « nom, Actions du dossier » en FR — le regex n'ancre que sur
-  le nom). Libellé désormais localisé : JAMAIS comme sélecteur — le bouton
-  d'actions du dossier se cible par testID (`{ id: 'folder-actions' }`).
-- **Boutons** : **testIDs** (`appbar-search-button`, `appbar-back-button`, `drive-fab`,
-  `search-input`, `create-folder-name-input`…) → `accessibilityIdentifier` sur iOS,
-  `resource-id` sur Android. Cohérents.
-- **Retour** : `{ id: 'appbar-back-button' }` (iOS n'a PAS de retour matériel → pas de `pressKey: Back`).
-- **Labels FR statiques** (Nouveau dossier, Annuler…) : identiques sur les 2 → texte direct OK.
-- **Assertions « on est dans le drive »** : `{ text: 'Mon Drive.*' }` (le titre exact « Mon Drive »
-  n'existe que sur l'onglet Mon Drive ; le regex tolère le suffixe onglet iOS).
+## CROSS-PLATFORM selector recipe (works on iOS AND Android)
+Labels/accessibility differ between platforms → rules:
+- **Tabs**: `{ text: 'Récents.*' }` (iOS = « Récents, tab, 3 of 7 »; Android = « Récents »).
+- **Folders/files**: `{ text: 'name.*' }` (iOS = « name, <localized actions
+  label> », e.g. « name, Actions du dossier » in FR — the regex only anchors on
+  the name). The label is now localized: NEVER use it as a selector — the folder
+  actions button is targeted by testID (`{ id: 'folder-actions' }`).
+- **Buttons**: **testIDs** (`appbar-search-button`, `appbar-back-button`, `drive-fab`,
+  `search-input`, `create-folder-name-input`…) → `accessibilityIdentifier` on iOS,
+  `resource-id` on Android. Consistent.
+- **Back**: `{ id: 'appbar-back-button' }` (iOS has NO hardware back → no `pressKey: Back`).
+- **Static FR labels** (Nouveau dossier, Annuler…): identical on both → direct text OK.
+- **"We are in the drive" assertions**: `{ text: 'Mon Drive.*' }` (the exact title « Mon Drive »
+  only exists on the Mon Drive tab; the regex tolerates the iOS tab suffix).
 
-## Statut par flow (cross-platform)
+## Status per flow (cross-platform)
 | Flow | iOS | Android | Note |
 |------|-----|---------|------|
-| 00-welcome (pré-auth) | ✅ | ✅ | boot → welcome → login form |
-| 01 launch-browse | ✅ | ✅ | dossier regex + back testID |
-| 02 tabs | ✅ | ✅ | onglets regex |
-| 03 search | ✅ | ✅ | testIDs ; résultats serveur non assertés (paginé) |
-| 04 folder-crud | ✅ | ✅ | **non-mutant** (FAB → dialog → champ) — idempotent |
+| 00-welcome (pre-auth) | ✅ | ✅ | boot → welcome → login form |
+| 01 launch-browse | ✅ | ✅ | folder regex + back testID |
+| 02 tabs | ✅ | ✅ | tabs regex |
+| 03 search | ✅ | ✅ | testIDs; server results not asserted (paginated) |
+| 04 folder-crud | ✅ | ✅ | **non-mutating** (FAB → dialog → field) — idempotent |
 | 10 fileprovider | — | ✅ | Android cross-app (Files by Google → « Twake Drive ») |
-| 07 offline-pin | 🔵 | 🟡 | Android labels validés ; iOS = folder-actions combiné (testID à cibler) |
-| 05 preview / 06 editor | 🔵 | 🔵 | testIDs présents ; besoin d'un fichier fixture (image/pdf, office/note) |
-| 11 share-to-drive | — | 🟢 | receiver enregistré (intent filters SEND) ; auto à finaliser |
-| 00-login | 🔵 | 🔵 | semi-manuel (code email), exclu des runs |
+| 07 offline-pin | 🔵 | 🟡 | Android labels validated; iOS = combined folder-actions (testID to target) |
+| 05 preview / 06 editor | 🔵 | 🔵 | testIDs present; needs a fixture file (image/pdf, office/note) |
+| 11 share-to-drive | — | 🟢 | receiver registered (SEND intent filters); auto to be finalized |
+| 00-login | 🔵 | 🔵 | semi-manual (email code), excluded from runs |
 
-## Le VERROU iOS levé : SecureStore sur simulateur
-`tokenStorage` réclame un **shared keychain access group** (pour les extensions). Sur un
-build simu **ad-hoc/non-signé**, cet entitlement n'est pas accordé → SecureStore jette
-« A required entitlement isn't present » → **login impossible**. Fix (`fix(auth)`, TDD) :
-**fallback vers le keychain par défaut** quand le groupe partagé échoue → login + session
-persistent sur le simulateur, **sans device réel**. Sur build device signé, le groupe
-partagé marche et le fallback ne tourne jamais.
+## The iOS BLOCKER lifted: SecureStore on the simulator
+`tokenStorage` demands a **shared keychain access group** (for the extensions). On an
+**ad-hoc/unsigned** simulator build, this entitlement is not granted → SecureStore throws
+« A required entitlement isn't present » → **login impossible**. Fix (`fix(auth)`, TDD):
+**fallback to the default keychain** when the shared group fails → login + persistent
+session on the simulator, **without a real device**. On a signed device build, the shared
+group works and the fallback never runs.
 
-## Quirks / limitations connues
-- **Suppression de dossier** : la CRÉATION marche ; la **SUPPRESSION ne se déclenche PAS via
-  tap synthétique** (maestro XCUITest/UIAutomator, adb input, point) alors qu'elle marche
-  **à la main** — le dialog est correct (« 1 éléments »), le bon bouton (`id=button`) est tapé
-  (COMPLETED) mais l'`onPress` n'agit pas, **cross-platform**. → flow 04 rendu **non-mutant**
-  (pas de faux positif). Le round-trip create+delete réel attend l'investigation de ce point.
-- **Foldable (Pixel Fold)** : 2 displays → `maestro hierarchy` / `screencap -p` (stdout) peuvent
-  cibler le mauvais écran ; `maestro test` réinit le driver, `uiautomator dump` direct + pull marchent.
-- **Recherche** : résultats serveur non déterministes (paginé + `.includes()` sur gros drive) — pas un bug.
-- **Maestro iOS** : `launchApp` peut échouer une assertion immédiate par timing (rendu) → `extendedWaitUntil`.
+## Known quirks / limitations
+- **Folder deletion**: CREATE works; **DELETE does NOT trigger via a synthetic tap**
+  (maestro XCUITest/UIAutomator, adb input, point) whereas it works **by hand** — the
+  dialog is correct (« 1 éléments »), the right button (`id=button`) is tapped
+  (COMPLETED) but the `onPress` does not act, **cross-platform**. → flow 04 made **non-mutating**
+  (no false positive). The real create+delete round-trip awaits investigation of this point.
+- **Foldable (Pixel Fold)**: 2 displays → `maestro hierarchy` / `screencap -p` (stdout) may
+  target the wrong screen; `maestro test` resets the driver, `uiautomator dump` direct + pull work.
+- **Search**: server results non-deterministic (paginated + `.includes()` on a large drive) — not a bug.
+- **Maestro iOS**: `launchApp` may fail an immediate assertion due to timing (rendering) → `extendedWaitUntil`.
 
-## Exécution
-`export PATH="$PATH:$HOME/.maestro/bin"` puis :
-- `npm run e2e:ios` / `npm run e2e:android` (ciblent la bonne plateforme).
-- Un flow ciblé : `maestro --platform ios test e2e/maestro/flows/in-app/02-tabs.yaml`.
+## Execution
+`export PATH="$PATH:$HOME/.maestro/bin"` then:
+- `npm run e2e:ios` / `npm run e2e:android` (target the right platform).
+- A targeted flow: `maestro --platform ios test e2e/maestro/flows/in-app/02-tabs.yaml`.
 
-## Passe bug-fix + partage (2026-07-05)
-Bugs trouvés via l'E2E + corrigés (device-validés sauf mention) :
-- **Badge offline absent en grid** (`FileGridItem` ne rendait pas `PinnedBadge`) — validé.
-- **Favoris listait TOUT** (le `where` nested `cozyMetadata.favorite` échoue "ouvert" en pouch local) → tri favoris-d'abord + filtre client `isFavorite` — validé.
-- **Récents ~1 min** (`recentQuery` avec `partialIndex` → nom d'index ≠ warmup `by_updated_at` → reconstruction pleine collection) → drop du partialIndex + filtre client — validé (~2s à chaud).
-- **Récents dates futures / doublons** → exclusion des `updated_at` futurs + dédup `_id`.
-- **Suppression via automatisation** : le code était bon ; le bouton confirmer n'avait pas de testID + label « Supprimer » ambigu → **testID `confirm-delete-submit`**. ⚠️ **La suppression MARCHE** — mes "échecs" venaient d'un sélecteur `rightOf` qui ciblait le **mauvais dossier** (2 vrais dossiers supprimés puis restaurés en bring-up).
-- **Refresh liste après delete/restore** : `confirmDelete`/`confirmBulkDelete` ne refetch pas (fix : refetch) ; restore/empty = server-only → retrait optimiste (`removedIds`).
+## Bug-fix + share pass (2026-07-05)
+Bugs found via the E2E + fixed (device-validated unless noted):
+- **Offline badge missing in grid** (`FileGridItem` did not render `PinnedBadge`) — validated.
+- **Favorites listed EVERYTHING** (the nested `where` `cozyMetadata.favorite` fails "open" in local pouch) → favorites-first sort + client-side `isFavorite` filter — validated.
+- **Recents ~1 min** (`recentQuery` with a `partialIndex` → index name ≠ `by_updated_at` warmup → full collection rebuild) → drop the partialIndex + client-side filter — validated (~2s warm).
+- **Recents future dates / duplicates** → exclude future `updated_at` + dedup `_id`.
+- **Deletion via automation**: the code was fine; the confirm button had no testID + an ambiguous « Supprimer » label → **testID `confirm-delete-submit`**. ⚠️ **Deletion WORKS** — my "failures" came from a `rightOf` selector that targeted the **wrong folder** (2 real folders deleted then restored during bring-up).
+- **List refresh after delete/restore**: `confirmDelete`/`confirmBulkDelete` do not refetch (fix: refetch); restore/empty = server-only → optimistic removal (`removedIds`).
 
-**Sélecteurs sûrs pour actions destructives (LEÇON) :**
-- **JAMAIS `rightOf`** pour ouvrir le menu d'une ligne → il matche la mauvaise ligne.
-- Menu d'un dossier précis : **`{ id: 'folder-actions:<nom>' }`** (testID par-dossier).
-- Suppression sûre : **long-press du nom exact** (sélectionne cette ligne uniquement) → `{ id: 'selection-delete' }` → `{ id: 'confirm-delete-submit' }`.
+**Safe selectors for destructive actions (LESSON):**
+- **NEVER `rightOf`** to open a row's menu → it matches the wrong row.
+- Menu of a specific folder: **`{ id: 'folder-actions:<name>' }`** (per-folder testID).
+- Safe deletion: **long-press the exact name** (selects that row only) → `{ id: 'selection-delete' }` → `{ id: 'confirm-delete-submit' }`.
 
-**Nouveaux flows :**
-- **04 folder-crud** : vrai create+delete round-trip, scoping strict sur E2E-smoke (long-press + testIDs).
-- **08 share-internal** : ouvre le partage interne d'un dossier (lien + destinataires) puis ferme — **non-mutant** (aucun partage créé), cleanup.
-- **11 share-to-drive** (OS share sheet) : fixture `sample.jpg` réelle en place (poussée par run-android.sh) ; run cross-app device = manuel.
+**New flows:**
+- **04 folder-crud**: real create+delete round-trip, strict scoping on E2E-smoke (long-press + testIDs).
+- **08 share-internal**: opens the internal share of a folder (link + recipients) then closes — **non-mutating** (no share created), cleanup.
+- **11 share-to-drive** (OS share sheet): real `sample.jpg` fixture in place (pushed by run-android.sh); cross-app device run = manual.
 
-## Menus de ligne sur iOS (a11y) — fix FolderRow (device-validé iOS 26.4)
-Sur iOS, la `List.Item` de Paper (touchable via `onPress`) **groupe ses enfants en
-UN élément d'accessibilité** → le bouton 3-points du slot `right` était absorbé
-(testID perdu, un tap ouvrait le dossier au lieu du menu). **Fix** : sortir le menu
-(et le chevron) du slot `right` en **SIBLING** de la `List.Item`. Device-validé
-iOS 26.4 : testIDs `folder-actions:<nom>` exposés → **04 delete, 07 pin, 08 share
-VERTS**. Nuances : sélecteur iOS = `folder-actions:<nom>-container-outer-layer`
-(le nu est ambigu) vs Android `folder-actions:<nom>` ; `inputText` mange le tiret
-sur iOS (noms sans tiret) ; la session iOS persiste à travers `simctl install`.
-Suivi : même restructure sur `FileRow`.
+## Row menus on iOS (a11y) — FolderRow fix (device-validated iOS 26.4)
+On iOS, Paper's `List.Item` (touchable via `onPress`) **groups its children into
+ONE accessibility element** → the 3-dot button in the `right` slot was absorbed
+(testID lost, a tap opened the folder instead of the menu). **Fix**: pull the menu
+(and the chevron) out of the `right` slot as a **SIBLING** of the `List.Item`. Device-validated
+iOS 26.4: `folder-actions:<name>` testIDs exposed → **04 delete, 07 pin, 08 share
+GREEN**. Nuances: iOS selector = `folder-actions:<name>-container-outer-layer`
+(the bare one is ambiguous) vs Android `folder-actions:<name>`; `inputText` eats the hyphen
+on iOS (names without hyphens); the iOS session persists across `simctl install`.
+Follow-up: same restructuring on `FileRow`.
 
-## Favoris + hors-ligne : retrait/purge (fixes + validation, 2026-07-05)
-**Fixes (PR #34)** : favori — refetch après toggle (retrait optimiste `removedIds`
-comme trash.tsx) + dossier passé avec `_type`/`_rev` (sinon `client.save` levait
-« must have a `_type` property », avalé → le favori dossier n'était **jamais**
-retiré) ; hors-ligne — `FileRow` pilote « Retirer » sur `isDirectPin` (sinon re-pin)
-+ `unpinFolder` récursif via `ancestorPins` (purge les blobs des sous-dossiers).
+## Favorites + offline: removal/purge (fixes + validation, 2026-07-05)
+**Fixes (PR #34)**: favorite — refetch after toggle (optimistic removal `removedIds`
+like trash.tsx) + folder passed with `_type`/`_rev` (otherwise `client.save` threw
+« must have a `_type` property », swallowed → the favorite folder was **never**
+removed); offline — `FileRow` drives « Retirer » on `isDirectPin` (otherwise re-pins)
++ recursive `unpinFolder` via `ancestorPins` (purges the blobs of subfolders).
 
-**Validé device** : retrait favori **Android = persiste** (E2Efav parti après
-relaunch — LE vrai bug) ; **iOS 26.4 = disparaît live** (menu Favoris → « Retirer
-des favoris » → `notVisible` EXIT=0, le retrait optimiste marche). Purge nested =
-test unitaire `OfflineFilesStore` vert.
+**Device-validated**: favorite removal **Android = persists** (E2Efav gone after
+relaunch — THE real bug); **iOS 26.4 = disappears live** (Favoris menu → « Retirer
+des favoris » → `notVisible` EXIT=0, the optimistic removal works). Nested purge =
+`OfflineFilesStore` unit test green.
 
-**Flows E2E 09 (favori) / 12 (hors-ligne)** : le menu s'ouvre de façon fiable sur
-iOS (`folder-actions:<nom>-container-outer-layer` + **`waitForAnimationToEnd`**),
-MAIS le tap des **items de menu Paper par TEXTE est flaky sur iOS** (XCUITest
-n'expose pas leur texte de façon fiable — « Supprimer »/« Ajouter aux favoris » OK,
-« Garder hors-ligne » rate par moments). Fiables sur Android. Aussi : la
-propagation **favori→écran Favoris** dépend de la réplication pouch (l'E2E « favori
-puis vérifier Favoris » court l'indexation → timeouts généreux + pull-to-refresh).
-**Suivi E2E iOS** : ajouter des **testIDs sur les `Menu.Item`** (comme
-`folder-actions`) pour des taps déterministes cross-platform.
+**E2E flows 09 (favorite) / 12 (offline)**: the menu opens reliably on
+iOS (`folder-actions:<name>-container-outer-layer` + **`waitForAnimationToEnd`**),
+BUT tapping Paper **menu items by TEXT is flaky on iOS** (XCUITest
+does not expose their text reliably — « Supprimer »/« Ajouter aux favoris » OK,
+« Garder hors-ligne » fails at times). Reliable on Android. Also: the
+**favorite→Favoris screen** propagation depends on pouch replication (the E2E « favorite
+then verify Favoris » outruns the indexing → generous timeouts + pull-to-refresh).
+**iOS E2E follow-up**: add **testIDs on the `Menu.Item`s** (like
+`folder-actions`) for deterministic cross-platform taps.

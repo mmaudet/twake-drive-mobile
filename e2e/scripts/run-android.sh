@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# Smoke E2E local sur device Android (adb). Pré-requis : app installée ET
-# déjà connectée (cf. e2e/README.md). Ne désinstalle jamais (garde la session).
+# Local E2E smoke on an Android device (adb). Prerequisite: app installed AND
+# already logged in (see e2e/README.md). Never uninstalls (keeps the session).
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 DEVICE="$(adb devices | awk 'NR>1 && $2=="device"{print $1; exit}')"
-[ -z "${DEVICE:-}" ] && { echo "Aucun device adb connecté."; exit 1; }
+[ -z "${DEVICE:-}" ] && { echo "No adb device connected."; exit 1; }
 echo "Device: $DEVICE"
 
-# (Ré)installation optionnelle sans effacer les données (-r conserve la session)
+# Optional (re)install without wiping data (-r keeps the session)
 if [ -n "${APK_PATH:-}" ]; then
-  echo "Installation de $APK_PATH (données conservées)…"
+  echo "Installing $APK_PATH (data preserved)…"
   adb -s "$DEVICE" install -r "$APK_PATH"
 fi
 
-# Seed l'image de fixture pour le flow de share
+# Seed the fixture image for the share flow
 adb -s "$DEVICE" shell mkdir -p /sdcard/Pictures/E2E >/dev/null 2>&1 || true
 adb -s "$DEVICE" push "$ROOT/e2e/fixtures/sample.jpg" /sdcard/Pictures/E2E/sample.jpg
 adb -s "$DEVICE" shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE \
   -d file:///sdcard/Pictures/E2E/sample.jpg >/dev/null
 
-# Volets in-app + android cross-app ; le login manuel est exclu.
+# In-app + android cross-app suites; the manual login is excluded.
 maestro --platform android test "$ROOT/e2e/maestro/flows" \
   --include-tags inapp,android \
   --exclude-tags login
