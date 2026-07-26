@@ -48,7 +48,8 @@ const makeAuthContext = () => ({
   login: jest.fn(),
   loginWithTwakeWorkplace: jest.fn(),
   logout: jest.fn(),
-  certifyFlagship: fakeCertifyFlagship
+  certifyFlagship: fakeCertifyFlagship,
+  devResetAndResync: jest.fn()
 })
 
 const setup = () => {

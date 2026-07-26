@@ -5,6 +5,12 @@ import { APP_SCOPES } from '@/auth/scopes'
 import { Session } from '@/auth/types'
 import { configureNetInfo } from '@/network/netInfoConfig'
 import { getLinks } from '@/pouchdb/getLinks'
+import {
+  instrumentClientQuery,
+  instrumentClientSetData,
+  printPerfSummary,
+  resetPerfCounters
+} from '@/pouchdb/perfLogging'
 import { triggerPouchReplication } from '@/pouchdb/triggerReplication'
 
 /**
@@ -30,6 +36,7 @@ export const createClient = async (session: Session): Promise<CozyClient> => {
     'tokenLen',
     session.token.accessToken?.length ?? 0
   )
+  if (__DEV__) resetPerfCounters()
   const client = new CozyClient({
     uri: session.uri,
     oauth: { ...session.oauthOptions, token: session.token },
@@ -42,6 +49,15 @@ export const createClient = async (session: Session): Promise<CozyClient> => {
     },
     links: getLinks()
   } as ConstructorParameters<typeof CozyClient>[0] & { scope: string[] })
+
+  if (__DEV__) {
+    instrumentClientSetData(client as unknown as Parameters<typeof instrumentClientSetData>[0])
+    instrumentClientQuery(client as unknown as Parameters<typeof instrumentClientQuery>[0])
+    ;(client as unknown as { on?: (e: string, cb: () => void) => void }).on?.(
+      'pouchlink:sync:end',
+      () => printPerfSummary('first-sync')
+    )
+  }
 
   try {
     await client.registerPlugin(flag.plugin, null)

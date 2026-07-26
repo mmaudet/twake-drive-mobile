@@ -3,6 +3,7 @@ import { CozyProvider } from 'cozy-client'
 
 import { useAuth } from '@/auth/useAuth'
 import { PendingShareProvider } from '@/share/PendingShareProvider'
+import { DevResetButton } from '@/ui/DevResetButton'
 
 // PendingShareProvider wraps the ENTIRE client conditional (rather than
 // living inside `children`) so its position in the tree never changes when
@@ -26,7 +27,14 @@ export const AppProviderTree = ({
   const { client } = useAuth()
   return (
     <PendingShareProvider>
-      {client ? <CozyProvider client={client}>{children}</CozyProvider> : children}
+      {client ? (
+        <CozyProvider client={client}>
+          {children}
+          <DevResetButton />
+        </CozyProvider>
+      ) : (
+        children
+      )}
     </PendingShareProvider>
   )
 }

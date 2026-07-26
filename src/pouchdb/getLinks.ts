@@ -2,6 +2,12 @@ import CozyClient, { CozyLink, Q, StackLink } from 'cozy-client'
 import PouchLink from 'cozy-pouch-link'
 import { createMMKV } from 'react-native-mmkv'
 
+import {
+  instrumentPouchLink,
+  instrumentStackLink,
+  metroPerformanceApi,
+  startJsStallMonitor
+} from './perfLogging'
 import { platformReactNative } from './platformReactNative'
 
 export const REPLICATION_DEBOUNCE = 60 * 1000 // 60s
@@ -143,11 +149,21 @@ export const getLinks = (): CozyLink[] => {
       options: {
         adapter: 'react-native-sqlite'
       }
-    }
+    },
+    ...(__DEV__ ? { performanceApi: metroPerformanceApi } : {})
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any)
 
+  if (__DEV__) {
+    instrumentPouchLink(pouchLink as unknown as Parameters<typeof instrumentPouchLink>[0])
+    startJsStallMonitor()
+  }
+
   const stackLink = new StackLink()
+
+  if (__DEV__) {
+    instrumentStackLink(stackLink as unknown as Parameters<typeof instrumentStackLink>[0])
+  }
 
   // PouchLink first → it intercepts queries for cached doctypes before StackLink.
   return [pouchLink as unknown as CozyLink, stackLink]

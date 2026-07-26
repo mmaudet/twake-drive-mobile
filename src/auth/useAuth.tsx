@@ -1,9 +1,18 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react'
 import CozyClient from 'cozy-client'
 
 import { createClient } from '@/client/createClient'
 import i18n, { resolveDeviceLanguage } from '@/i18n'
 import { mirrorSessionToNative } from '@/native/twakeAuthBridge'
+import { destroyLocalData } from '@/pouchdb/destroyLocalData'
 import { clearSession, getSession, saveSession } from './tokenStorage'
 import { startOidcFlow } from './oidcFlow'
 import { registerSession } from './registerSession'
@@ -21,13 +30,21 @@ interface AuthContextValue extends AuthState {
   loginWithTwakeWorkplace: (mode: 'signin' | 'signup') => Promise<void>
   logout: () => Promise<void>
   certifyFlagship: () => Promise<CozyClient>
+  devResetAndResync: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
+let devResyncInFlight = false
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, setState] = useState<AuthState>({ status: 'loading', client: null })
   const [authenticating, setAuthenticating] = useState(false)
+  const clientRef = useRef<CozyClient | null>(null)
+
+  useEffect(() => {
+    clientRef.current = state.client
+  }, [state.client])
 
   useEffect(() => {
     const bootstrap = async () => {
@@ -119,9 +136,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return client
   }, [])
 
+  const devResetAndResync = useCallback(async (): Promise<void> => {
+    if (devResyncInFlight) return
+    devResyncInFlight = true
+    try {
+      const session = await getSession()
+      if (!session) return
+      await destroyLocalData(clientRef.current ?? undefined)
+      clientRef.current = null
+      setState({ status: 'loading', client: null })
+      const client = await createClient(session)
+      setState({ status: 'authenticated', client })
+    } finally {
+      devResyncInFlight = false
+    }
+  }, [])
+
   const value = useMemo<AuthContextValue>(
-    () => ({ ...state, authenticating, login, loginWithTwakeWorkplace, logout, certifyFlagship }),
-    [state, authenticating, login, loginWithTwakeWorkplace, logout, certifyFlagship]
+    () => ({
+      ...state,
+      authenticating,
+      login,
+      loginWithTwakeWorkplace,
+      logout,
+      certifyFlagship,
+      devResetAndResync
+    }),
+    [
+      state,
+      authenticating,
+      login,
+      loginWithTwakeWorkplace,
+      logout,
+      certifyFlagship,
+      devResetAndResync
+    ]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
