@@ -14,7 +14,8 @@
     "e2e:android": "./e2e/scripts/run-android.sh",
     "e2e:ios": "./e2e/scripts/run-ios.sh",
     "e2e:login": "maestro test e2e/maestro/flows/00-login.yaml",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "postinstall": "patch-package"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -109,6 +110,7 @@
     "lint-staged": "^15.4.3",
     "nock": "^13.5.6",
     "node-fetch": "^2.7.0",
+    "patch-package": "^8.0.1",
     "pouchdb-adapter-memory": "^8.0.1",
     "prettier": "^3.8.3",
     "react-native-worklets": "^0.8.1",

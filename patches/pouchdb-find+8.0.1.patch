@@ -1,0 +1,460 @@
+diff --git a/node_modules/pouchdb-find/lib/index-browser.es.js b/node_modules/pouchdb-find/lib/index-browser.es.js
+index 3d7674d..372b8f6 100644
+--- a/node_modules/pouchdb-find/lib/index-browser.es.js
++++ b/node_modules/pouchdb-find/lib/index-browser.es.js
+@@ -385,12 +385,19 @@ function uniq(arr) {
+ //
+ 
+ 
++/* POUCHDB_PERF_PATCHED:B-deep-multi-mapper
++   createDeepSingleMapper already hoists this; the multi-field variant re-parsed
++   every field name for every document indexed. */
+ function createDeepMultiMapper(fields, emit, selector) {
++  var __parsed = new Array(fields.length);
++  for (var __i = 0; __i < fields.length; __i++) {
++    __parsed[__i] = parseField(fields[__i]);
++  }
+   return function (doc) {
+     if (selector && !matchesSelector(doc, selector)) { return; }
+     var toEmit = [];
+     for (var i = 0, iLen = fields.length; i < iLen; i++) {
+-      var parsedField = parseField(fields[i]);
++      var parsedField = __parsed[i]; /* POUCHDB_PERF_PATCHED:B2-use-parsed */
+       var value = doc;
+       for (var j = 0, jLen = parsedField.length; j < jLen; j++) {
+         var key = parsedField[j];
+@@ -1365,6 +1372,49 @@ function doAllDocs(db, originalOpts) {
+     });
+ }
+ 
++/* POUCHDB_PERF_PATCHED:D-targeted-ddoc
++   getIndexes() does allDocs({startkey:'_design/', include_docs:true}) on EVERY
++   find(), reading every index, and the planner then walks all of them — only to
++   keep the one the caller already named. cozy-pouch-link always passes
++   use_index. Returns null on anything unexpected so the caller falls back to
++   the original path and error behaviour is unchanged. */
++function getIndexesForUseIndex(db, useIndex) {
++  var ddocName = useIndex && useIndex.length >= 1 ? useIndex[0] : null;
++  if (!ddocName) {
++    return Promise.resolve(null);
++  }
++  return db.get('_design/' + ddocName).then(function (doc) {
++    if (!doc || doc.language !== 'query' || !doc.views) {
++      return null;
++    }
++    var indexes = [{
++      ddoc: null,
++      name: '_all_docs',
++      type: 'special',
++      def: { fields: [{ _id: 'asc' }] }
++    }];
++    var viewNames = Object.keys(doc.views);
++    for (var i = 0; i < viewNames.length; i++) {
++      var view = doc.views[viewNames[i]];
++      if (!view || !view.options || !view.options.def) {
++        return null;
++      }
++      indexes.push({
++        ddoc: doc._id,
++        name: viewNames[i],
++        type: 'json',
++        def: massageIndexDef(view.options.def)
++      });
++    }
++    indexes.sort(function (left, right) {
++      return compare(left.name, right.name);
++    });
++    return { indexes: indexes, total_rows: indexes.length };
++  }, function () {
++    return null;
++  });
++}
++
+ function find$1(db, requestDef, explain) {
+   if (requestDef.selector) {
+     // must be validated before massaging
+@@ -1382,10 +1432,37 @@ function find$1(db, requestDef, explain) {
+ 
+   validateFindRequest(requestDef);
+ 
+-  return getIndexes$1(db).then(function (getIndexesRes) {
++  /* POUCHDB_PERF_PATCHED:D2-wire-targeted */
++  var __indexesPromise = requestDef.use_index
++    ? getIndexesForUseIndex(db, requestDef.use_index).then(function (targeted) {
++        return targeted !== null
++          ? { res: targeted, targeted: true }
++          : getIndexes$1(db).then(function (full) {
++              return { res: full, targeted: false };
++            });
++      })
++    : getIndexes$1(db).then(function (full) {
++        return { res: full, targeted: false };
++      });
++
++  return __indexesPromise.then(function (__wrapped) {
++    var getIndexesRes = __wrapped.res;
+ 
+     db.constructor.emit('debug', ['find', 'planning query', requestDef]);
+-    var queryPlan = planQuery(requestDef, getIndexesRes.indexes);
++    var queryPlan;
++    try {
++      queryPlan = planQuery(requestDef, getIndexesRes.indexes);
++    } catch (err) {
++      if (!__wrapped.targeted) {
++        throw err;
++      }
++      // Named index did not satisfy the request: replay against the full index
++      // list so the error raised is exactly the one the original path raised.
++      return getIndexes$1(db).then(function (full) {
++        planQuery(requestDef, full.indexes);
++        throw err;
++      });
++    }
+     db.constructor.emit('debug', ['find', 'query plan', queryPlan]);
+ 
+     var indexToUse = queryPlan.index;
+diff --git a/node_modules/pouchdb-find/lib/index-browser.js b/node_modules/pouchdb-find/lib/index-browser.js
+index 7062fcc..9246b6b 100644
+--- a/node_modules/pouchdb-find/lib/index-browser.js
++++ b/node_modules/pouchdb-find/lib/index-browser.js
+@@ -389,12 +389,19 @@ function uniq(arr) {
+ //
+ 
+ 
++/* POUCHDB_PERF_PATCHED:B-deep-multi-mapper
++   createDeepSingleMapper already hoists this; the multi-field variant re-parsed
++   every field name for every document indexed. */
+ function createDeepMultiMapper(fields, emit, selector) {
++  var __parsed = new Array(fields.length);
++  for (var __i = 0; __i < fields.length; __i++) {
++    __parsed[__i] = pouchdbSelectorCore.parseField(fields[__i]);
++  }
+   return function (doc) {
+     if (selector && !pouchdbSelectorCore.matchesSelector(doc, selector)) { return; }
+     var toEmit = [];
+     for (var i = 0, iLen = fields.length; i < iLen; i++) {
+-      var parsedField = pouchdbSelectorCore.parseField(fields[i]);
++      var parsedField = __parsed[i]; /* POUCHDB_PERF_PATCHED:B2-use-parsed */
+       var value = doc;
+       for (var j = 0, jLen = parsedField.length; j < jLen; j++) {
+         var key = parsedField[j];
+@@ -1369,6 +1376,49 @@ function doAllDocs(db, originalOpts) {
+     });
+ }
+ 
++/* POUCHDB_PERF_PATCHED:D-targeted-ddoc
++   getIndexes() does allDocs({startkey:'_design/', include_docs:true}) on EVERY
++   find(), reading every index, and the planner then walks all of them — only to
++   keep the one the caller already named. cozy-pouch-link always passes
++   use_index. Returns null on anything unexpected so the caller falls back to
++   the original path and error behaviour is unchanged. */
++function getIndexesForUseIndex(db, useIndex) {
++  var ddocName = useIndex && useIndex.length >= 1 ? useIndex[0] : null;
++  if (!ddocName) {
++    return Promise.resolve(null);
++  }
++  return db.get('_design/' + ddocName).then(function (doc) {
++    if (!doc || doc.language !== 'query' || !doc.views) {
++      return null;
++    }
++    var indexes = [{
++      ddoc: null,
++      name: '_all_docs',
++      type: 'special',
++      def: { fields: [{ _id: 'asc' }] }
++    }];
++    var viewNames = Object.keys(doc.views);
++    for (var i = 0; i < viewNames.length; i++) {
++      var view = doc.views[viewNames[i]];
++      if (!view || !view.options || !view.options.def) {
++        return null;
++      }
++      indexes.push({
++        ddoc: doc._id,
++        name: viewNames[i],
++        type: 'json',
++        def: massageIndexDef(view.options.def)
++      });
++    }
++    indexes.sort(function (left, right) {
++      return pouchdbSelectorCore.compare(left.name, right.name);
++    });
++    return { indexes: indexes, total_rows: indexes.length };
++  }, function () {
++    return null;
++  });
++}
++
+ function find$1(db, requestDef, explain) {
+   if (requestDef.selector) {
+     // must be validated before massaging
+@@ -1386,10 +1436,37 @@ function find$1(db, requestDef, explain) {
+ 
+   validateFindRequest(requestDef);
+ 
+-  return getIndexes$1(db).then(function (getIndexesRes) {
++  /* POUCHDB_PERF_PATCHED:D2-wire-targeted */
++  var __indexesPromise = requestDef.use_index
++    ? getIndexesForUseIndex(db, requestDef.use_index).then(function (targeted) {
++        return targeted !== null
++          ? { res: targeted, targeted: true }
++          : getIndexes$1(db).then(function (full) {
++              return { res: full, targeted: false };
++            });
++      })
++    : getIndexes$1(db).then(function (full) {
++        return { res: full, targeted: false };
++      });
++
++  return __indexesPromise.then(function (__wrapped) {
++    var getIndexesRes = __wrapped.res;
+ 
+     db.constructor.emit('debug', ['find', 'planning query', requestDef]);
+-    var queryPlan = planQuery(requestDef, getIndexesRes.indexes);
++    var queryPlan;
++    try {
++      queryPlan = planQuery(requestDef, getIndexesRes.indexes);
++    } catch (err) {
++      if (!__wrapped.targeted) {
++        throw err;
++      }
++      // Named index did not satisfy the request: replay against the full index
++      // list so the error raised is exactly the one the original path raised.
++      return getIndexes$1(db).then(function (full) {
++        planQuery(requestDef, full.indexes);
++        throw err;
++      });
++    }
+     db.constructor.emit('debug', ['find', 'query plan', queryPlan]);
+ 
+     var indexToUse = queryPlan.index;
+diff --git a/node_modules/pouchdb-find/lib/index.es.js b/node_modules/pouchdb-find/lib/index.es.js
+index 3d7674d..372b8f6 100644
+--- a/node_modules/pouchdb-find/lib/index.es.js
++++ b/node_modules/pouchdb-find/lib/index.es.js
+@@ -385,12 +385,19 @@ function uniq(arr) {
+ //
+ 
+ 
++/* POUCHDB_PERF_PATCHED:B-deep-multi-mapper
++   createDeepSingleMapper already hoists this; the multi-field variant re-parsed
++   every field name for every document indexed. */
+ function createDeepMultiMapper(fields, emit, selector) {
++  var __parsed = new Array(fields.length);
++  for (var __i = 0; __i < fields.length; __i++) {
++    __parsed[__i] = parseField(fields[__i]);
++  }
+   return function (doc) {
+     if (selector && !matchesSelector(doc, selector)) { return; }
+     var toEmit = [];
+     for (var i = 0, iLen = fields.length; i < iLen; i++) {
+-      var parsedField = parseField(fields[i]);
++      var parsedField = __parsed[i]; /* POUCHDB_PERF_PATCHED:B2-use-parsed */
+       var value = doc;
+       for (var j = 0, jLen = parsedField.length; j < jLen; j++) {
+         var key = parsedField[j];
+@@ -1365,6 +1372,49 @@ function doAllDocs(db, originalOpts) {
+     });
+ }
+ 
++/* POUCHDB_PERF_PATCHED:D-targeted-ddoc
++   getIndexes() does allDocs({startkey:'_design/', include_docs:true}) on EVERY
++   find(), reading every index, and the planner then walks all of them — only to
++   keep the one the caller already named. cozy-pouch-link always passes
++   use_index. Returns null on anything unexpected so the caller falls back to
++   the original path and error behaviour is unchanged. */
++function getIndexesForUseIndex(db, useIndex) {
++  var ddocName = useIndex && useIndex.length >= 1 ? useIndex[0] : null;
++  if (!ddocName) {
++    return Promise.resolve(null);
++  }
++  return db.get('_design/' + ddocName).then(function (doc) {
++    if (!doc || doc.language !== 'query' || !doc.views) {
++      return null;
++    }
++    var indexes = [{
++      ddoc: null,
++      name: '_all_docs',
++      type: 'special',
++      def: { fields: [{ _id: 'asc' }] }
++    }];
++    var viewNames = Object.keys(doc.views);
++    for (var i = 0; i < viewNames.length; i++) {
++      var view = doc.views[viewNames[i]];
++      if (!view || !view.options || !view.options.def) {
++        return null;
++      }
++      indexes.push({
++        ddoc: doc._id,
++        name: viewNames[i],
++        type: 'json',
++        def: massageIndexDef(view.options.def)
++      });
++    }
++    indexes.sort(function (left, right) {
++      return compare(left.name, right.name);
++    });
++    return { indexes: indexes, total_rows: indexes.length };
++  }, function () {
++    return null;
++  });
++}
++
+ function find$1(db, requestDef, explain) {
+   if (requestDef.selector) {
+     // must be validated before massaging
+@@ -1382,10 +1432,37 @@ function find$1(db, requestDef, explain) {
+ 
+   validateFindRequest(requestDef);
+ 
+-  return getIndexes$1(db).then(function (getIndexesRes) {
++  /* POUCHDB_PERF_PATCHED:D2-wire-targeted */
++  var __indexesPromise = requestDef.use_index
++    ? getIndexesForUseIndex(db, requestDef.use_index).then(function (targeted) {
++        return targeted !== null
++          ? { res: targeted, targeted: true }
++          : getIndexes$1(db).then(function (full) {
++              return { res: full, targeted: false };
++            });
++      })
++    : getIndexes$1(db).then(function (full) {
++        return { res: full, targeted: false };
++      });
++
++  return __indexesPromise.then(function (__wrapped) {
++    var getIndexesRes = __wrapped.res;
+ 
+     db.constructor.emit('debug', ['find', 'planning query', requestDef]);
+-    var queryPlan = planQuery(requestDef, getIndexesRes.indexes);
++    var queryPlan;
++    try {
++      queryPlan = planQuery(requestDef, getIndexesRes.indexes);
++    } catch (err) {
++      if (!__wrapped.targeted) {
++        throw err;
++      }
++      // Named index did not satisfy the request: replay against the full index
++      // list so the error raised is exactly the one the original path raised.
++      return getIndexes$1(db).then(function (full) {
++        planQuery(requestDef, full.indexes);
++        throw err;
++      });
++    }
+     db.constructor.emit('debug', ['find', 'query plan', queryPlan]);
+ 
+     var indexToUse = queryPlan.index;
+diff --git a/node_modules/pouchdb-find/lib/index.js b/node_modules/pouchdb-find/lib/index.js
+index 7062fcc..9246b6b 100644
+--- a/node_modules/pouchdb-find/lib/index.js
++++ b/node_modules/pouchdb-find/lib/index.js
+@@ -389,12 +389,19 @@ function uniq(arr) {
+ //
+ 
+ 
++/* POUCHDB_PERF_PATCHED:B-deep-multi-mapper
++   createDeepSingleMapper already hoists this; the multi-field variant re-parsed
++   every field name for every document indexed. */
+ function createDeepMultiMapper(fields, emit, selector) {
++  var __parsed = new Array(fields.length);
++  for (var __i = 0; __i < fields.length; __i++) {
++    __parsed[__i] = pouchdbSelectorCore.parseField(fields[__i]);
++  }
+   return function (doc) {
+     if (selector && !pouchdbSelectorCore.matchesSelector(doc, selector)) { return; }
+     var toEmit = [];
+     for (var i = 0, iLen = fields.length; i < iLen; i++) {
+-      var parsedField = pouchdbSelectorCore.parseField(fields[i]);
++      var parsedField = __parsed[i]; /* POUCHDB_PERF_PATCHED:B2-use-parsed */
+       var value = doc;
+       for (var j = 0, jLen = parsedField.length; j < jLen; j++) {
+         var key = parsedField[j];
+@@ -1369,6 +1376,49 @@ function doAllDocs(db, originalOpts) {
+     });
+ }
+ 
++/* POUCHDB_PERF_PATCHED:D-targeted-ddoc
++   getIndexes() does allDocs({startkey:'_design/', include_docs:true}) on EVERY
++   find(), reading every index, and the planner then walks all of them — only to
++   keep the one the caller already named. cozy-pouch-link always passes
++   use_index. Returns null on anything unexpected so the caller falls back to
++   the original path and error behaviour is unchanged. */
++function getIndexesForUseIndex(db, useIndex) {
++  var ddocName = useIndex && useIndex.length >= 1 ? useIndex[0] : null;
++  if (!ddocName) {
++    return Promise.resolve(null);
++  }
++  return db.get('_design/' + ddocName).then(function (doc) {
++    if (!doc || doc.language !== 'query' || !doc.views) {
++      return null;
++    }
++    var indexes = [{
++      ddoc: null,
++      name: '_all_docs',
++      type: 'special',
++      def: { fields: [{ _id: 'asc' }] }
++    }];
++    var viewNames = Object.keys(doc.views);
++    for (var i = 0; i < viewNames.length; i++) {
++      var view = doc.views[viewNames[i]];
++      if (!view || !view.options || !view.options.def) {
++        return null;
++      }
++      indexes.push({
++        ddoc: doc._id,
++        name: viewNames[i],
++        type: 'json',
++        def: massageIndexDef(view.options.def)
++      });
++    }
++    indexes.sort(function (left, right) {
++      return pouchdbSelectorCore.compare(left.name, right.name);
++    });
++    return { indexes: indexes, total_rows: indexes.length };
++  }, function () {
++    return null;
++  });
++}
++
+ function find$1(db, requestDef, explain) {
+   if (requestDef.selector) {
+     // must be validated before massaging
+@@ -1386,10 +1436,37 @@ function find$1(db, requestDef, explain) {
+ 
+   validateFindRequest(requestDef);
+ 
+-  return getIndexes$1(db).then(function (getIndexesRes) {
++  /* POUCHDB_PERF_PATCHED:D2-wire-targeted */
++  var __indexesPromise = requestDef.use_index
++    ? getIndexesForUseIndex(db, requestDef.use_index).then(function (targeted) {
++        return targeted !== null
++          ? { res: targeted, targeted: true }
++          : getIndexes$1(db).then(function (full) {
++              return { res: full, targeted: false };
++            });
++      })
++    : getIndexes$1(db).then(function (full) {
++        return { res: full, targeted: false };
++      });
++
++  return __indexesPromise.then(function (__wrapped) {
++    var getIndexesRes = __wrapped.res;
+ 
+     db.constructor.emit('debug', ['find', 'planning query', requestDef]);
+-    var queryPlan = planQuery(requestDef, getIndexesRes.indexes);
++    var queryPlan;
++    try {
++      queryPlan = planQuery(requestDef, getIndexesRes.indexes);
++    } catch (err) {
++      if (!__wrapped.targeted) {
++        throw err;
++      }
++      // Named index did not satisfy the request: replay against the full index
++      // list so the error raised is exactly the one the original path raised.
++      return getIndexes$1(db).then(function (full) {
++        planQuery(requestDef, full.indexes);
++        throw err;
++      });
++    }
+     db.constructor.emit('debug', ['find', 'query plan', queryPlan]);
+ 
+     var indexToUse = queryPlan.index;

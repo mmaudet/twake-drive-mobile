@@ -1,0 +1,85 @@
+diff --git a/node_modules/pouchdb-adapter-react-native-sqlite/lib/commonjs/openDatabase.js b/node_modules/pouchdb-adapter-react-native-sqlite/lib/commonjs/openDatabase.js
+index b427570..d23b759 100644
+--- a/node_modules/pouchdb-adapter-react-native-sqlite/lib/commonjs/openDatabase.js
++++ b/node_modules/pouchdb-adapter-react-native-sqlite/lib/commonjs/openDatabase.js
+@@ -12,6 +12,7 @@ function openDBSafely(opts) {
+   try {
+     const db = (0, _opSqlite.open)(opts);
+     const transactionQueue = new _transactionQueue.TransactionQueue(db);
++    (globalThis.__rnSqliteRawDBs || (globalThis.__rnSqliteRawDBs = new Map())).set(opts.name, db);
+     return {
+       db,
+       transactionQueue
+diff --git a/node_modules/pouchdb-adapter-react-native-sqlite/lib/commonjs/transactionQueue.js b/node_modules/pouchdb-adapter-react-native-sqlite/lib/commonjs/transactionQueue.js
+index 32cb15c..0c55838 100644
+--- a/node_modules/pouchdb-adapter-react-native-sqlite/lib/commonjs/transactionQueue.js
++++ b/node_modules/pouchdb-adapter-react-native-sqlite/lib/commonjs/transactionQueue.js
+@@ -59,11 +59,19 @@ class TransactionQueue {
+   }
+   async pushReadOnly(fn) {
+     return new Promise(resolve => {
+-      this.queue.push({
++      const pending = {
+         readonly: true,
+         start: fn,
+         finish: resolve
+-      });
++      };
++      let insertAt = this.queue.length;
++      for (let i = 0; i < this.queue.length; i++) {
++        if (!this.queue[i].readonly) {
++          insertAt = i;
++          break;
++        }
++      }
++      this.queue.splice(insertAt, 0, pending);
+       this.run();
+     });
+   }
+diff --git a/node_modules/pouchdb-adapter-react-native-sqlite/lib/module/transactionQueue.js b/node_modules/pouchdb-adapter-react-native-sqlite/lib/module/transactionQueue.js
+index 82eb2f7..f915d7d 100644
+--- a/node_modules/pouchdb-adapter-react-native-sqlite/lib/module/transactionQueue.js
++++ b/node_modules/pouchdb-adapter-react-native-sqlite/lib/module/transactionQueue.js
+@@ -55,11 +55,19 @@ export class TransactionQueue {
+   }
+   async pushReadOnly(fn) {
+     return new Promise(resolve => {
+-      this.queue.push({
++      const pending = {
+         readonly: true,
+         start: fn,
+         finish: resolve
+-      });
++      };
++      let insertAt = this.queue.length;
++      for (let i = 0; i < this.queue.length; i++) {
++        if (!this.queue[i].readonly) {
++          insertAt = i;
++          break;
++        }
++      }
++      this.queue.splice(insertAt, 0, pending);
+       this.run();
+     });
+   }
+diff --git a/node_modules/pouchdb-adapter-react-native-sqlite/src/transactionQueue.ts b/node_modules/pouchdb-adapter-react-native-sqlite/src/transactionQueue.ts
+index bf745ba..1145f8e 100644
+--- a/node_modules/pouchdb-adapter-react-native-sqlite/src/transactionQueue.ts
++++ b/node_modules/pouchdb-adapter-react-native-sqlite/src/transactionQueue.ts
+@@ -68,7 +68,15 @@ export class TransactionQueue {
+ 
+   async pushReadOnly(fn: (tx: Transaction) => Promise<void>) {
+     return new Promise<void>((resolve) => {
+-      this.queue.push({ readonly: true, start: fn, finish: resolve })
++      const pending: PendingTransaction = { readonly: true, start: fn, finish: resolve }
++      let insertAt = this.queue.length
++      for (let i = 0; i < this.queue.length; i++) {
++        if (!this.queue[i].readonly) {
++          insertAt = i
++          break
++        }
++      }
++      this.queue.splice(insertAt, 0, pending)
+       this.run()
+     })
+   }
