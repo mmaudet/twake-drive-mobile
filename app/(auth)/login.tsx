@@ -50,6 +50,7 @@ export default function LoginScreen() {
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.colors.background }]}>
       <View style={styles.container}>
         <IconButton
+          testID="login-back"
           icon="arrow-left"
           size={24}
           onPress={goBack}
@@ -75,6 +76,7 @@ export default function LoginScreen() {
         </Text>
 
         <TextInput
+          testID="login-email-input"
           label={t('auth.emailLabel')}
           placeholder={t('auth.emailPlaceholder')}
           value={email}
@@ -100,6 +102,7 @@ export default function LoginScreen() {
         <View style={styles.spacer} />
 
         <Button
+          testID="login-submit"
           mode="contained"
           onPress={onSubmit}
           disabled={!isValidEmail(email) || loading}

@@ -9,10 +9,16 @@ tags:
 #
 # Also serves as a non-regression guard for the bootstrap hang fix
 # (useAuth: fallback to 'unauthenticated' instead of staying on the spinner).
+# Selectors are testIDs (language-independent), not UI labels.
 - launchApp
-- assertVisible: 'Bienvenue sur Twake Drive'
-- tapOn: 'Se connecter'
-- assertVisible: 'Adresse email'
-- tapOn: 'Adresse email'
+- assertVisible:
+    id: 'welcome-login'
+- tapOn:
+    id: 'welcome-login'
+- assertVisible:
+    id: 'login-email-input'
+- tapOn:
+    id: 'login-email-input'
 - inputText: 'test@example.com'
-- assertVisible: 'Continuer'
+- assertVisible:
+    id: 'login-submit'

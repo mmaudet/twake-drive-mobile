@@ -62,6 +62,7 @@ export default function WelcomeScreen() {
             {error ?? ''}
           </HelperText>
           <Button
+            testID="welcome-signup"
             mode="contained"
             onPress={() => void start('signup')}
             loading={loading === 'signup'}
@@ -72,6 +73,7 @@ export default function WelcomeScreen() {
             {t('auth.signUp')}
           </Button>
           <Button
+            testID="welcome-login"
             mode="outlined"
             onPress={() => void start('signin')}
             loading={loading === 'signin'}
@@ -82,6 +84,7 @@ export default function WelcomeScreen() {
             {t('auth.loginCta')}
           </Button>
           <Pressable
+            testID="welcome-org-server-link"
             onPress={() => router.push('/(auth)/login')}
             disabled={loading !== null}
             style={styles.link}
