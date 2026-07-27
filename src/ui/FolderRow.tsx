@@ -84,7 +84,8 @@ export const FolderRow = ({
         })
       : undefined
 
-  // The 3-dot menu button is a SIBLING of the List.Item, NOT its `right` slot.
+  // The 3-dot menu button is an absolutely-positioned SIBLING of the List.Item,
+  // NOT its `right` slot (the List.Item spans the full row so its ripple does too).
   // On iOS, List.Item's touchable (it has onPress) groups its children into ONE
   // accessibility element, which absorbs the button — its testID is dropped and a
   // synthetic tap lands on the row (opening the folder) instead of the button.
@@ -128,136 +129,155 @@ export const FolderRow = ({
           </View>
         )}
       />
-      {hasMenu ? (
-        <Menu
-          visible={menuVisible}
-          onDismiss={() => setMenuVisible(false)}
-          anchor={
-            <IconButton
-              icon={p => <CozyIcon name="dotsVertical" size={p?.size ?? 24} color={p?.color} />}
-              onPress={() => setMenuVisible(true)}
-              accessibilityLabel={t('a11y.folderActions')}
-              testID={`folder-actions:${folder.name}`}
-            />
-          }
-        >
-          {onTogglePin ? (
-            <Menu.Item
-              leadingIcon={isPinned ? 'cloud-off-outline' : 'cloud-download-outline'}
-              title={t(isPinned ? 'drive.offline.unpin' : 'drive.offline.pin')}
-              disabled={!isPinned && !isOnline}
-              onPress={() => {
-                setMenuVisible(false)
-                onTogglePin(folder)
-              }}
-            />
-          ) : null}
-          {onShare ? (
-            <Menu.Item
-              leadingIcon={() => (
-                <CozyIcon name="shareExternal" size={24} color={theme.colors.onSurface} />
-              )}
-              title={t('drive.fileMeta.share')}
-              disabled={!isOnline}
-              onPress={() => {
-                setMenuVisible(false)
-                onShare(folder)
-              }}
-            />
-          ) : null}
-          {onRename ? (
-            <Menu.Item
-              leadingIcon={() => (
-                <CozyIcon name="rename" size={24} color={theme.colors.onSurface} />
-              )}
-              title={t('drive.fileMeta.rename')}
-              disabled={!isOnline}
-              onPress={() => {
-                setMenuVisible(false)
-                onRename(folder)
-              }}
-            />
-          ) : null}
-          {onRestore ? (
-            <Menu.Item
-              leadingIcon={() => (
-                <CozyIcon name="restore" size={24} color={theme.colors.onSurface} />
-              )}
-              title={t('drive.trashActions.restore')}
-              disabled={!isOnline}
-              onPress={() => {
-                setMenuVisible(false)
-                onRestore(folder)
-              }}
-            />
-          ) : null}
-          {onDelete ? (
-            <Menu.Item
-              leadingIcon={() => <CozyIcon name="trash" size={24} color={theme.colors.onSurface} />}
-              title={t('drive.fileMeta.delete')}
-              disabled={!isOnline}
-              onPress={() => {
-                setMenuVisible(false)
-                onDelete(folder)
-              }}
-            />
-          ) : null}
-          {onMove ? (
-            <Menu.Item
-              leadingIcon={() => (
-                <CozyIcon name="moveto" size={24} color={theme.colors.onSurface} />
-              )}
-              title={t('drive.fileMeta.move')}
-              disabled={!isOnline}
-              onPress={() => {
-                setMenuVisible(false)
-                onMove(folder)
-              }}
-            />
-          ) : null}
-          <Menu.Item
-            leadingIcon={() => (
-              <CozyIcon
-                name={
-                  isFavorite(folder as Parameters<typeof isFavorite>[0]) ? 'star' : 'starOutline'
-                }
-                size={24}
-                color={theme.colors.onSurface}
+      <View style={styles.actionSlot} pointerEvents="box-none">
+        {hasMenu ? (
+          <Menu
+            visible={menuVisible}
+            onDismiss={() => setMenuVisible(false)}
+            anchor={
+              <IconButton
+                icon={p => <CozyIcon name="dotsVertical" size={p?.size ?? 24} color={p?.color} />}
+                onPress={() => setMenuVisible(true)}
+                accessibilityLabel={t('a11y.folderActions')}
+                testID={`folder-actions:${folder.name}`}
               />
-            )}
-            title={t(
-              isFavorite(folder as Parameters<typeof isFavorite>[0])
-                ? 'drive.fileMeta.unfavorite'
-                : 'drive.fileMeta.favorite'
-            )}
-            onPress={() => {
-              setMenuVisible(false)
-              if (!client) return
-              const next = !isFavorite(folder as Parameters<typeof isFavorite>[0])
-              void toggleFavorite(client, folder as Parameters<typeof toggleFavorite>[1], next)
-                .then(() => {
-                  triggerPouchReplication(client)
-                  onFavoriteChange?.()
-                })
-                .catch(e => console.error('[FolderRow] toggleFavorite failed', e))
-            }}
+            }
+          >
+            {onTogglePin ? (
+              <Menu.Item
+                leadingIcon={isPinned ? 'cloud-off-outline' : 'cloud-download-outline'}
+                title={t(isPinned ? 'drive.offline.unpin' : 'drive.offline.pin')}
+                disabled={!isPinned && !isOnline}
+                onPress={() => {
+                  setMenuVisible(false)
+                  onTogglePin(folder)
+                }}
+              />
+            ) : null}
+            {onShare ? (
+              <Menu.Item
+                leadingIcon={() => (
+                  <CozyIcon name="shareExternal" size={24} color={theme.colors.onSurface} />
+                )}
+                title={t('drive.fileMeta.share')}
+                disabled={!isOnline}
+                onPress={() => {
+                  setMenuVisible(false)
+                  onShare(folder)
+                }}
+              />
+            ) : null}
+            {onRename ? (
+              <Menu.Item
+                leadingIcon={() => (
+                  <CozyIcon name="rename" size={24} color={theme.colors.onSurface} />
+                )}
+                title={t('drive.fileMeta.rename')}
+                disabled={!isOnline}
+                onPress={() => {
+                  setMenuVisible(false)
+                  onRename(folder)
+                }}
+              />
+            ) : null}
+            {onRestore ? (
+              <Menu.Item
+                leadingIcon={() => (
+                  <CozyIcon name="restore" size={24} color={theme.colors.onSurface} />
+                )}
+                title={t('drive.trashActions.restore')}
+                disabled={!isOnline}
+                onPress={() => {
+                  setMenuVisible(false)
+                  onRestore(folder)
+                }}
+              />
+            ) : null}
+            {onDelete ? (
+              <Menu.Item
+                leadingIcon={() => (
+                  <CozyIcon name="trash" size={24} color={theme.colors.onSurface} />
+                )}
+                title={t('drive.fileMeta.delete')}
+                disabled={!isOnline}
+                onPress={() => {
+                  setMenuVisible(false)
+                  onDelete(folder)
+                }}
+              />
+            ) : null}
+            {onMove ? (
+              <Menu.Item
+                leadingIcon={() => (
+                  <CozyIcon name="moveto" size={24} color={theme.colors.onSurface} />
+                )}
+                title={t('drive.fileMeta.move')}
+                disabled={!isOnline}
+                onPress={() => {
+                  setMenuVisible(false)
+                  onMove(folder)
+                }}
+              />
+            ) : null}
+            <Menu.Item
+              leadingIcon={() => (
+                <CozyIcon
+                  name={
+                    isFavorite(folder as Parameters<typeof isFavorite>[0]) ? 'star' : 'starOutline'
+                  }
+                  size={24}
+                  color={theme.colors.onSurface}
+                />
+              )}
+              title={t(
+                isFavorite(folder as Parameters<typeof isFavorite>[0])
+                  ? 'drive.fileMeta.unfavorite'
+                  : 'drive.fileMeta.favorite'
+              )}
+              onPress={() => {
+                setMenuVisible(false)
+                if (!client) return
+                const next = !isFavorite(folder as Parameters<typeof isFavorite>[0])
+                void toggleFavorite(client, folder as Parameters<typeof toggleFavorite>[1], next)
+                  .then(() => {
+                    triggerPouchReplication(client)
+                    onFavoriteChange?.()
+                  })
+                  .catch(e => console.error('[FolderRow] toggleFavorite failed', e))
+              }}
+            />
+          </Menu>
+        ) : (
+          <IconButton
+            icon={p => <CozyIcon name="chevronRight" size={p?.size ?? 24} color={p?.color} />}
+            disabled
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
           />
-        </Menu>
-      ) : (
-        <IconButton
-          icon={p => <CozyIcon name="chevronRight" size={p?.size ?? 24} color={p?.color} />}
-          disabled
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-        />
-      )}
+        )}
+      </View>
     </View>
   )
 }
 
+// Width of the 3-dot IconButton (MD3: 24 icon + 2×8 padding) plus its 6px margins,
+// and the title's right inset — Paper's own MD3 paddingRight, kept so the text
+// wraps exactly where it did when the button was a flex sibling.
+const ACTION_SLOT_WIDTH = 52
+const TITLE_RIGHT_INSET = ACTION_SLOT_WIDTH + 24
+
 const styles = StyleSheet.create({
-  rowContainer: { flexDirection: 'row', alignItems: 'center' },
-  item: { flex: 1, paddingVertical: 4 },
+  rowContainer: { position: 'relative' },
+  item: { paddingVertical: 4, paddingRight: TITLE_RIGHT_INSET },
+  actionSlot: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: ACTION_SLOT_WIDTH,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   leftSlot: { justifyContent: 'center', alignItems: 'center', width: 40, height: 40 },
   thumbWrap: { position: 'relative', width: 40, height: 40 },
   checkmark: {
