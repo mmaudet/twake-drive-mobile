@@ -104,18 +104,30 @@ export const recentQueryAs = 'recent-view-query'
 
 // Files and folders marked favourite (`cozyMetadata.favorite === true`).
 //
+// Follows twake-drive-web's `buildFavoritesQuery`: the favourite flag lives in
+// the partialIndex and the sort uses a SINGLE attribute. Sorting on the nested
+// flag alongside `name` mixed `desc` and `asc` in one Mango sort, which
+// cozy-stack rejects with "Mango sort can only use a single order (asc or desc)".
+//
+// Web's `path`/`trashed` conditions stay OUT of the partialIndex: they need
+// `$regex` and a field-level `$or`, which cozy-pouch-link's native SQLite engine
+// cannot translate — it emits `undefined` as the SQL operator, and op-sqlite
+// exposes no REGEXP function — so `find` logs the failure and returns null,
+// surfacing as a silently EMPTY Favoris on the local replica. `isInTrash` in the
+// Favoris screen already covers `trashed`, the trash dir_id and the
+// `/.cozy_trash` path.
+//
 // Offline/local gotcha: cozy-pouch-link/pouchdb-find does NOT reliably enforce
-// a `$eq: true` selector on the NESTED `cozyMetadata.favorite` path in the local
-// replica — the `where` filter fails OPEN and the query returns every file
-// (which is why the Favoris tab used to list all folders). The nested field is
-// still usable as an index/sort key, so we sort favourites FIRST (desc → `true`
-// leads) to keep them inside the window, over-fetch, and filter authoritatively
+// a `$eq: true` condition on the NESTED `cozyMetadata.favorite` path in the
+// local replica — it fails OPEN and returns every file (which is why the Favoris
+// tab used to list all folders). So we over-fetch and filter authoritatively
 // CLIENT-SIDE with `isFavorite` (strict `=== true`) in the Favoris screen.
 export const favoritesQuery = (): QueryDefinition =>
   Q('io.cozy.files')
-    .where({ 'cozyMetadata.favorite': true })
-    .indexFields(['cozyMetadata.favorite', 'name'])
-    .sortBy([{ 'cozyMetadata.favorite': 'desc' }, { name: 'asc' }])
+    .where({ name: { $gt: null } })
+    .partialIndex({ 'cozyMetadata.favorite': true })
+    .indexFields(['name'])
+    .sortBy([{ name: 'asc' }])
     .limitBy(200)
 export const favoritesQueryAs = 'favorites-view-query'
 

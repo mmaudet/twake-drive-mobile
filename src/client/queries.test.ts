@@ -63,20 +63,38 @@ describe('favoritesQuery', () => {
     expect(captured.doctype).toBe('io.cozy.files')
   })
 
-  it('filters on cozyMetadata.favorite via the where selector', () => {
-    expect(captured.whereArg).toMatchObject({ 'cozyMetadata.favorite': true })
+  it('pins the favorite flag in the partialIndex, not in the sort', () => {
+    expect(captured.partialIndexArg).toMatchObject({ 'cozyMetadata.favorite': true })
   })
 
-  it('indexes the nested favorite field so PouchDB matches it locally', () => {
-    expect(captured.indexFieldsArg).toContain('cozyMetadata.favorite')
+  // cozy-pouch-link's native SQLite engine only maps $eq/$ne/$gt/$gte/$lt/$lte/
+  // $in/$nin/$exists. A field-level $or or a $regex makes it emit `undefined` as
+  // the SQL operator, so `find` returns null and Favoris goes silently empty on
+  // the local replica. The trash exclusions live in the screen, not the index.
+  it('only uses partialIndex conditions the native SQLite engine can translate', () => {
+    expect(captured.partialIndexArg).toEqual({ 'cozyMetadata.favorite': true })
+  })
+
+  it('selects on the sort attribute so the Mango index is usable', () => {
+    expect(captured.whereArg).toMatchObject({ name: { $gt: null } })
   })
 
   it('indexes on name so the stack can use a Mango index', () => {
-    expect(captured.indexFieldsArg).toContain('name')
+    expect(captured.indexFieldsArg).toEqual(['name'])
   })
 
   it('sorts by name ascending', () => {
-    expect(captured.sortByArg).toEqual(expect.arrayContaining([{ name: 'asc' }]))
+    expect(captured.sortByArg).toEqual([{ name: 'asc' }])
+  })
+
+  // cozy-stack rejects a Mango sort whose keys mix directions with
+  // "Mango sort can only use a single order (asc or desc)", which crashed
+  // the Favoris screen.
+  it('uses a single sort direction across every sort key', () => {
+    const directions = (captured.sortByArg as Record<string, string>[]).flatMap(key =>
+      Object.values(key)
+    )
+    expect(new Set(directions).size).toBe(1)
   })
 })
 
