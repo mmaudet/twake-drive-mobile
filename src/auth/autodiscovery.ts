@@ -51,7 +51,7 @@ export const getLoginUri = async (email: string): Promise<URL | null> => {
 
   const config = await fetchTwakeConfiguration(domain)
   const flagshipUri = config?.['twake-flagship-login-uri']
-  return flagshipUri ? buildLoginUri(flagshipUri) : null
+  return flagshipUri ? buildLoginUri(flagshipUri, { login_hint: email.trim() }) : null
 }
 
 export const getTwakeWorkplaceLoginUri = (mode: 'signin' | 'signup'): URL => {

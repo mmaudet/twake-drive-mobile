@@ -72,6 +72,15 @@ describe('getLoginUri', () => {
     expect(result?.searchParams.get('redirect_after_oidc')).toBe('twakedrive://')
   })
 
+  it('passes the email as login_hint so the SSO page is pre-filled', async () => {
+    nock('https://example.com')
+      .get('/.well-known/twake-configuration')
+      .reply(200, { 'twake-flagship-login-uri': 'https://login.example.com/oauth' })
+
+    const result = await getLoginUri('  User@Example.com  ')
+    expect(result?.searchParams.get('login_hint')).toBe('User@Example.com')
+  })
+
   it('returns null for an invalid email', async () => {
     expect(await getLoginUri('not-an-email')).toBeNull()
   })
