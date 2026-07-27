@@ -1,0 +1,20 @@
+# Trivy ignore file — deliberate, documented exceptions.
+# Format: one vulnerability ID per line; comments start with '#'.
+
+# CVE-2026-14257 — brace-expansion, Denial of Service (HIGH).
+#
+# Why ignored:
+#   * Build-tooling only. brace-expansion is pulled in transitively by dev/build
+#     tooling (eslint, jest, rimraf, @react-native/codegen) — it is never part of
+#     the JavaScript bundle shipped to the device, so there is no runtime exposure
+#     in the app itself.
+#   * No usable fix. The only fixed version (5.0.8) moved brace-expansion to a
+#     named export, but @react-native/codegen bundles minimatch 3.x which calls
+#     require('brace-expansion') as a function. Forcing 5.0.8 therefore breaks the
+#     native codegen build ("TypeError: expand is not a function") on both Android
+#     and iOS (generateCodegenSchemaFromJavaScript) — attempted and reverted.
+#   * brace-expansion stays pinned per-major via package.json "overrides" (#76).
+#
+# Re-evaluate when: a codegen-compatible fix lands on the 1.x/2.x branches, or
+# @react-native/codegen upgrades to a minimatch that uses brace-expansion 5.x.
+CVE-2026-14257
