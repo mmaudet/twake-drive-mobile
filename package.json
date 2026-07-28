@@ -37,7 +37,7 @@
     "cozy-flags": "^4.9.1",
     "cozy-logger": "^1.18.1",
     "cozy-minilog": "^3.10.1",
-    "cozy-pouch-link": "^60.30.1",
+    "cozy-pouch-link": "^60.30.3",
     "cozy-stack-client": "^60.24.0",
     "date-fns": "^2.30.0",
     "events": "^3.3.0",
